@@ -1,8 +1,8 @@
 name: Backup Main to Backup Branch
 
 on:
-    schedule:
-      - cron: '*/5 * * * *'  # Runs every 5 minutes
+    # schedule:
+    #   - cron: '*/5 * * * *'  # Runs every 5 minutes
     workflow_dispatch:  # Allows manual trigger
 
 
@@ -24,11 +24,9 @@ jobs:
       - name: Calculate backup branch name
         id: backup_name
         run: |
-          # Get the current run number based on the previous successful run
-          BACKUP_COUNT=$(git branch -r --list "origin/backup*" | wc -l)
-          BACKUP_BRANCH="backup-$((BACKUP_COUNT + 1))"
-          echo "Backup branch will be: $BACKUP_BRANCH"
-          echo "BACKUP_BRANCH=$BACKUP_BRANCH" >> $GITHUB_ENV
+            BACKUP_BRANCH="backup-$(date +'%Y-%m-%dT%H%M')"
+            echo "Backup branch will be: $BACKUP_BRANCH"
+            echo "BACKUP_BRANCH=$BACKUP_BRANCH" >> $GITHUB_ENV
 
       - name: Create backup branch
         run: |
