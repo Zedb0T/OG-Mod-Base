@@ -1,4 +1,4 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+<!-- Improved compatibility of back to top link: See: https://github.com/OpenGOAL-Mods/OG-Mod-Base/pull/73 -->
 <a id="readme-top"></a>
 <!--
 *** Thanks for checking out the Best-README-Template. If you have a suggestion
@@ -24,13 +24,22 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
+![DISCORD](https://img.shields.io/discord/967812267351605298?label=Discord&color=7289DA)
+![GitHub all releases](https://img.shields.io/github/downloads/open-goal/jak-project/total?label=Downloads&color=brightgreen)
+
+![Total Downloads](https://img.shields.io/badge/Total%20Downloads-XXXXX-brightgreen)
+
+![OpenGOAL](https://img.shields.io/badge/Powered%20by-OpenGOAL-blue)
+![Python](https://img.shields.io/badge/Built%20with-Python-blue)
+![Lisp](https://img.shields.io/badge/Lang-Lisp-green)
+
 
 
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/OpenGOAL-Mods/OG-Mod-Base">
     <img src="docs\img\logo-text-colored-new.png" alt="Logo" width="780" height="180">
   </a>
 
@@ -39,14 +48,14 @@
   <p align="center">
     A Modifed Jak Project, to make Mod development more convient!
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/OpenGOAL-Mods/OG-Mod-Base"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="https://github.com/OpenGOAL-Mods/OG-Mod-Base">View Demo</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/OpenGOAL-Mods/OG-Mod-Base/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/OpenGOAL-Mods/OG-Mod-Base/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
@@ -189,7 +198,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
     - [ ] Chinese
     - [ ] Spanish
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/OpenGOAL-Mods/OG-Mod-Base/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -262,16 +271,16 @@ Use this space to list resources you find helpful and would like to give credit 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/OpenGOAL-Mods/OG-Mod-Base.svg?style=for-the-badge
+[contributors-url]: https://github.com/OpenGOAL-Mods/OG-Mod-Base/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/OpenGOAL-Mods/OG-Mod-Base.svg?style=for-the-badge
+[forks-url]: https://github.com/OpenGOAL-Mods/OG-Mod-Base/network/members
+[stars-shield]: https://img.shields.io/github/stars/OpenGOAL-Mods/OG-Mod-Base.svg?style=for-the-badge
+[stars-url]: https://github.com/OpenGOAL-Mods/OG-Mod-Base/stargazers
+[issues-shield]: https://img.shields.io/github/issues/OpenGOAL-Mods/OG-Mod-Base.svg?style=for-the-badge
+[issues-url]: https://github.com/OpenGOAL-Mods/OG-Mod-Base/issues
+[license-shield]: https://img.shields.io/github/license/OpenGOAL-Mods/OG-Mod-Base.svg?style=for-the-badge
+[license-url]: https://github.com/OpenGOAL-Mods/OG-Mod-Base/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
 [product-screenshot]: docs/img/Goal-code-preview.png
