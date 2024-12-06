@@ -106,3 +106,4 @@ out/jak2/fr3.rar
 *.diff
 goalc-report.html
 /third-party/fmt
+.vscode/PythonImportHelper-v2-Completion.json

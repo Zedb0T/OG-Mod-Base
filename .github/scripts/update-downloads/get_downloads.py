@@ -1,4 +1,5 @@
 import requests
+import re
 
 repos = [
     "Kuitar5/the-forgotten-lands",
@@ -55,10 +56,8 @@ readme_file = "README.md"
 with open(readme_file, "r") as file:
     content = file.read()
 
-content = content.replace(
-    "![Total Downloads](https://img.shields.io/badge/Total%20Downloads-XXXXX-brightgreen)",
-    f"![Total Downloads]({badge_url})",
-)
+badge_pattern = r'!\[Total Downloads\]\(https://img\.shields\.io/badge/Total%20Downloads-[^)]*\)'
+content = re.sub(badge_pattern, f"![Total Downloads]({badge_url})", content)
 
 with open(readme_file, "w") as file:
     file.write(content)
