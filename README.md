@@ -27,7 +27,7 @@
 ![DISCORD](https://img.shields.io/discord/967812267351605298?label=Discord&color=7289DA)
 ![GitHub all releases](https://img.shields.io/github/downloads/open-goal/jak-project/total?label=Downloads&color=brightgreen)
 
-![Total Downloads](https://img.shields.io/badge/Total%20Downloads-XXXXX-brightgreen)
+![Total Downloads](https://img.shields.io/badge/Total%20Downloads-20469-brightgreen)
 
 ![OpenGOAL](https://img.shields.io/badge/Powered%20by-OpenGOAL-blue)
 ![Python](https://img.shields.io/badge/Built%20with-Python-blue)
