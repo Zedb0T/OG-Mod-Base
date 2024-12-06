@@ -23,15 +23,10 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-![DISCORD](https://img.shields.io/discord/967812267351605298?label=Discord&color=7289DA)
-![GitHub all releases](https://img.shields.io/github/downloads/open-goal/jak-project/total?label=Downloads&color=brightgreen)
+![DISCORD](https://img.shields.io/discord/967812267351605298?label=Discord&color=7289DA&style=for-the-badge)
+![Total Downloads](https://img.shields.io/badge/Total%20Downloads-20469-brightgreen?style=for-the-badge)
+![OpenGOAL](https://img.shields.io/badge/OpenGOAL-yellow?style=for-the-badge)
 
-![Total Downloads](https://img.shields.io/badge/Total%20Downloads-44817-brightgreen)
-
-![OpenGOAL](https://img.shields.io/badge/Powered%20by-OpenGOAL-blue)
-![Python](https://img.shields.io/badge/Built%20with-Python-blue)
-![Lisp](https://img.shields.io/badge/Lang-Lisp-green)
 
 
 
@@ -103,41 +98,52 @@
 </a>
 </div>
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+Welcome to the openGOAL Modbase! This project is designed to give modders a comprehensive foundation for creating mods for the openGOAL framework. Whether you're looking to improve existing mods or build something entirely new, this modbase provides the essential tools, resources, and documentation to get you started.
 
-Here's why:
+Here's why the openGOAL Modbase is perfect for modders:
 * Your time should be focused on creating something amazing. A project that solves a problem and helps others
+* Creating GOAL code is hard, running it shouldn't be.
 * You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
+* With a focus on simplicity, modbase helps you get up and running quickly, even if you have little to no programming experience.
+* Thanks to the openGOAL community, this modbase is always evolving. You can contribute, suggest features, or create pull requests to make it even better. :smile:
 
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
-
-Use the `BLANK_README.md` to get started.
+For more information, visit jakmods.dev, or check out the documentation to learn more about how to get started and make the most out of this project.
+Feel free to fork this repo, suggest changes, or open issues to help improve the openGOAL Modbase. Thanks to everyone who has contributed to making this project better!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
-### Built With
+### Recommend Software
 
 This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+* [![Githubdesktop][Githubdesktop]][githubdesktop-url]
+* [![Githubaccount][Githubaccount]][githubaccount-url]
+* [![VSCode][VSCode]][VSCode-url]
+* [![OpenGOAL-VSCode][OpenGOAL-VSCode]][OpenGOAL-VSCode-url]
 
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+* [![Scoop][Scoop]][Scoop-url]
+Once Scoop is installed, run the following commands in cmd:
+```sh
+scoop install git llvm nasm python task
+```
+
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
+
+<!--
+Cover basics here with links and images
+1. Getting github desktop
+2. Getting github account
+3. Making github organization
+4. Forking mod base
+5. Simple GOAL change (TARGETBANK)
+6. Seeing the change in game.
+ -->
 This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
 
@@ -284,19 +290,24 @@ Use this space to list resources you find helpful and would like to give credit 
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
 [product-screenshot]: docs/img/Goal-code-preview.png
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com
+
+
+[Githubdesktop]: https://img.shields.io/badge/Github_Desktop-4C4CFF?style=for-the-badge&logo=github&logoColor=white
+[Githubdesktop-url]: https://angular.io/
+
+[Githubaccount]: https://img.shields.io/badge/Github_Account-4C4CFF?style=for-the-badge&logo=github&logoColor=white
+[Githubaccount-url]: https://angular.io/
+
+[VSCode]: https://img.shields.io/badge/VS_Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white
+[VSCode-url]: https://code.visualstudio.com/
+
+[OpenGOAL-VSCode]: https://img.shields.io/badge/OpenGOAL_VSCode_Extension-0091D4?style=for-the-badge&logo=visual-studio-code&logoColor=white
+[OpenGOAL-VSCode-url]: https://marketplace.visualstudio.com/items?itemName=OpenGOAL.openGOAL
+
+[Scoop]: https://img.shields.io/badge/Scoop-3D9D63?style=for-the-badge&logo=scoop&logoColor=white
+[Scoop-url]: https://scoop.sh/
+
+* [![Githubdesktop][Githubdesktop]][githubdesktop-url]
+* [![VSCode][VSCode]][VSCode-url]
+* [![OpenGOAL-VSCode][OpenGOAL-VSCode]][OpenGOAL-VSCode-url]
+
