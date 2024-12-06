@@ -1,0 +1,40 @@
+name: Backup Main to Backup Branch
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Runs every 5 minutes
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the main branch
+        uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: Set up Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Calculate backup branch name
+        id: backup_name
+        run: |
+          # Get the current run number based on the previous successful run
+          BACKUP_COUNT=$(git branch -r --list "origin/backup*" | wc -l)
+          BACKUP_BRANCH="backup-$((BACKUP_COUNT + 1))"
+          echo "Backup branch will be: $BACKUP_BRANCH"
+          echo "BACKUP_BRANCH=$BACKUP_BRANCH" >> $GITHUB_ENV
+
+      - name: Create backup branch
+        run: |
+          git checkout -b ${{ env.BACKUP_BRANCH }}
+          git push origin ${{ env.BACKUP_BRANCH }}
+
+      - name: Merge main into backup branch
+        run: |
+          git checkout ${{ env.BACKUP_BRANCH }}
+          git pull origin main
+          git push origin ${{ env.BACKUP_BRANCH }}
