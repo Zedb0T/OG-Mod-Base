@@ -118,7 +118,6 @@
 
 (deftype hud-pickups (hud) ())
 
-
 (defmethod draw-hud ((this hud-pickups))
   (let ((t9-0 (method-of-type hud draw-hud))) (t9-0 this))
   (let* ((s5-0 (-> *display* frames (-> *display* on-screen) frame global-buf))
@@ -233,7 +232,6 @@
 
 (deftype hud-health (hud)
   ((scale float)))
-
 
 (defun part-hud-health-01-func ((arg0 sparticle-system) (arg1 sparticle-cpuinfo) (arg2 matrix))
   (let ((f0-0 (-> *hud-parts* health 0 scale))) (set! (-> arg2 vector 0 w) f0-0) (set! (-> arg2 vector 1 w) f0-0))
@@ -370,7 +368,6 @@
    (total-orbs  int32)
    (level-index int32)
    (start-time  time-frame)))
-
 
 (defmethod draw-hud ((this hud-money-all))
   (let ((t9-0 (method-of-type hud draw-hud))) (t9-0 this))
@@ -855,7 +852,6 @@
    (scale-center        float)
    (icon-pos-y          int32)))
 
-
 (defmethod draw-hud ((this hud-fuel-cell))
   (let ((t9-0 (method-of-type hud draw-hud))) (t9-0 this))
   (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id debug))
@@ -1062,7 +1058,6 @@
   ((scale         float)
    (text-y-offset int32)))
 
-
 (defun part-hud-buzzer-func ((arg0 sparticle-system) (arg1 sparticle-cpuinfo) (arg2 matrix))
   (let ((f0-0 (-> *hud-parts* buzzers 0 scale))) (set! (-> arg2 vector 0 w) f0-0) (set! (-> arg2 vector 1 w) f0-0))
   (none))
@@ -1251,7 +1246,6 @@
   ((scale-timer   float)
    (scale-backing float)
    (scale-blue    float)))
-
 
 (defun calculate-rotation-and-color-for-slice ((arg0 int) (arg1 float) (arg2 int) (arg3 int) (arg4 int) (arg5 matrix))
   (cond

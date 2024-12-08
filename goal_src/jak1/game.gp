@@ -1908,6 +1908,7 @@
  "entity/entity-table.gc"
  "load/loader.gc"
  "game/task/task-control-h.gc"
+ "mods/mod-declares-h.gc"
  "game/game-info.gc"
  "game/game-save.gc"
  "game/settings.gc"

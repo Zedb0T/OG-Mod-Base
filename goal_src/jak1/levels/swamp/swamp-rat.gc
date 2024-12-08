@@ -26,7 +26,6 @@
   (:states
    swamp-rat-spawn))
 
-
 (defskelgroup *swamp-rat-sg*
   swamp-rat
   swamp-rat-lod0-jg
@@ -185,7 +184,10 @@ swamp-rat-default-event-handler
           (ja-no-eval :num! (loop!))
           (logclear! (-> self nav-enemy-flags) (nav-enemy-flags enable-travel))
           (let ((gp-0 (rand-vu-int-range 300 600)))
-            (suspend-for gp-0 (ja :num-func num-func-identity :frame-num 0.0) (ja-blend-eval) (suspend)))))))
+            (suspend-for gp-0
+              (ja :num-func num-func-identity :frame-num 0.0)
+              (ja-blend-eval)
+              (suspend)))))))
 
 (defstate nav-enemy-give-up (swamp-rat)
   :virtual #t

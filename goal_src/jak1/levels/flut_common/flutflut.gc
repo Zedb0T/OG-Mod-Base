@@ -27,7 +27,6 @@
    (pickup (state flutflut))
    wait-for-return))
 
-
 (defmethod relocate ((this flutflut) (offset int))
   (countdown (v1-0 2)
     (if (-> this path-data v1-0) (&+! (-> this path-data v1-0) offset)))
@@ -125,7 +124,8 @@
   :enter
     (behavior ()
       (blocking-plane-destroy)
-      (blocking-plane-spawn (the-as curve-control (-> self path-target))))
+      (if (not *allow-flutflut-anywhere*) (blocking-plane-spawn (the-as curve-control (-> self path-target))))
+      (none))
   :exit
     (-> (method-of-type flutflut wait-for-start)
         exit)
@@ -188,7 +188,8 @@
       (while (and *target* (logtest? (-> *target* control root-prim prim-core action) (collide-action flut)))
         (flutflut-effect)
         (suspend))
-      (suspend-for (seconds 1) (flutflut-effect))
+      (suspend-for (seconds 1)
+        (flutflut-effect))
       (go arg0)))
 
 (defstate wait-for-return (flutflut)
@@ -201,7 +202,8 @@
   :enter
     (behavior ()
       (blocking-plane-destroy)
-      (blocking-plane-spawn (the-as curve-control (-> self path-flut))))
+      (if (not *allow-flutflut-anywhere*) (blocking-plane-spawn (the-as curve-control (-> self path-target))))
+      (none))
   :code
     (behavior ()
       (ja-channel-set! 0)
@@ -244,10 +246,11 @@
   (set! (-> this auto-get-off) #f)
   (move-to-ground (-> this root) 40960.0 40960.0 #t (collide-kind background))
   (set! (-> this cell) (the-as handle #f))
-  (blocking-plane-spawn (the-as curve-control
-                                (if (and *target* (logtest? (-> *target* control root-prim prim-core action) (collide-action flut)))
-                                  (-> this path-flut)
-                                  (-> this path-target))))
+  (if (not *allow-flutflut-anywhere*)
+    (blocking-plane-spawn (the-as curve-control
+                                  (if (and *target* (logtest? (-> *target* control root-prim prim-core action) (collide-action flut)))
+                                    (-> this path-flut)
+                                    (-> this path-target)))))
   (set! (-> this sound) (new 'process 'ambient-sound (static-sound-spec "zoom-teleport" :fo-max 30) (-> this root trans)))
   (go (method-of-object this wait-for-start))
   (none))

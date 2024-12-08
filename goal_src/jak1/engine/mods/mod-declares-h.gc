@@ -1,0 +1,16 @@
+(defun-extern runs-on-jak-death symbol none)
+(defun-extern runs-on-jak-spawn none)
+(defun-extern runs-on-orb-pickup process-tree none)
+(defun-extern runs-on-cell-pickup symbol none)
+(defun-extern runs-on-fly-pickup none)
+
+(defun-extern runs-every-frame none)
+(defun-extern runs-on-eco-pickup pickup-type process-tree none)
+
+(defun-extern orb-placer-maintenance none)
+(defun-extern orb-placer-list-maintenace symbol none)
+(define-extern *debug-continue-point* string)
+(define-extern *has-landed?* symbol)
+(define-extern *allow-zoomer-anywhere* symbol)
+(define-extern *allow-flutflut-anywhere* symbol)
+(define-extern *mod-version-text* string)

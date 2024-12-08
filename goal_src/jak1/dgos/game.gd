@@ -272,6 +272,7 @@
   "aligner.o"
   "effect-control.o"
   "water.o"
+  "mod-declares-h.o"
   "collectables-part.o"
   "collectables.o"
   "task-control.o"
