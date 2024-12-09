@@ -66,7 +66,6 @@
    seagull-soaring
    seagull-takeoff))
 
-
 (deftype seagullflock (process)
   ((self-override      seagullflock :overlay-at self)
    (path               path-control)
@@ -91,7 +90,6 @@
   (:states
    seagullflock-at-waterfall
    seagullflock-idle))
-
 
 (defmethod relocate ((this seagullflock) (offset int))
   (if (nonzero? (-> this path)) (&+! (-> this path) offset))
@@ -295,10 +293,10 @@
           (go seagull-takeoff)))
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
         (let ((target (get-interactive-target tgt-idx)))
-        (when target
-          (let ((v1-12 (vector-! (new 'stack-no-clear 'vector) (-> target control trans) (-> self root trans))))
-            (when (< (vector-dot v1-12 v1-12) 1677721600.0)
-              (let ((v1-14 (-> self flock))) (play-hint (if v1-14 (-> v1-14 0 self-override)) (-> self index)))))))))
+          (when target
+            (let ((v1-12 (vector-! (new 'stack-no-clear 'vector) (-> target control trans) (-> self root trans))))
+              (when (< (vector-dot v1-12 v1-12) 1677721600.0)
+                (let ((v1-14 (-> self flock))) (play-hint (if v1-14 (-> v1-14 0 self-override)) (-> self index)))))))))
   :code
     (behavior ()
       (+! (-> self root trans y) 20480.0)
@@ -694,7 +692,11 @@
             (while (< 0.5 f30-0)
               (suspend)
               (set! f30-0 (- f30-0 (seconds-per-frame)))
-              (fill-cache-integrate-and-collide! (-> self root) (-> self root transv) (collide-kind background) *collide-cache* *collide-work*)
+              (fill-cache-integrate-and-collide! (-> self root)
+                                                 (-> self root transv)
+                                                 (collide-kind background)
+                                                 *collide-cache*
+                                                 *collide-work*)
               (let* ((v1-21 self)
                      (f1-3 (the float (sar (shl (the int (- (-> self heading) (-> v1-21 heading))) 48) 48)))
                      (f0-12 (- (-> v1-21 tilt))))
@@ -715,7 +717,11 @@
               (suspend)
               (ja :num! (seek!))
               (set! f30-0 (- f30-0 (seconds-per-frame)))
-              (fill-cache-integrate-and-collide! (-> self root) (-> self root transv) (collide-kind background) *collide-cache* *collide-work*)
+              (fill-cache-integrate-and-collide! (-> self root)
+                                                 (-> self root transv)
+                                                 (collide-kind background)
+                                                 *collide-cache*
+                                                 *collide-work*)
               (let* ((v1-48 self)
                      (f1-13 (the float (sar (shl (the int (- (-> self heading) (-> v1-48 heading))) 48) 48)))
                      (f0-32 (- (-> v1-48 tilt))))
@@ -875,9 +881,7 @@
         (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
           (let ((target (get-interactive-target tgt-idx)))
             (if (and target (>= 102400.0 (vector-vector-distance (-> self trans) (-> target control trans))))
-                (level-hint-spawn (text-id zero) (the-as string #f) (-> self entity) *entity-pool* (game-task none)))
-                )
-            )
+              (level-hint-spawn (text-id zero) (the-as string #f) (-> self entity) *entity-pool* (game-task none)))))
         (suspend))))
 
 (defmethod init-from-entity! ((this seagullflock) (arg0 entity-actor))

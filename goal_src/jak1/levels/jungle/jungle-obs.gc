@@ -7,7 +7,6 @@
 (require "engine/common-obs/water-anim.gc")
 (require "engine/camera/pov-camera-h.gc")
 
-
 ;; DECOMP BEGINS
 
 (defskelgroup *med-res-firecanyon-sg*
@@ -448,33 +447,33 @@
         (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
           (let ((target (get-interactive-target tgt-idx)))
             (when (and target
-                      (< (vector-vector-xz-distance (-> self activation-point) (-> target control trans)) 49152.0)
-                      (< (-> self activation-point y) (-> target control trans y))
-                      (< (-> target control trans y) (+ 20480.0 (-> self activation-point y)))
-                      (not (-> self child)))
+                       (< (vector-vector-xz-distance (-> self activation-point) (-> target control trans)) 49152.0)
+                       (< (-> self activation-point y) (-> target control trans y))
+                       (< (-> target control trans y) (+ 20480.0 (-> self activation-point y)))
+                       (not (-> self child)))
               (cond
                 ((send-event target 'query 'powerup (pickup-type eco-blue))
-                (logclear! (-> self mask) (process-mask actor-pause))
-                (logclear! (-> self mask) (process-mask platform))
-                (if *enable-ingame-cutscenes?*
-                (let ((gp-1 (entity-by-name "junglecam-1")))
-                  (cond
-                    (gp-1
-                      (process-spawn precurbridgecam
-                                    :init
-                                    pov-camera-init-by-other
-                                    (-> gp-1 extra trans)
-                                    *junglecam-sg*
-                                    "precurbridgecam"
-                                    0
-                                    #f
-                                    '()
-                                    :to
-                                    self))
-                    (else (format #t "ERROR<GMJ>: position for precursor bridge camera not found~%") (go precurbridge-activate))))
-                (go precurbridge-activate)))
+                 (logclear! (-> self mask) (process-mask actor-pause))
+                 (logclear! (-> self mask) (process-mask platform))
+                 (if *enable-ingame-cutscenes?*
+                   (let ((gp-1 (entity-by-name "junglecam-1")))
+                     (cond
+                       (gp-1
+                        (process-spawn precurbridgecam
+                                       :init
+                                       pov-camera-init-by-other
+                                       (-> gp-1 extra trans)
+                                       *junglecam-sg*
+                                       "precurbridgecam"
+                                       0
+                                       #f
+                                       '()
+                                       :to
+                                       self))
+                       (else (format #t "ERROR<GMJ>: position for precursor bridge camera not found~%") (go precurbridge-activate))))
+                   (go precurbridge-activate)))
                 (else
-                (level-hint-spawn (text-id sidekick-hint-precurbridge) "sksp0039" (the-as entity #f) *entity-pool* (game-task none)))))))
+                 (level-hint-spawn (text-id sidekick-hint-precurbridge) "sksp0039" (the-as entity #f) *entity-pool* (game-task none)))))))
         (suspend)))
   :post ja-post)
 
@@ -719,7 +718,7 @@
           (let ((target (get-interactive-target tgt-idx)))
             (when (or (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete)))
                       (and (and target (>= (-> self thresh w) (vector-vector-distance (-> self root trans) (-> target control trans))))
-                          (send-event target 'query 'powerup (pickup-type eco-blue))))
+                           (send-event target 'query 'powerup (pickup-type eco-blue))))
               (sound-play "blue-eco-on" :position (the-as symbol (-> self root trans)))
               (go maindoor-open #f))
             (if (and target (>= (-> self thresh w) (vector-vector-distance (-> self root trans) (-> target control trans))))

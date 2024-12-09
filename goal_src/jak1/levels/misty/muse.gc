@@ -3,7 +3,6 @@
 (bundles "MIS.DGO")
 (require "engine/common-obs/nav-enemy.gc")
 
-
 ;; DECOMP BEGINS
 
 (deftype muse (nav-enemy)
@@ -242,9 +241,9 @@ nav-enemy-default-event-handler
             (cond
               (gp-1 (move-to-point! (-> self collide-info) gp-1) (set-yaw-angle-clear-roll-pitch! (-> self collide-info) (-> gp-1 w)))
               (else
-              (move-to-point! (-> self collide-info) (-> *target* control trans))
-              (quaternion-copy! (-> self collide-info quat) (-> *target* control quat))
-              (move-to-ground (-> self collide-info) 40960.0 40960.0 #f (collide-kind background)))))
+               (move-to-point! (-> self collide-info) (-> *target* control trans))
+               (quaternion-copy! (-> self collide-info quat) (-> *target* control quat))
+               (move-to-ground (-> self collide-info) 40960.0 40960.0 #f (collide-kind background)))))
           (send-event *target* 'trans 'save (-> self old-target-pos))
           (send-event (ppointer->process (-> *target* sidekick)) 'matrix 'play-anim)
           (send-event *target* 'blend-shape #t)
@@ -269,24 +268,24 @@ nav-enemy-default-event-handler
           (send-event *target* 'blend-shape #f)
           (cond
             ((!= *kernel-boot-message* 'play)
-            (set-blackout-frames 0)
-            (ja-channel-set! 0)
-            (ja-post)
-            (clear-collide-with-as (-> self collide-info))
-            (send-event *target* 'trans 'reset)
-            (let ((gp-4 (ppointer->handle (birth-pickup-at-point (target-pos 0)
+             (set-blackout-frames 0)
+             (ja-channel-set! 0)
+             (ja-post)
+             (clear-collide-with-as (-> self collide-info))
+             (send-event *target* 'trans 'reset)
+             (let ((gp-4 (ppointer->handle (birth-pickup-at-point (target-pos 0)
                                                                   (pickup-type fuel-cell)
                                                                   (the float (-> self entity extra perm task))
                                                                   #f
                                                                   self
                                                                   (the-as fact-info #f)))))
-              (send-event (handle->process (the-as handle gp-4)) 'pickup)
-              (while (handle->process (the-as handle gp-4))
-                (suspend))))
+               (send-event (handle->process (the-as handle gp-4)) 'pickup)
+               (while (handle->process (the-as handle gp-4))
+                 (suspend))))
             (else
-            (send-event *target* 'trans 'restore (-> self old-target-pos))
-            (set-blackout-frames 0)
-            (set-blackout-frames (seconds 0.1)))))))
+             (send-event *target* 'trans 'restore (-> self old-target-pos))
+             (set-blackout-frames 0)
+             (set-blackout-frames (seconds 0.1)))))))
   :post
     (behavior ()
       (nav-enemy-method-51 self)

@@ -11,7 +11,6 @@
 
 (deftype sunken-pipegame-button (basebutton) ())
 
-
 (deftype sunken-pipegame-prize (structure)
   ((puzzle-delay            time-frame)
    (pipe-travel-time-to-far time-frame)
@@ -25,7 +24,6 @@
    (blown-out-far-part-pos  vector :inline)
    (sucked-up-part          sparticle-launch-control)
    (blown-out-part          sparticle-launch-control)))
-
 
 (deftype sunken-pipegame (process-drawable)
   ((abort-audio-if-beaten? symbol)
@@ -44,7 +42,6 @@
    sunken-pipegame-end-play
    sunken-pipegame-idle
    sunken-pipegame-start-up))
-
 
 (defpartgroup group-pipegame-jar-suck0
   :id 448
@@ -495,14 +492,14 @@
           (let ((v1-10 (-> self challenge)))
             (cond
               ((zero? v1-10)
-              (ambient-hint-spawn "gamcam27" (the-as vector #f) *entity-pool* 'camera)
-              (process-spawn pov-camera (-> self root trans) *sunkencam-sg* "pipegame-left" 0 #f '() :to self))
+               (ambient-hint-spawn "gamcam27" (the-as vector #f) *entity-pool* 'camera)
+               (process-spawn pov-camera (-> self root trans) *sunkencam-sg* "pipegame-left" 0 #f '() :to self))
               ((= v1-10 1)
-              (ambient-hint-spawn "gamcam25" (the-as vector #f) *entity-pool* 'camera)
-              (process-spawn pov-camera (-> self root trans) *sunkencam-sg* "pipegame-middle" 0 #f '() :to self))
+               (ambient-hint-spawn "gamcam25" (the-as vector #f) *entity-pool* 'camera)
+               (process-spawn pov-camera (-> self root trans) *sunkencam-sg* "pipegame-middle" 0 #f '() :to self))
               ((= v1-10 2)
-              (ambient-hint-spawn "gamcam26" (the-as vector #f) *entity-pool* 'camera)
-              (process-spawn pov-camera (-> self root trans) *sunkencam-sg* "pipegame-right" 0 #f '() :to self)))))
+               (ambient-hint-spawn "gamcam26" (the-as vector #f) *entity-pool* 'camera)
+               (process-spawn pov-camera (-> self root trans) *sunkencam-sg* "pipegame-right" 0 #f '() :to self)))))
         (set-time! (-> self state-time))
         (let ((f30-0 0.0))
           (until (time-elapsed? (-> self state-time) (seconds 2))

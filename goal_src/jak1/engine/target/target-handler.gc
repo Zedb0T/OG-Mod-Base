@@ -9,36 +9,35 @@
 (defbehavior target-generic-event-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (local-vars (v0-0 object))
   (case arg2
-    (('taunt)
-     (ambient-hint-spawn (the string (-> arg3 param 0)) (-> self control trans) *entity-pool* 'ambient)
-     )
+    (('taunt) (ambient-hint-spawn (the string (-> arg3 param 0)) (-> self control trans) *entity-pool* 'ambient))
     (('get-pickup)
-      (let ((s4-0 (-> arg3 param 0))
-            (f28-0 (the-as float (-> arg3 param 1))))
-        ;; Teamruns same-level pickup flag
-        (when (and (or (!= (the-as pickup-type s4-0) (pickup-type money)) *allow-orb-pickup?*)
+     (let ((s4-0 (-> arg3 param 0))
+           (f28-0 (the-as float (-> arg3 param 1))))
+       ;; Teamruns same-level pickup flag
+       (when (and (or (!= (the-as pickup-type s4-0) (pickup-type money)) *allow-orb-pickup?*)
                   (or (!= (the-as pickup-type s4-0) (pickup-type buzzer)) *allow-fly-pickup?*))
-          (when (not (logtest? (-> self state-flags) (state-flags dying)))
-            (let ((s4-0 (-> arg3 param 0))
-                  (f28-0 (the-as float (-> arg3 param 1))))
-                  (let ((trigger-runs-on-pickup ;; needs to be checked before for vent pickup logic
-                          (and
-                            (= self *target*)
-                            (!= (the-as pickup-type s4-0) (pickup-type none))
-                            (!= (the-as pickup-type s4-0) (pickup-type eco-pill-random))
-                            (!= (the-as pickup-type s4-0) (pickup-type eco-pill))
-                            (!= (the-as pickup-type s4-0) (pickup-type fuel-cell)) ;; is instead taken from task-control
-                            ;; makes sure eco vents only runs on enter and not every frame after, can/will cause bugs with remotes standing inside and shooting yellow eco shots as they'll run out eventually with this
-                            (or (not (type-type? (-> arg0 type) vent)) (< 50 (the int (- (-> *display* game-frame-counter) (- (+ (-> self fact eco-pickup-time) (-> self fact eco-timeout)) (-> *FACT-bank* eco-full-timeout))))))
-                            )
-                          )
-                        (pickup-result (if (!= (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) (the-as float 0.0) (the-as handle #f))
-                                (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) f28-0 (process->handle arg0)))
-                          #t
-                          'full)))
-                    (if trigger-runs-on-pickup ;; needs to be executed after to have correct *game-info* money and buzzer count
-                      (runs-on-pickup (the-as pickup-type s4-0) f28-0 arg0))
-                    pickup-result))))))
+         (when (not (logtest? (-> self state-flags) (state-flags dying)))
+           (let ((s4-0 (-> arg3 param 0))
+                 (f28-0 (the-as float (-> arg3 param 1))))
+             (let ((trigger-runs-on-pickup ;; needs to be checked before for vent pickup logic
+                     (and (= self *target*)
+                          (!= (the-as pickup-type s4-0) (pickup-type none))
+                          (!= (the-as pickup-type s4-0) (pickup-type eco-pill-random))
+                          (!= (the-as pickup-type s4-0) (pickup-type eco-pill))
+                          (!= (the-as pickup-type s4-0) (pickup-type fuel-cell)) ;; is instead taken from task-control
+                          ;; makes sure eco vents only runs on enter and not every frame after, can/will cause bugs with remotes standing inside and shooting yellow eco shots as they'll run out eventually with this
+                          (or (not (type-type? (-> arg0 type) vent))
+                              (< 50
+                                 (the int
+                                      (- (-> *display* game-frame-counter)
+                                         (- (+ (-> self fact eco-pickup-time) (-> self fact eco-timeout)) (-> *FACT-bank* eco-full-timeout))))))))
+                   (pickup-result (if (!= (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) (the-as float 0.0) (the-as handle #f))
+                                          (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) f28-0 (process->handle arg0)))
+                                    #t
+                                    'full)))
+               (if trigger-runs-on-pickup ;; needs to be executed after to have correct *game-info* money and buzzer count
+                 (runs-on-pickup (the-as pickup-type s4-0) f28-0 arg0))
+               pickup-result))))))
     (('reset-pickup) (reset! (-> self fact) (the-as symbol (-> arg3 param 0))))
     (('reset-collide)
      (cond
@@ -330,7 +329,7 @@
                                        74
                                        #f
                                        (static-sound-name "spin-hit"))
-            (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.2))))
+             (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.2))))
             ((= v1-5 'punch)
              (set! sv-128 (prims-touching? arg2 (-> self control) (the-as uint 64)))
              (cond
@@ -388,7 +387,7 @@
                                        23
                                        #f
                                        (static-sound-name "punch-hit"))
-              (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))))
+             (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))))
             ((= v1-5 'flip)
              (effect-control-method-12 (-> self skel effect)
                                        (-> self control unknown-symbol30)
@@ -455,7 +454,7 @@
                                        23
                                        #f
                                        (static-sound-name "uppercut-hit"))
-              (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))))
+             (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))))
             ((or (= v1-5 'flop) (= v1-5 'flop-down))
              (effect-control-method-10 (-> self skel effect) 'group-flop-hit (the-as float -1.0) 23)
              (effect-control-method-10 (-> self skel effect) 'group-flop-hit (the-as float -1.0) 17)
@@ -465,7 +464,7 @@
                                        23
                                        #f
                                        (static-sound-name "flop-hit"))
-            (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))))
+             (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))))
             ((= v1-5 'flut-attack)
              (effect-control-method-12 (-> self skel effect)
                                        (-> self control unknown-symbol30)
@@ -473,7 +472,7 @@
                                        23
                                        #f
                                        (static-sound-name "punch-hit"))
-              (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.2)))))))
+             (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.2)))))))
       (the-as symbol gp-0))))
 
 (defbehavior target-apply-tongue target ((arg0 vector))
@@ -495,18 +494,15 @@
     #t))
 
 (defbehavior target-standard-event-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
-    (when (and (not *remote-stuck-released*)
-        (= (-> arg0 type) target) (!= arg0 *target*)
-        (process-close? (the-as process-drawable arg0) 4500.0)
-        )
+  (when (and (not *remote-stuck-released*)
+             (= (-> arg0 type) target)
+             (!= arg0 *target*)
+             (process-close? (the-as process-drawable arg0) 4500.0))
     (set! *remote-stuck-released* #t)
     (set! *remote-stuck-release-timestamp* (+ (current-time) (seconds 0.5)))
-    (logclear! (-> *target* control root-prim collide-with) (collide-kind target-remote))
-    )
+    (logclear! (-> *target* control root-prim collide-with) (collide-kind target-remote)))
   (case arg2
-  (('taunt)
-     (ambient-hint-spawn (the string (-> arg3 param 0)) (-> self control trans) *entity-pool* 'ambient)
-     )
+    (('taunt) (ambient-hint-spawn (the string (-> arg3 param 0)) (-> self control trans) *entity-pool* 'ambient))
     (('attack 'attack-or-shove 'attack-invinc)
      (target-attacked arg2
                       (the-as attack-info (-> arg3 param 1))

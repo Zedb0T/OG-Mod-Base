@@ -11,9 +11,7 @@
 
 (deftype rolling-part (part-spawner) ())
 
-
 (deftype rollingcam (process-hidden) ())
-
 
 (defskelgroup *rollingcam-sg*
   rollingcam
@@ -26,19 +24,16 @@
   ((root      collide-shape-moving :override)
    (max-frame float)))
 
-
 (deftype pusher (pusher-base)
   ((sync sync-info-paused :inline)
    (cyl  cylinder :inline))
   (:states
    pusher-idle))
 
-
 (deftype gorge-pusher (pusher-base)
   ((min-frame float))
   (:states
    gorge-pusher-idle))
-
 
 (defskelgroup *pusher-sg*
   pusher
@@ -144,7 +139,6 @@
    dark-plant-sprout
    dark-plant-startup))
 
-
 (defskelgroup *dark-plant-sg*
   dark-plant
   dark-plant-lod0-jg
@@ -155,11 +149,11 @@
 (defun dark-plant-check-target ((arg0 dark-plant))
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
     (let ((target (get-interactive-target tgt-idx)))
-  (if (the-as symbol
-          (and target
-               (and (< (vector-vector-distance (-> arg0 root trans) (remote-target-pos 0 target)) 16384.0)
-                    (send-event target 'query 'powerup (pickup-type eco-green)))))
-    (return #t)))))
+      (if (the-as symbol
+                  (and target
+                       (and (< (vector-vector-distance (-> arg0 root trans) (remote-target-pos 0 target)) 16384.0)
+                            (send-event target 'query 'powerup (pickup-type eco-green)))))
+        (return #t)))))
 
 (defun dark-plant-randomize ((arg0 dark-plant))
   (quaternion-axis-angle! (-> arg0 root quat) 0.0 1.0 0.0 (rand-vu-float-range 0.0 65536.0))
@@ -241,8 +235,8 @@
         (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
           (let ((target (get-interactive-target tgt-idx)))
             (when (and (logtest? (-> self draw status) (draw-status was-drawn))
-                      target
-                      (>= 81920.0 (vector-vector-distance (-> self root trans) (-> target control trans))))
+                       target
+                       (>= 81920.0 (vector-vector-distance (-> self root trans) (-> target control trans))))
               (if (rand-vu-percent? 0.3) (sound-play "darkvine-move"))
               (when (task-closed? (game-task rolling-plants) (task-status need-hint))
                 (level-hint-spawn (text-id rolling-plants-hint) "sksp0113" (the-as entity #f) *entity-pool* (game-task none))
@@ -352,7 +346,6 @@
    happy-plant-opened
    happy-plant-opening))
 
-
 (defskelgroup *happy-plant-sg*
   happy-plant
   happy-plant-lod0-jg
@@ -397,12 +390,12 @@
             (if *target* (logior! (-> *target* mask) (process-mask sleep)))
             (send-event (-> gp-2 process 0) 'anim-mode 'clone-anim)
             (ja-play-spooled-anim (new 'static
-                                      'spool-anim
-                                      :name "happy-plant-open"
-                                      :index 5
-                                      :parts 2
-                                      :command-list
-                                      '((0 send-event target draw #f) (10000 send-event target draw #t)))
+                                       'spool-anim
+                                       :name "happy-plant-open"
+                                       :index 5
+                                       :parts 2
+                                       :command-list
+                                       '((0 send-event target draw #f) (10000 send-event target draw #t)))
                                   (the-as art-joint-anim #f)
                                   (the-as art-joint-anim happy-plant-idle-ja)
                                   (the-as (function process-drawable symbol) false-func))
@@ -415,29 +408,17 @@
                 (let ((s5-4 (new-stack-vector0)))
                   (vector<-cspace! s5-4 (joint-node happy-plant-lod0-jg fuelcell))
                   (send-event gp-3 'trans s5-4))))))
-        (let ((s5-3
-                (ppointer->handle (process-spawn fuel-cell :init fuel-cell-init-as-clone (process->handle self) 55 :to self))
-                )
-              )
-          (ja-play-spooled-anim
-            (new 'static 'spool-anim
-              :name "happy-plant-open"
-              :index 5
-              :parts 2
-              :command-list '()
-              )
-            (the-as art-joint-anim #f)
-            (the-as art-joint-anim (-> self draw art-group data 4))
-            (the-as (function process-drawable symbol) false-func)
-            )
+        (let ((s5-3 (ppointer->handle (process-spawn fuel-cell :init fuel-cell-init-as-clone (process->handle self) 55 :to self))))
+          (ja-play-spooled-anim (new 'static 'spool-anim :name "happy-plant-open" :index 5 :parts 2 :command-list '())
+                                (the-as art-joint-anim #f)
+                                (the-as art-joint-anim (-> self draw art-group data 4))
+                                (the-as (function process-drawable symbol) false-func))
           (ja-channel-set! 1)
           (ja :group! (-> self draw art-group data 4))
           (let ((gp-3 (handle->process s5-3)))
             (when gp-3
               (send-event gp-3 'stop-cloning)
-              (let ((s5-4 (new-stack-vector0)))
-                (vector<-cspace! s5-4 (-> self node-list data 25))
-                (send-event gp-3 'trans s5-4))))))
+              (let ((s5-4 (new-stack-vector0))) (vector<-cspace! s5-4 (-> self node-list data 25)) (send-event gp-3 'trans s5-4))))))
       (restore-collide-with-as (-> self root))
       (go happy-plant-opened))
   :post transform-post)
@@ -498,7 +479,6 @@
 (deftype race-time (structure)
   ((digit int8 5))
   :pack-me)
-
 
 (defun race-time-copy! ((arg0 race-time) (arg1 race-time))
   (dotimes (v1-0 5)
@@ -566,7 +546,6 @@
   (:states (rolling-start-break symbol)
    rolling-start-whole))
 
-
 (defstate rolling-start-break (rolling-start)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
@@ -623,7 +602,6 @@
    (radius    float)
    (thickness float)))
 
-
 (defbehavior gorge-init gorge ((arg0 vector) (arg1 vector) (arg2 float) (arg3 float))
   (forward-down->inv-matrix (-> self coord) arg1 (new 'static 'vector :y -1.0))
   (matrix-transpose! (-> self coord) (-> self coord))
@@ -649,17 +627,14 @@
    gorge-start-racing
    gorge-start-ready))
 
-
 (deftype gorge-finish (gorge)
   ((alt-actor entity-actor))
   (:states
    gorge-finish-idle))
 
-
 (deftype gorge-abort (gorge) ()
   (:states
    gorge-abort-idle))
-
 
 (defun gorge-behind ((arg0 gorge))
   (if (not *target*) (return #f))
@@ -948,7 +923,6 @@
 
 (deftype rolling-water (water-anim) ())
 
-
 (define ripple-for-rolling-water
   (the-as object
           (new 'static
@@ -976,6 +950,5 @@
     (set! (-> v1-2 far-fade-dist) 245760.0)
     (set! (-> v1-2 waveform) (the-as ripple-wave-set ripple-for-rolling-water)))
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-    (logclear! (-> this flags tgt-idx) (water-flags wt23))
-    )
+    (logclear! (-> this flags tgt-idx) (water-flags wt23)))
   (none))

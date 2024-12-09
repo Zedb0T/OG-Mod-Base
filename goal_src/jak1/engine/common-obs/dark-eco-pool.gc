@@ -91,8 +91,7 @@
   (let ((t9-0 (method-of-type water-anim water-vol-method-25))) (t9-0 this))
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
     (logclear! (-> this flags tgt-idx) (water-flags wt23))
-    (logior! (-> this flags tgt-idx) (water-flags wt24))
-    )
+    (logior! (-> this flags tgt-idx) (water-flags wt24)))
   (set! (-> this attack-event)
         (the-as symbol
                 ((the-as (function res-lump symbol symbol float structure (pointer res-tag) pointer object)

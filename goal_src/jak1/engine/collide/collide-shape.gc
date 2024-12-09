@@ -1217,7 +1217,7 @@
          (add-debug-box #t (bucket-id debug) (-> s5-0 min) (-> s5-0 max) (new 'static 'rgba :a #x80 :b #x70 :g #x70))))
       (else
        ;; no need. the cache can be empty.
-      (initialize cache))))
+       (initialize cache))))
   (none))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1886,7 +1886,7 @@
                     (when (!= (-> obj process) (-> s3-2 process))
                       (let ((s2-2 (new 'stack-no-clear 'collide-overlap-result)))
                         (when (and (should-push-away obj s3-2 s2-2) (>= -81.92 (-> s2-2 best-dist)))
-                         (fill-cache-for-shape! s3-2 8192.0 (-> s3-2 root-prim collide-with) *collide-cache* *collide-work*)
+                          (fill-cache-for-shape! s3-2 8192.0 (-> s3-2 root-prim collide-with) *collide-cache* *collide-work*)
                           (let ((s5-3 3))
                             (until (or (<= s5-3 0) (not (should-push-away obj s3-2 s2-2)))
                               (let ((s1-2 (new 'stack-no-clear 'vector)))

@@ -86,9 +86,9 @@
         (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
           (let ((tgt (get-target tgt-idx)))
             (when (and tgt
-                      (< (vector-vector-distance (-> self root trans) (-> tgt control unknown-vector90)) (-> self range))
-                      (logtest? (-> tgt control root-prim prim-core action) (collide-action edgegrab-possible))
-                      (< (-> tgt control unknown-vector90 y) (+ (-> self root trans y) (* 0.5 (-> self range)))))
+                       (< (vector-vector-distance (-> self root trans) (-> tgt control unknown-vector90)) (-> self range))
+                       (logtest? (-> tgt control root-prim prim-core action) (collide-action edgegrab-possible))
+                       (< (-> tgt control unknown-vector90 y) (+ (-> self root trans y) (* 0.5 (-> self range)))))
               (if (and (= tgt *target*) (send-event tgt 'pole-grab self)) (go swingpole-active)))))
         (suspend))))
 
@@ -102,15 +102,9 @@
           (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
             (let ((tgt (get-target tgt-idx)))
               (when (and (= tgt *target*) tgt (= (handle->process (-> tgt control unknown-handle10)) self))
-                (set! tgt-swinging? #t)
-                )
-              )
-            )
+                (set! tgt-swinging? #t))))
           (when tgt-swinging?
-            (suspend)
-            )
-          )
-        )
+            (suspend))))
       (suspend-for (seconds 0.5))
       (go swingpole-stance)))
 

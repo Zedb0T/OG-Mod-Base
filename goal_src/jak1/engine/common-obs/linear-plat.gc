@@ -6,7 +6,8 @@
 (require "engine/util/sync-info.gc")
 (require "engine/common-obs/plat.gc")
 
-#| custom platform for complex animations
+#|
+ custom platform for complex animations
 
   define path array of vector4m as usual, probably you want first and last positions to be the same
     "path": ["vector4m",

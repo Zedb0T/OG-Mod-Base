@@ -91,7 +91,15 @@
     (+! (-> s2-0 y) arg5)
     (let ((s4-0 (new 'stack-no-clear 'collide-tri-result)))
       (cond
-        ((>= (fill-and-probe-using-y-probe *collide-cache* s2-0 arg6 arg3 arg4 s4-0 (new 'static 'pat-surface :noentity #x1) *collide-work*) 0.0)
+        ((>= (fill-and-probe-using-y-probe *collide-cache*
+                                           s2-0
+                                           arg6
+                                           arg3
+                                           arg4
+                                           s4-0
+                                           (new 'static 'pat-surface :noentity #x1)
+                                           *collide-work*)
+             0.0)
          (if (!= arg2 0.0)
            (compute-and-draw-shadow s2-0 (-> s4-0 intersect) (-> s4-0 normal) (the-as vector arg2) arg6 (the-as float 0)))
          (if (and arg1 (!= (-> s4-0 pat material) 3)) (set! (-> arg1 quad) (-> s4-0 intersect quad))))

@@ -93,9 +93,7 @@
        (set! gp-0 (-> this rider (-> this num-riders)))
        (+! (-> this num-riders) 1)
        (let ((v1-6 gp-0)) (set! (-> v1-6 rider-handle) (the-as handle arg0)) (set! (-> v1-6 sticky-prim) #f)))
-      (else 
-        (if (= (the-as target (handle->process arg0)) *target*)
-          (format 0 "ERROR: Exeeded max number of riders!~%"))))
+      (else (if (= (the-as target (handle->process arg0)) *target*) (format 0 "ERROR: Exeeded max number of riders!~%"))))
     gp-0))
 
 (defmethod detect-riders! ((this collide-shape))

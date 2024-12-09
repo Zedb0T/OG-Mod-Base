@@ -9,12 +9,10 @@
   :type uint32
   (mp-tgt-disconnected)
   (mp-tgt-active)
-  (mp-tgt-interactive)
-  )
+  (mp-tgt-interactive))
 
 (defun mp-tgt-state->string ((cmd mp-tgt-state))
-  (enum->string mp-tgt-state cmd)
-  )
+  (enum->string mp-tgt-state cmd))
 
 (defenum tgt-color
   :type uint32
@@ -28,13 +26,10 @@
   (purple)
   (pink)
   (light-blue)
-  (max)
-  )
+  (max))
 
 (defun tgt-color->string ((cmd tgt-color))
-  (enum->string tgt-color cmd)
-  )
-
+  (enum->string tgt-color cmd))
 
 ;; Follows pickup-type structure, thus same enum value should be kept for relevant types
 (defenum interaction-type
@@ -56,17 +51,15 @@
   (lpc-chamber)
   (swingpole)
   (boss-phase)
-  (taunt)
-  )
+  (taunt))
 
 (defenum crate-type
   :type int32
   (crate-normal)
   (crate-iron)
   (crate-steel)
-  (crate-darkeco)
-  )
-  
+  (crate-darkeco))
+
 (defenum run-category
   :type int32
   (custom)
@@ -75,39 +68,32 @@
   (hundo)
   (orbless)
   (all-flies)
-  (all-orbs)
-  )
-  
+  (all-orbs))
+
 (defenum run-mode
   :type int32
   (speedrun)
   (lockout)
-  (casual)
-  )
-  
+  (casual))
+
 (defenum citadel-skip-version
   :type int32
   (patched)
   (normal)
-  (shared)
-  )
-
+  (shared))
 
 (defenum selector-option
   :type int32
   (teams)
   (splits)
   (timer)
-  (names)
-  )
-
+  (names))
 
 (defenum name-display
   :type uint32
   (none)
   (team)
-  (all)
-  )
+  (all))
 
 (defenum teamrun-command
   :type int32
@@ -127,156 +113,117 @@
   (on-remote-level-update)
   (enable-debug-mode)
   (disable-debug-mode)
-  (disable-play-hints)
-)
+  (disable-play-hints))
 
 (deftype remote-player-info (structure)
- ((username   string)
-  (color      tgt-color)
-  (trans_x    float)
-  (trans_y    float)
-  (trans_z    float)
-  (quat_x     float)
-  (quat_y     float)
-  (quat_z     float)
-  (quat_w     float)
-
-  (zoomer_rot_y   float)
-
-  (inter_type    interaction-type)
-  (inter_amount  float)
-  (inter_status  float)
-  (inter_name    string)
-  (inter_parent  string)
-  (inter_level   string)
-  (inter_cleanup   int32) ;; marks level cleanup interaction from entering level
-
-  (current_level    symbol)
-  (tgt_state        symbol)
-  (mp_state         mp-tgt-state) 
-  (mp_state_check   mp-tgt-state) ;; used only on goal side, used to check if mp_state has changed
-  
-  ;; set from teamrun side
-  (cells_collected int32)
-  (player_index    int32)
-  (team_id         int32)
-  )
+  ((username        string)
+   (color           tgt-color)
+   (trans_x         float)
+   (trans_y         float)
+   (trans_z         float)
+   (quat_x          float)
+   (quat_y          float)
+   (quat_z          float)
+   (quat_w          float)
+   (zoomer_rot_y    float)
+   (inter_type      interaction-type)
+   (inter_amount    float)
+   (inter_status    float)
+   (inter_name      string)
+   (inter_parent    string)
+   (inter_level     string)
+   (inter_cleanup   int32) ;; marks level cleanup interaction from entering level
+   (current_level   symbol)
+   (tgt_state       symbol)
+   (mp_state        mp-tgt-state)
+   (mp_state_check  mp-tgt-state) ;; used only on goal side, used to check if mp_state has changed
+   ;; set from teamrun side
+   (cells_collected int32)
+   (player_index    int32)
+   (team_id         int32))
   :pack-me
   (:methods
-    (new (symbol type) _type_)
-    )
-  )
+   (new (symbol type) _type_)))
 
 (deftype game-mode (structure)
- (
-  (category               run-category)
-  (mode                   run-mode)
-  (require_same_level     int32)
-  (allow_solo_hub_zoomers int32)
-  (no_lts                 int32)
-  (citadel_skip_version   citadel-skip-version)
-  (free_for_all           int32)
-  (enable_pvp             int32)
-  )
+  ((category               run-category)
+   (mode                   run-mode)
+   (require_same_level     int32)
+   (allow_solo_hub_zoomers int32)
+   (no_lts                 int32)
+   (citadel_skip_version   citadel-skip-version)
+   (free_for_all           int32)
+   (enable_pvp             int32))
   :pack-me
   (:methods
-    (new (symbol type) _type_)
-    )
-  )
-  
-(deftype timer-info (structure)
- ((hours        int32)
-  (minutes      int32)
-  (seconds      int32)
-  (milliseconds int32)
+   (new (symbol type) _type_)))
 
-  (split_time     string)
-  (split_name     string)
-  (split_player   string)
-  (split_timesave string)
-  )
+(deftype timer-info (structure)
+  ((hours          int32)
+   (minutes        int32)
+   (seconds        int32)
+   (milliseconds   int32)
+   (split_time     string)
+   (split_name     string)
+   (split_player   string)
+   (split_timesave string))
   :pack-me
   (:methods
-    (new (symbol type) _type_)
-    )
-  )
-  
+   (new (symbol type) _type_)))
+
 (deftype notification-info (structure)
-  ((has_notif?   int32)
-   (message     string)
-   (time        int32)
-  )
+  ((has_notif? int32)
+   (message    string)
+   (time       int32))
   :pack-me
   (:methods
-    (new (symbol type) _type_)
-    )
-  )
+   (new (symbol type) _type_)))
 
 (deftype time-handler (structure)
- ((active? symbol)
-  (active_time int32)
-  )
+  ((active?     symbol)
+   (active_time int32))
   :pack-me
   (:methods
-    (new (symbol type) _type_)
-    )
-  )
+   (new (symbol type) _type_)))
 
 (deftype spectator-handler (structure)
- ((is_spectator? symbol)
-  (spectator_idx  int32)
-
-  (has_found_initial_target? symbol)
-
-  (refocus_dist float)
-  (is_refocusing? symbol)
-
-  (next_logic_check int32)
-
-  (last_level_slot_used int32)
-  (next_level_check int32)
-  (in_level_check_wait? symbol)
-  (full_new_level? symbol)
-
-  (next_vis_nick_check int32)
-  (check_vis_nick? symbol)
-
-  (render_animations? symbol)
-  )
+  ((is_spectator?             symbol)
+   (spectator_idx             int32)
+   (has_found_initial_target? symbol)
+   (refocus_dist              float)
+   (is_refocusing?            symbol)
+   (next_logic_check          int32)
+   (last_level_slot_used      int32)
+   (next_level_check          int32)
+   (in_level_check_wait?      symbol)
+   (full_new_level?           symbol)
+   (next_vis_nick_check       int32)
+   (check_vis_nick?           symbol)
+   (render_animations?        symbol))
   :pack-me
   (:methods
-    (new (symbol type) _type_)
-    )
-  )
+   (new (symbol type) _type_)))
 
 (deftype load-handler (structure)
- ((load_slot_0 symbol)
-  (load_slot_1 symbol)
-
-  (force_load_slot_0 symbol)
-  (force_load_slot_1 symbol)
-
-  (load_phase int32)
-  (load_phase_interval_seconds float)
-  (next_load_phase int32)
-  )
+  ((load_slot_0                 symbol)
+   (load_slot_1                 symbol)
+   (force_load_slot_0           symbol)
+   (force_load_slot_1           symbol)
+   (load_phase                  int32)
+   (load_phase_interval_seconds float)
+   (next_load_phase             int32))
   :pack-me
   (:methods
-    (new (symbol type) _type_)
-    )
-  )
-  
+   (new (symbol type) _type_)))
+
 (deftype multiplayer-info (structure)
- ((teamrun_command      teamrun-command)
-  (force_continue       string)
-  (client_version       string)
-  (player_num           int32)
-  (players              remote-player-info MAX_MULTIPLAYER_COUNT :inline)
-  (game                 game-mode :inline)
-  (timer                timer-info :inline)
-  (notification         notification-info :inline)
-  )
+  ((teamrun_command teamrun-command)
+   (force_continue  string)
+   (client_version  string)
+   (player_num      int32)
+   (players         remote-player-info MAX_MULTIPLAYER_COUNT :inline)
+   (game            game-mode :inline)
+   (timer           timer-info :inline)
+   (notification    notification-info :inline))
   (:methods
-    (new (symbol type) _type_)
-    )
-  )
+   (new (symbol type) _type_)))

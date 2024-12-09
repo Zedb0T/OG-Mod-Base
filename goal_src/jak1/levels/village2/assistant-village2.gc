@@ -13,7 +13,6 @@
   (:states
    just-particles))
 
-
 (defmethod relocate ((this assistant-levitator) (offset int))
   (dotimes (v1-0 4)
     (if (nonzero? (-> this particle v1-0)) (&+! (-> this particle v1-0) offset)))
@@ -351,10 +350,10 @@
   :trans
     (behavior ()
       (case (get-task-status (game-task village2-levitator))
-        (((task-status need-hint) (task-status need-introduction)) 
-        (if *enable-ingame-cutscenes?*
-          (send-event self 'play-anim)
-          (close-specific-task! (game-task village2-levitator) (task-status need-reminder-a)))))
+        (((task-status need-hint) (task-status need-introduction))
+         (if *enable-ingame-cutscenes?*
+           (send-event self 'play-anim)
+           (close-specific-task! (game-task village2-levitator) (task-status need-reminder-a)))))
       ((-> (method-of-type process-taskable idle) trans)))
   :code
     (behavior ()

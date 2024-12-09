@@ -110,18 +110,18 @@
     (set! (-> coll-list num-items) 0)
     (cond
       ((= bsp-find-mesh-func (method-of-type bsp-header collide-ray))
-      ;; for collide-ray (actually line-sphere), we have a fancy version.
-      (dotimes (s4-1 (-> *level* length))
-        (let ((a0-2 (-> *level* level s4-1)))
-          (when (= (-> a0-2 status) 'active)
-            (reset! (-> *perf-stats* data 14))
-            (collide-probe-make-list a0-2 coll-list)
-            (read! (-> *perf-stats* data 14))))))
+       ;; for collide-ray (actually line-sphere), we have a fancy version.
+       (dotimes (s4-1 (-> *level* length))
+         (let ((a0-2 (-> *level* level s4-1)))
+           (when (= (-> a0-2 status) 'active)
+             (reset! (-> *perf-stats* data 14))
+             (collide-probe-make-list a0-2 coll-list)
+             (read! (-> *perf-stats* data 14))))))
       (else
-      ;; for the othes, we don't have a fancy version, so use the versio provided by the user.
-      (dotimes (s3-0 (-> *level* length))
-        (let ((v1-21 (-> *level* level s3-0)))
-          (if (= (-> v1-21 status) 'active) (bsp-find-mesh-func (-> v1-21 bsp) 0 coll-list coll-work))))))
+       ;; for the othes, we don't have a fancy version, so use the versio provided by the user.
+       (dotimes (s3-0 (-> *level* length))
+         (let ((v1-21 (-> *level* level s3-0)))
+           (if (= (-> v1-21 status) 'active) (bsp-find-mesh-func (-> v1-21 bsp) 0 coll-list coll-work))))))
     (when (> (-> coll-list num-items) 0)
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;; Step 2: Upload to VU0 Data
@@ -300,7 +300,8 @@
 (defmethod collide-with-box ((obj collide-fragment) (arg0 int) (arg1 collide-list) (coll-work collide-work))
   (let ((s3-0 coll-work))
     (dotimes (s2-0 arg0)
-      (when (and (collide-cache-using-box-test (-> obj bsphere) coll-work) (drawable-sphere-box-intersect? obj (-> s3-0 collide-box4w)))
+      (when (and (collide-cache-using-box-test (-> obj bsphere) coll-work)
+                 (drawable-sphere-box-intersect? obj (-> s3-0 collide-box4w)))
         (let ((v1-5 (-> arg1 items (-> arg1 num-items)))) (set! (-> v1-5 mesh) (-> obj mesh)) (set! (-> v1-5 inst) #f))
         ; (add-debug-sphere #t (bucket-id debug) (-> obj bsphere) (-> obj bsphere w) (new 'static 'rgba :g #x80 :a #x80))
         ; (format 0 "~f~%" (-> obj bsphere w))
@@ -420,14 +421,9 @@
 (defmethod collide-y-probe ((obj collide-fragment) (arg0 int) (arg1 collide-list) (coll-work collide-work))
   (dotimes (s3-0 arg0)
     (when (collide-cache-using-y-probe-test (-> obj bsphere) coll-work)
-      (let ((v1-5 (-> arg1 items (-> arg1 num-items))))
-        (set! (-> v1-5 mesh) (-> obj mesh))
-        (set! (-> v1-5 inst) #f)
-        )
-      (+! (-> arg1 num-items) 1)
-      )
-    (&+! obj 32)
-    )
+      (let ((v1-5 (-> arg1 items (-> arg1 num-items)))) (set! (-> v1-5 mesh) (-> obj mesh)) (set! (-> v1-5 inst) #f))
+      (+! (-> arg1 num-items) 1))
+    (&+! obj 32))
   0
   (none))
 
@@ -735,7 +731,6 @@
    If the bsphere of the mesh is in the non-aligned bounding box, the mesh will be added
    to the given collide-list.
    Note: collide-probe is the faster implementation of this."
-
   ;; just iterate over all and check their bsphere.
   (dotimes (s3-0 arg0)
     (when (collide-cache-using-line-sphere-test (-> obj bsphere) coll-work)
@@ -1857,7 +1852,12 @@
   (let ((s4-0 (new 'stack-no-clear 'bounding-box)))
     (set-from-spheres! s4-0 (-> arg0 spheres) (the-as int (-> arg0 num-spheres)))
     ;; this box looks correct
-    (fill-using-bounding-box obj s4-0 (-> arg0 collide-with) (-> arg0 proc) (the-as pat-surface (-> arg0 ignore-pat)) coll-work))
+    (fill-using-bounding-box obj
+                             s4-0
+                             (-> arg0 collide-with)
+                             (-> arg0 proc)
+                             (the-as pat-surface (-> arg0 ignore-pat))
+                             coll-work))
   (none))
 
 (defmethod probe-using-spheres ((obj collide-cache) (arg0 collide-using-spheres-params))

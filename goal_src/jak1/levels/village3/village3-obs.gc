@@ -8,8 +8,6 @@
 (require "engine/common-obs/water-anim.gc")
 (require "engine/target/target-util.gc")
 
-
-
 ;; DECOMP BEGINS
 
 (defskelgroup *med-res-ogre-sg*
@@ -69,8 +67,7 @@
     (set! (-> v1-2 waveform) ripple-for-villagec-lava))
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
     (logclear! (-> this flags tgt-idx) (water-flags wt23))
-    (logior! (-> this flags tgt-idx) (water-flags wt25))
-    )
+    (logior! (-> this flags tgt-idx) (water-flags wt25)))
   (set! (-> this attack-event) 'lava)
   (none))
 
@@ -98,62 +95,62 @@
       (ja-channel-set! 1)
       (cond
         (arg0
-          (if *enable-ingame-cutscenes?*
-          (set! (-> self anim)
-                (new 'static
+         (if *enable-ingame-cutscenes?*
+           (set! (-> self anim)
+                 (new 'static
                       'spool-anim
                       :name "gondola-ride-down"
                       :index 6
                       :parts 3
                       :command-list
                       '((0 want-levels village3 snow)
-                      (0 shadow target #f)
-                      (0 shadow sidekick #f)
-                      (1 display-level village3 display)
-                      (175 display-level snow #f)
-                      (300 setting-reset music village3)
-                      (618 save)
-                      (619 blackout 20)
-                      (619 shadow target #t))))
-            (set! (-> self anim) (new 'static 'spool-anim
-                                  :name "gondola-ride-down"
-                                  :index 6
-                                  :parts 3
-                                  :command-list '((0 want-levels village3 snow)
-                                    (1 display-level village3 display)
-                                    (300 setting-reset music village3)
-                                    (618 save)))))
+                       (0 shadow target #f)
+                       (0 shadow sidekick #f)
+                       (1 display-level village3 display)
+                       (175 display-level snow #f)
+                       (300 setting-reset music village3)
+                       (618 save)
+                       (619 blackout 20)
+                       (619 shadow target #t))))
+           (set! (-> self anim)
+                 (new 'static
+                      'spool-anim
+                      :name "gondola-ride-down"
+                      :index 6
+                      :parts 3
+                      :command-list
+                      '((0 want-levels village3 snow) (1 display-level village3 display) (300 setting-reset music village3) (618 save)))))
          (ja :group! gondola-idle-up-ja))
         (else
-          (if *enable-ingame-cutscenes?*
-          (set! (-> self anim)
-                (new 'static
+         (if *enable-ingame-cutscenes?*
+           (set! (-> self anim)
+                 (new 'static
                       'spool-anim
                       :name "gondola-ride-up"
                       :index 5
                       :parts 3
                       :command-list
                       '((0 want-levels village3 snow)
-                      (0 shadow target #f)
-                      (400 setting-reset music snow)
-                      (400 display-level snow display)
-                      (678 save)
-                      (679 blackout 20)
-                      (679 shadow target #t))))
-            (set! (-> self anim) (new 'static 'spool-anim
-                                  :name "gondola-ride-up"
-                                  :index 5
-                                  :parts 3
-                                  :command-list '((0 want-levels village3 snow)
-                                    (400 display-level snow display)
-                                    (678 save)
-                                    )
-                                  )
-                  ))
+                       (0 shadow target #f)
+                       (400 setting-reset music snow)
+                       (400 display-level snow display)
+                       (678 save)
+                       (679 blackout 20)
+                       (679 shadow target #t))))
+           (set! (-> self anim)
+                 (new 'static
+                      'spool-anim
+                      :name "gondola-ride-up"
+                      :index 5
+                      :parts 3
+                      :command-list
+                      '((0 want-levels village3 snow) (400 display-level snow display) (678 save)))))
          (ja :group! gondola-idle-down-ja)))
       (transform-post)
       (loop
-        (when (and *target* (and (any-interactive-targets-close-to-vector? (vector<-cspace! (new 'stack-no-clear 'vector) (-> self node-list data 3)) 81920.0)
+        (when (and *target*
+                   (and (any-interactive-targets-close-to-vector? (vector<-cspace! (new 'stack-no-clear 'vector) (-> self node-list data 3))
+                                                                  81920.0)
                         (not (movie?))
                         (not (level-hint-displayed?))
                         (time-elapsed? (-> self state-time) (seconds 3))
@@ -190,67 +187,54 @@
                  (let ((s3-2 send-event-function)
                        (v1-40 (entity-actor-lookup (-> self entity) 'alt-actor 1)))
                    (s3-2 (if v1-40 (-> v1-40 extra process)) s4-4)))
-                (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-                  (let ((target (get-interactive-target tgt-idx)))
-                    (when (and (< (vector-vector-xz-distance s5-1 (-> target control trans)) 18432.0)
-                                (and (not (and (logtest? (-> target control unknown-surface00 flags) (surface-flags jump))
-                                              (not (logtest? (-> target control status) (cshape-moving-flags onsurf)))))
-                                    (and (< (+ -40960.0 (-> s5-1 y)) (-> target control trans y))
-                                          (or (!= target *target*)
+               (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+                 (let ((target (get-interactive-target tgt-idx)))
+                   (when (and (< (vector-vector-xz-distance s5-1 (-> target control trans)) 18432.0)
+                              (and (not (and (logtest? (-> target control unknown-surface00 flags) (surface-flags jump))
+                                             (not (logtest? (-> target control status) (cshape-moving-flags onsurf)))))
+                                   (and (< (+ -40960.0 (-> s5-1 y)) (-> target control trans y))
+                                        (or (!= target *target*)
                                             (and (begin
-                                            (hide-hud)
-                                            (level-hint-surpress!)
-                                            (kill-current-level-hint '() '(sidekick voicebox) 'exit)
-                                            (hud-hidden?))
-                                          (can-grab-display? self))))))
-                (when (= target *target*)
-                 (let ((s5-2 (new 'stack 'font-context *font-default-matrix* 32 160 0.0 (font-color default) (font-flags shadow kerning))))
-                   (let ((v1-59 s5-2)) (set! (-> v1-59 width) (the float 440)))
-                   (let ((v1-60 s5-2)) (set! (-> v1-60 height) (the float 80)))
-                   (set! (-> s5-2 flags) (font-flags shadow kerning large))
-                   (print-game-text (lookup-text! *common-text* (text-id press-to-use) #f) s5-2 #f 128 22)))
-                 (when (or (and (= target *target*) (cpad-pressed? 0 circle) (or (not *enable-ingame-cutscenes?*) (process-grab? *target*)))
-                          (and (!= target *target*) (remote-target-fake-cpad-circle-pressed? target)))
-                   (if arg0 (go-virtual ride-down) (go-virtual ride-up))))))))))
+                                                   (hide-hud)
+                                                   (level-hint-surpress!)
+                                                   (kill-current-level-hint '() '(sidekick voicebox) 'exit)
+                                                   (hud-hidden?))
+                                                 (can-grab-display? self))))))
+                     (when (= target *target*)
+                       (let ((s5-2 (new 'stack 'font-context *font-default-matrix* 32 160 0.0 (font-color default) (font-flags shadow kerning))))
+                         (let ((v1-59 s5-2)) (set! (-> v1-59 width) (the float 440)))
+                         (let ((v1-60 s5-2)) (set! (-> v1-60 height) (the float 80)))
+                         (set! (-> s5-2 flags) (font-flags shadow kerning large))
+                         (print-game-text (lookup-text! *common-text* (text-id press-to-use) #f) s5-2 #f 128 22)))
+                     (when (or (and (= target *target*) (cpad-pressed? 0 circle) (or (not *enable-ingame-cutscenes?*) (process-grab? *target*)))
+                               (and (!= target *target*) (remote-target-fake-cpad-circle-pressed? target)))
+                       (if arg0 (go-virtual ride-down) (go-virtual ride-up))))))))))
         (spool-push *art-control* (-> self anim name) 0 self -99.0)
         (suspend))))
 
 (defstate ride-up (gondola)
-  :trans (behavior ()
-    (when (not *enable-ingame-cutscenes?*)
-      (rider-trans)
-      (if (!= (-> self root riders num-riders) 0) ;; rider spot is only allowed for main jak
-        (set! *target-on-active-gondola?* #t)
-        (set! *target-on-active-gondola?* #f)
-        )
-      )
-    (none)
-    )
+  :trans
+    (behavior ()
+      (when (not *enable-ingame-cutscenes?*)
+        (rider-trans)
+        (if (!= (-> self root riders num-riders) 0) ;; rider spot is only allowed for main jak
+          (set! *target-on-active-gondola?* #t)
+          (set! *target-on-active-gondola?* #f)))
+      (none))
   :virtual #t
   :code
     (behavior ()
       (if (and (not *enable-ingame-cutscenes?*) (= (-> self root riders num-riders) 0) (not (process-close? self 105000.0))) ;;remove loads from animation if main target is not on gondola
-        (set! (-> self anim) (new 'static 'spool-anim
-                                  :name "gondola-ride-up"
-                                  :index 5
-                                  :parts 3
-                                  :command-list '()
-                                  )
-          )
-        )
+        (set! (-> self anim) (new 'static 'spool-anim :name "gondola-ride-up" :index 5 :parts 3 :command-list '())))
       (process-entity-status! self (entity-perm-status bit-3) #t)
       (when (not *enable-ingame-cutscenes?*)
         (let ((gp-1 (-> *display* base-frame-counter)))
           (until (>= (- (-> *display* base-frame-counter) gp-1) (seconds 0.3))
-            (suspend)
-            )
-          )
-        )
+            (suspend))))
       (when (or (not *enable-ingame-cutscenes?*) (send-event *target* 'clone-anim self))
         (when *enable-ingame-cutscenes?*
           (send-event (ppointer->process (-> *target* sidekick)) 'matrix 'play-anim)
-          (send-event *target* 'blend-shape #t)
-          )
+          (send-event *target* 'blend-shape #t))
         (set-setting! 'sound-flava #f 30.0 (music-flava to-snow))
         (logclear! (-> self mask) (process-mask enemy))
         (if *enable-ingame-cutscenes?* (process-spawn othercam self 4 #f #t :to self))
@@ -264,19 +248,16 @@
           (when *enable-ingame-cutscenes?*
             (vector<-cspace! (the-as vector (-> self old-target-pos)) (-> *target* node-list data 3))
             (send-event *target* 'trans 'restore (-> self old-target-pos))
-            (send-event *target* 'end-mode)
-            )
+            (send-event *target* 'end-mode))
           (update-transforms! (-> self root))
           (when *enable-ingame-cutscenes?*
             (move-to-ground (-> *target* control) 4096.0 40960.0 #t (-> *target* control root-prim collide-with))
             (logior! (-> *target* control status) (cshape-moving-flags onsurf onground tsurf))
             (suspend)
-            (send-event *camera* 'teleport-to-other-start-string)
-            ))
-      (when *enable-ingame-cutscenes?*
-        (load-state-want-vis 'sno)
-        (set-continue! *game-info* "snow-start")
-        ))
+            (send-event *camera* 'teleport-to-other-start-string)))
+        (when *enable-ingame-cutscenes?*
+          (load-state-want-vis 'sno)
+          (set-continue! *game-info* "snow-start")))
       (process-entity-status! self (entity-perm-status bit-3) #f)
       (if (not *enable-ingame-cutscenes?*) (set! *target-on-active-gondola?* #f))
       (go-virtual idle #t))
@@ -287,42 +268,29 @@
       (update-direction-from-time-of-day (-> self draw shadow-ctrl))))
 
 (defstate ride-down (gondola)
-  :trans (behavior ()
-    (when (not *enable-ingame-cutscenes?*)
-      (rider-trans)
-      (if (!= (-> self root riders num-riders) 0) ;; rider spot is only allowed for main jak
-        (set! *target-on-active-gondola?* #t)
-        (set! *target-on-active-gondola?* #f)
-        )
-      )
-    (none)
-    )
+  :trans
+    (behavior ()
+      (when (not *enable-ingame-cutscenes?*)
+        (rider-trans)
+        (if (!= (-> self root riders num-riders) 0) ;; rider spot is only allowed for main jak
+          (set! *target-on-active-gondola?* #t)
+          (set! *target-on-active-gondola?* #f)))
+      (none))
   :virtual #t
   :code
     (behavior ()
       (if (and (not *enable-ingame-cutscenes?*) (= (-> self root riders num-riders) 0) (not (process-close? self 105000.0))) ;;remove loads from animation if main target is not on gondola
-        (set! (-> self anim) (new 'static 'spool-anim
-                                  :name "gondola-ride-down"
-                                  :index 6
-                                  :parts 3
-                                  :command-list '()
-                                  )
-          )
-        )
+        (set! (-> self anim) (new 'static 'spool-anim :name "gondola-ride-down" :index 6 :parts 3 :command-list '())))
       (process-entity-status! self (entity-perm-status bit-3) #t)
       (when (not *enable-ingame-cutscenes?*)
         (let ((gp-1 (-> *display* base-frame-counter)))
           (until (>= (- (-> *display* base-frame-counter) gp-1) (seconds 0.3))
-            (suspend)
-            )
-          )
-        )
+            (suspend))))
       (when (or (not *enable-ingame-cutscenes?*) (send-event *target* 'clone-anim self))
         (when *enable-ingame-cutscenes?*
           (send-event *target* 'trans 'save (-> self old-target-pos))
           (send-event (ppointer->process (-> *target* sidekick)) 'matrix 'play-anim)
-          (send-event *target* 'blend-shape #t)
-          )
+          (send-event *target* 'blend-shape #t))
         (set-setting! 'sound-flava #f 30.0 (music-flava to-snow))
         (logclear! (-> self mask) (process-mask enemy))
         (if *enable-ingame-cutscenes?* (process-spawn othercam self 4 #f #t :to self))
@@ -336,19 +304,16 @@
           (when *enable-ingame-cutscenes?*
             (vector<-cspace! (the-as vector (-> self old-target-pos)) (-> *target* node-list data 3))
             (send-event *target* 'trans 'restore (-> self old-target-pos))
-            (send-event *target* 'end-mode)
-            )
+            (send-event *target* 'end-mode))
           (update-transforms! (-> self root))
           (when *enable-ingame-cutscenes?*
             (move-to-ground (-> *target* control) 4096.0 40960.0 #t (-> *target* control root-prim collide-with))
             (logior! (-> *target* control status) (cshape-moving-flags onsurf onground tsurf))
             (suspend)
-            (send-event *camera* 'teleport-to-other-start-string)
-            ))
+            (send-event *camera* 'teleport-to-other-start-string)))
         (when *enable-ingame-cutscenes?*
           (load-state-want-vis 'vi3)
-          (set-continue! *game-info* "village3-farside")
-          ))
+          (set-continue! *game-info* "village3-farside")))
       (process-entity-status! self (entity-perm-status bit-3) #f)
       (if (not *enable-ingame-cutscenes?*) (set! *target-on-active-gondola?* #f))
       (go-virtual idle #f))

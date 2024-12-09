@@ -494,6 +494,7 @@
    periscope-wait-for-power-input))
 
 (define-extern runs-on-periscope-activate (function string none))
+
 (define-extern runs-on-last-periscope-power-up (function none))
 
 (defmethod relocate ((this periscope) (offset int))
@@ -512,7 +513,6 @@
   (:states
    reflector-idle))
 
-
 (deftype reflector-origin (process-drawable)
   ((reflector-trans      vector :inline)
    (next-reflector-trans vector :inline)
@@ -522,13 +522,11 @@
   (:states
    reflector-origin-idle))
 
-
 (deftype reflector-mirror (process-drawable)
   ((root     collide-shape :override)
    (beam-end vector :inline))
   (:states (reflector-mirror-broken symbol)
    reflector-mirror-idle))
-
 
 (defskelgroup *periscope-base-sg*
   periscope
@@ -889,47 +887,47 @@
       (the-as (pointer pov-camera)
               (cond
                 (gp-0
-                (cond
-                  ((name= arg0 "reflector-mirror-2")
+                 (cond
+                   ((name= arg0 "reflector-mirror-2")
                     (process-spawn pov-camera (-> gp-0 extra trans) *junglecam-sg* "tower1" 0 #f '((0 ambient camera "gamcam14")) :to self))
-                  ((name= arg0 "periscope-11")
+                   ((name= arg0 "periscope-11")
                     (process-spawn pov-camera
-                                  (-> gp-0 extra trans)
-                                  *junglecam-sg*
-                                  "tower2"
-                                  0
-                                  #f
-                                  '((0 ambient camera "gamcam15") (0 want-force-vis jungle #t) (0 want-force-vis village1 #t))
-                                  :to
-                                  self))
-                  ((name= arg0 "periscope-12")
+                                   (-> gp-0 extra trans)
+                                   *junglecam-sg*
+                                   "tower2"
+                                   0
+                                   #f
+                                   '((0 ambient camera "gamcam15") (0 want-force-vis jungle #t) (0 want-force-vis village1 #t))
+                                   :to
+                                   self))
+                   ((name= arg0 "periscope-12")
                     (process-spawn pov-camera (-> gp-0 extra trans) *junglecam-sg* "tower3" 0 #f '((0 ambient camera "gamcam16")) :to self))
-                  ((name= arg0 "periscope-13")
+                   ((name= arg0 "periscope-13")
                     (process-spawn pov-camera (-> gp-0 extra trans) *junglecam-sg* "tower4" 0 #f '((0 ambient camera "gamcam17")) :to self))
-                  ((name= arg0 "periscope-14")
+                   ((name= arg0 "periscope-14")
                     (process-spawn pov-camera
-                                  (-> gp-0 extra trans)
-                                  *junglecam-sg*
-                                  "tower5"
-                                  0
-                                  #f
-                                  '((0 ambient camera "gamcam18") (0 want-force-vis jungle #t) (0 want-force-vis village1 #t))
-                                  :to
-                                  self))
-                  ((name= arg0 "periscope-15")
+                                   (-> gp-0 extra trans)
+                                   *junglecam-sg*
+                                   "tower5"
+                                   0
+                                   #f
+                                   '((0 ambient camera "gamcam18") (0 want-force-vis jungle #t) (0 want-force-vis village1 #t))
+                                   :to
+                                   self))
+                   ((name= arg0 "periscope-15")
                     (process-spawn pov-camera
-                                  (-> gp-0 extra trans)
-                                  *junglecam-sg*
-                                  "beamcam"
-                                  0
-                                  #f
-                                  '((0 ambient camera "gamcam19")
+                                   (-> gp-0 extra trans)
+                                   *junglecam-sg*
+                                   "beamcam"
+                                   0
+                                   #f
+                                   '((0 ambient camera "gamcam19")
                                     (0 want-force-vis jungle #t)
                                     (0 want-force-vis village1 #t)
                                     (0 display-level village1 movie))
-                                  :to
-                                  self))
-                  (else (format #t "ERROR<GMJ>: don't know which peri-beamcam to play for ~S~%" arg0))))
+                                   :to
+                                   self))
+                   (else (format #t "ERROR<GMJ>: don't know which peri-beamcam to play for ~S~%" arg0))))
                 (else (format #t "ERROR<GMJ>: couldn't find junglecam-1 to initialize peri-beamcam~%")))))))
 
 (defbehavior periscope-debug-trans periscope ()
@@ -1210,7 +1208,8 @@
       (loop
         (if (not (-> self aligned?)) (set-time! (-> self lock-time)))
         (periscope-crosshair)
-        (when (or (cpad-pressed? 0 triangle x) (and (-> self aligned?) (time-elapsed? (-> self lock-time) (if *enable-ingame-cutscenes?* (seconds 3) (seconds 0.5)))))
+        (when (or (cpad-pressed? 0 triangle x)
+                  (and (-> self aligned?) (time-elapsed? (-> self lock-time) (if *enable-ingame-cutscenes?* (seconds 3) (seconds 0.5)))))
           (sound-stop (-> self sound-id))
           (if (periscope-test-task-complete?) (close-specific-task! (game-task jungle-lurkerm) (task-status need-reminder)))
           (loop
@@ -1266,9 +1265,7 @@
   :code
     (behavior ()
       (logclear! (-> self mask) (process-mask actor-pause))
-      (if (name= (-> self name) "periscope-15")
-        (runs-on-last-periscope-power-up)
-        )
+      (if (name= (-> self name) "periscope-15") (runs-on-last-periscope-power-up))
       (set! (-> self y-offset) (-> self height))
       (link-to-next-and-prev-actor (-> self link))
       (periscope-find-reflection-angles)
@@ -1522,7 +1519,8 @@
                                                   t2-0
                                                   (new 'static 'pat-surface :noentity #x1))
                 0.0)
-          (if (process-close? (the-as process-drawable (process-by-ename "reflector-mirror-2")) 22000.0) (send-event *target* 'get-pickup 3 5.0)))))
+          (if (process-close? (the-as process-drawable (process-by-ename "reflector-mirror-2")) 22000.0)
+            (send-event *target* 'get-pickup 3 5.0)))))
     (if (and (< 4096.0 (vector-vector-distance (camera-pos) arg0)) (< 4096.0 (vector-vector-distance (camera-pos) arg1)))
       (draw-eco-beam arg0 arg1)))
   0

@@ -4,7 +4,6 @@
 (require "engine/common-obs/rigid-body.gc")
 (require "engine/common-obs/nav-enemy.gc")
 
-
 ;; DECOMP BEGINS
 
 (defpartgroup group-balloonlurker-pilot-death
@@ -212,7 +211,6 @@
    (explosion-force             float)
    (mine-weight                 float)))
 
-
 (define *BALLOONLURKER-bank*
   (new 'static
        'balloonlurker-bank
@@ -283,7 +281,6 @@
    (balloonlurker-mine-explode int)
    balloonlurker-patrol))
 
-
 (deftype balloonlurker-pilot (process-drawable)
   ((root            collide-shape-moving :override)
    (parent-override (pointer balloonlurker) :overlay-at parent))
@@ -293,7 +290,6 @@
   (:states
    balloonlurker-pilot-die
    balloonlurker-pilot-idle))
-
 
 (defskelgroup *balloonlurker-sg*
   balloonlurker
@@ -362,26 +358,26 @@
 (defbehavior balloonlurker-event-handler balloonlurker ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (case arg2
     (('touch 'attack)
-      (when (or (not (type-type? (-> arg0 type) target)) (= arg0 *target*) (target-is-interactive? (the-as target arg0)))
-        (balloonlurker-player-impulse)
-        (when ((method-of-type touching-shapes-entry prims-touching?)
-                (the-as touching-shapes-entry (-> arg3 param 0))
-                (-> self root-overlay)
-                (the-as uint 1))
-          (do-push-aways! (-> self root-overlay))
-          (send-event arg0 'shove (-> arg3 param 0) (static-attack-info ((shove-back (meters 2)) (shove-up (meters 0.5))))))
-        (dotimes (s4-0 2)
-          (let ((s3-0 (if (zero? s4-0) 8 16)))
-            (when ((method-of-type touching-shapes-entry prims-touching?)
-                    (the-as touching-shapes-entry (-> arg3 param 0))
-                    (-> self root-overlay)
-                    (the-as uint s3-0))
-              (let ((a0-10 (find-prim-by-id (-> self root-overlay) (the-as uint s3-0))))
-                (when a0-10
-                  (set! (-> self explosion-force-position quad) (-> a0-10 prim-core world-sphere quad))
-                  (if (send-event arg0 'attack (-> arg3 param 0) (static-attack-info ((mode 'balloonlurker))))
-                    (level-hint-spawn (text-id misty-bike-mines-hint) "sksp0063" (the-as entity #f) *entity-pool* (game-task none)))
-                  (go balloonlurker-mine-explode s4-0)))))))
+     (when (or (not (type-type? (-> arg0 type) target)) (= arg0 *target*) (target-is-interactive? (the-as target arg0)))
+       (balloonlurker-player-impulse)
+       (when ((method-of-type touching-shapes-entry prims-touching?)
+              (the-as touching-shapes-entry (-> arg3 param 0))
+              (-> self root-overlay)
+              (the-as uint 1))
+         (do-push-aways! (-> self root-overlay))
+         (send-event arg0 'shove (-> arg3 param 0) (static-attack-info ((shove-back (meters 2)) (shove-up (meters 0.5))))))
+       (dotimes (s4-0 2)
+         (let ((s3-0 (if (zero? s4-0) 8 16)))
+           (when ((method-of-type touching-shapes-entry prims-touching?)
+                  (the-as touching-shapes-entry (-> arg3 param 0))
+                  (-> self root-overlay)
+                  (the-as uint s3-0))
+             (let ((a0-10 (find-prim-by-id (-> self root-overlay) (the-as uint s3-0))))
+               (when a0-10
+                 (set! (-> self explosion-force-position quad) (-> a0-10 prim-core world-sphere quad))
+                 (if (send-event arg0 'attack (-> arg3 param 0) (static-attack-info ((mode 'balloonlurker))))
+                   (level-hint-spawn (text-id misty-bike-mines-hint) "sksp0063" (the-as entity #f) *entity-pool* (game-task none)))
+                 (go balloonlurker-mine-explode s4-0)))))))
      #f)
     (('die) (go balloonlurker-die))))
 
@@ -591,9 +587,9 @@
         (entity-birth-no-kill sv-24)
         (apply-all (-> self link) actor-link-dead-hook (& sv-16))
         (when (and sv-16 sv-24)
-          (if  *enable-ingame-cutscenes?* (process-grab? *target*))
+          (if *enable-ingame-cutscenes?* (process-grab? *target*))
           (suspend-for (seconds 1))
-          (if  *enable-ingame-cutscenes?* (process-release? *target*))
+          (if *enable-ingame-cutscenes?* (process-release? *target*))
           (while (let ((a1-4 (new 'stack-no-clear 'event-message-block)))
                    (set! (-> a1-4 from) self)
                    (set! (-> a1-4 num-params) 0)

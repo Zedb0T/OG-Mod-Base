@@ -5,7 +5,6 @@
 (require "levels/snow/ice-cube.gc")
 (declare-type ram-boss nav-enemy)
 
-
 ;; DECOMP BEGINS
 
 (deftype ram-boss-proj (projectile)
@@ -19,7 +18,6 @@
   (:states
    ram-boss-proj-growing
    ram-boss-proj-launch))
-
 
 (deftype ram-boss (nav-enemy)
   ((parent-override          (pointer ram) :overlay-at parent)
@@ -53,7 +51,6 @@
    ram-boss-throw
    ram-boss-tracking
    ram-boss-up-defend-block))
-
 
 (defskelgroup *ram-boss-sg*
   ram-boss
@@ -982,7 +979,7 @@
                                       s5-0
                                       0
                                       (process->handle *target*)
-                         #f
+                                      #f
                                       :to
                                       this)))
              (set! (-> (the-as (pointer ram-boss-proj) v1-9) 0 notify-handle) (process->handle this)))))))
@@ -1417,10 +1414,9 @@
   :virtual #t
   :code
     (behavior ()
-    (when (and (-> self parent-override) (-> self parent-override 0))
-      (runs-on-task-related-death (the-as string (-> self parent-override 0 name)) 0.0)
-      )
-    (ja-channel-push! 1 (seconds 0.075))
+      (when (and (-> self parent-override) (-> self parent-override 0))
+        (runs-on-task-related-death (the-as string (-> self parent-override 0 name)) 0.0))
+      (ja-channel-push! 1 (seconds 0.075))
       (clear-collide-with-as (-> self collide-info))
       (nav-enemy-fall-and-play-death-anim (the-as art-joint-anim (-> self draw art-group data (-> self nav-info die-anim)))
                                           1.0

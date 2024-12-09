@@ -102,9 +102,7 @@
   (none))
 
 (defmethod effect-control-method-10 ((this effect-control) (arg0 symbol) (arg1 float) (arg2 int))
-(if (and (= arg0 'group-smack-surface) (!= (-> *target* state name) 'target-hit))
-    (return 0)
-    )
+  (if (and (= arg0 'group-smack-surface) (!= (-> *target* state name) 'target-hit)) (return 0))
   (local-vars
     (sv-160 int)
     (sv-176 symbol)

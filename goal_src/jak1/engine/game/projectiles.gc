@@ -559,7 +559,11 @@
                     ((< f0-6 40960.0) (seek! (-> self tween) 1.0 (seconds-per-frame))))))
               (let ((s3-0 (new 'stack-no-clear 'vector)))
                 (set! (-> s3-0 quad) (-> self root trans quad))
-                (fill-cache-integrate-and-collide! (-> self root) (-> self root transv) (-> self root root-prim collide-with) *collide-cache* *collide-work*)
+                (fill-cache-integrate-and-collide! (-> self root)
+                                                   (-> self root transv)
+                                                   (-> self root root-prim collide-with)
+                                                   *collide-cache*
+                                                   *collide-work*)
                 (set! (-> self old-dist (-> self old-dist-count)) (* 0.0625 (vector-vector-distance s3-0 (-> self root trans)))))
               (set! (-> self old-dist-count) (logand (+ (-> self old-dist-count) 1) 15))
               (let ((f0-16 0.0))

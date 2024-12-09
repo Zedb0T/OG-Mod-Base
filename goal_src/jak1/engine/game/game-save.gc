@@ -731,7 +731,7 @@
       ;; calling this will run the function to see if the task is done or not
       (get-task-status (the-as game-task s5-1))
       (+! s5-1 1)))
-	(runs-on-load 'load-end)
+  (runs-on-load 'load-end)
   (label cfg-134)
   save)
 

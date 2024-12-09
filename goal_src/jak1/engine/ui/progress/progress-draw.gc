@@ -4,7 +4,6 @@
 (require "engine/ui/progress/progress-static.gc")
 (require "engine/game/main.gc")
 (require "engine/ui/hud-classes.gc")
-
 (define-extern *enable-multiplayer-save-and-load* symbol)
 
 ;; DECOMP BEGINS

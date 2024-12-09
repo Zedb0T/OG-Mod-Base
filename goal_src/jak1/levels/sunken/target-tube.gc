@@ -298,9 +298,13 @@
       (set! (-> self control reaction) target-collision-reaction)
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
         (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-close-by-environment? self))
-          (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
+          (fill-cache-integrate-and-collide! (-> self control)
+                                             (-> self control transv)
+                                             (-> self control root-prim collide-with)
+                                             *collide-cache*
+                                             *collide-work*)
           (if (logtest? (-> self control root-prim prim-core action) (collide-action edgegrab-possible))
-            (find-edge-grabs!  self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))
+            (find-edge-grabs! self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))
       (if *debug-segment*
         (add-frame (-> *display* frames (-> *display* on-screen) frame profile-bar 0)
                    'draw
@@ -330,7 +334,7 @@
          (case message
            (('end-mode)
             (go target-jump (-> *TARGET-bank* tube-jump-height-min) (-> *TARGET-bank* tube-jump-height-max) (the-as surface #f)))
-           (('touched) 
+           (('touched)
             (if (or (= self *target*) (target-is-interactive? self)) (send-event proc 'attack (-> block param 0) 'tube 0 0) #f))
            (('attack 'attack-or-shove 'attack-invinc)
             (target-attacked 'attack-or-shove
@@ -361,7 +365,7 @@
         (target-exit)))
   :code
     (behavior ((arg0 handle))
-      (if (= self *target*)(send-event *camera* 'set-slave-option #x6000))
+      (if (= self *target*) (send-event *camera* 'set-slave-option #x6000))
       (target-exit)
       (set! *display-profile* #f)
       (set! *display-entity-errors* #f)
@@ -579,7 +583,8 @@
               (a0-35 (new-stack-vector0)))
           (set! (-> a0-35 quad) (-> self control transv quad))
           (s5-3 s4-2 (t9-9 a0-35 1.0) (vector-y-quaternion! (new-stack-vector0) (-> self control dir-targ))))
-        (if (and (= (-> self game mode) 'play) (>= 0.0 (-> self fact health))) (if (= self *target*) (go target-tube-death (-> gp-0 mode)))))
+        (if (and (= (-> self game mode) 'play) (>= 0.0 (-> self fact health)))
+          (if (= self *target*) (go target-tube-death (-> gp-0 mode)))))
       (go target-tube))
   :post target-post)
 

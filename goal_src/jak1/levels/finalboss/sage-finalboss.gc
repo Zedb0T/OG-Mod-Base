@@ -6,10 +6,7 @@
 (require "levels/finalboss/final-door.gc")
 (require "engine/ui/credits.gc")
 
-
-
 ;; DECOMP BEGINS
-
 
 (defskelgroup *robotboss-cinematic-sg*
   robotboss-cinematic
@@ -50,7 +47,6 @@
    (speed      float)
    (touch-time time-frame)))
 
-
 (defmethod get-unlit-skel ((this plat-eco-finalboss))
   *plat-eco-finalboss-unlit-sg*)
 
@@ -61,10 +57,7 @@
   (set! (-> this force-dest) -1.0)
   (set! (-> this targ-dest) -1.0)
   (set! (-> this dest) 0.0)
-  (if (= (check-allow-final-boss?) #t)
-    (set! (-> this speed) 0.1)
-    (set! (-> this speed) 0.0)
-  )
+  (if (= (check-allow-final-boss?) #t) (set! (-> this speed) 0.1) (set! (-> this speed) 0.0))
   (logclear! (-> this mask) (process-mask actor-pause))
   (process-entity-status! this (entity-perm-status bit-3) #t)
   (none))
@@ -122,7 +115,6 @@
    (active symbol))
   :allow-misaligned)
 
-
 (deftype sage-finalboss (process-taskable)
   ((redsage           handle)
    (bluesage          handle)
@@ -143,7 +135,6 @@
    (credits-played    symbol))
   (:states
    sage-finalboss-credits))
-
 
 (defmethod relocate ((this sage-finalboss) (offset int))
   (dotimes (v1-0 9)
@@ -448,11 +439,11 @@
       (when (= (current-status (-> self tasks)) (task-status invalid))
         (cond
           ((not (-> self credits-played)) (set! (-> self kick-the-credits) #t))
-          (else 
-            (set-blackout-frames 0) 
-            (if *enable-ingame-cutscenes?*
-              (initialize! *game-info* 'game (the-as game-save #f) "title-start")
-              (start 'play (get-continue-by-name *game-info* "finalboss-start"))))))
+          (else
+           (set-blackout-frames 0)
+           (if *enable-ingame-cutscenes?*
+             (initialize! *game-info* 'game (the-as game-save #f) "title-start")
+             (start 'play (get-continue-by-name *game-info* "finalboss-start"))))))
       (let ((a0-4 (handle->process (-> self redsage)))) (if a0-4 (deactivate a0-4)))
       (let ((a0-8 (handle->process (-> self bluesage)))) (if a0-8 (deactivate a0-8)))
       (let ((a0-12 (handle->process (-> self yellowsage)))) (if a0-12 (deactivate a0-12)))
@@ -485,8 +476,7 @@
         (set! (-> self right-door) #f))
       (cond
         ((= (current-status (-> self tasks)) (task-status need-reward-speech))
-         (if (target-has-all-the-cells?)
-           (set! (-> self kick-in-the-door) #t))
+         (if (target-has-all-the-cells?) (set! (-> self kick-in-the-door) #t))
          (when (not (target-has-all-the-cells?))
            (start 'play (get-continue-by-name *game-info* "finalboss-start"))))
         ((= (current-status (-> self tasks)) (task-status invalid)))

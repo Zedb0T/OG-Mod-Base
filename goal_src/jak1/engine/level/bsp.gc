@@ -373,7 +373,9 @@
 
 (defmethod collide-ray ((this bsp-header) (arg0 int) (arg1 collide-list) (coll-work collide-work))
   (+! (-> *collide-stats* calls) 1)
-  (let ((s4-0 (-> this drawable-trees))) (dotimes (s3-0 (-> s4-0 length)) (collide-ray (-> s4-0 trees s3-0) arg0 arg1 coll-work)))
+  (let ((s4-0 (-> this drawable-trees)))
+    (dotimes (s3-0 (-> s4-0 length))
+      (collide-ray (-> s4-0 trees s3-0) arg0 arg1 coll-work)))
   (none))
 
 (defmethod collect-ambients ((this bsp-header) (arg0 sphere) (arg1 int) (arg2 ambient-list))

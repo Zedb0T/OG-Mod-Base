@@ -653,9 +653,8 @@
   (set! sv-56 0)
   (set! spool-sound (new-sound-id))
   (if (not (and (type-type? (-> self type) fuel-cell) (name= (-> self name) "remote-cell")))
-    (backup-load-state-and-set-cmds *load-state* (-> arg0 command-list))
-    )
-   (set-setting! 'spooling (process->ppointer self) 0.0 0)
+    (backup-load-state-and-set-cmds *load-state* (-> arg0 command-list)))
+  (set-setting! 'spooling (process->ppointer self) 0.0 0)
   (logior! (-> self skel status) (janim-status inited drawn done))
   (kill-current-level-hint '() '() 'die)
   (level-hint-surpress!)
@@ -710,10 +709,9 @@
              (if (< (+ spool-part 1) (-> arg0 parts))
                (spool-push *art-control* (-> arg0 name) (+ spool-part 1) self -10.0)
                (logclear! (-> self skel status) (janim-status done)))
-              (if (not (and (type-type? (-> self type) fuel-cell) (name= (-> self name) "remote-cell")))
-               (execute-commands-up-to *load-state* (ja-aframe-num 0))
-                )
-              (cond
+             (if (not (and (type-type? (-> self type) fuel-cell) (name= (-> self name) "remote-cell")))
+               (execute-commands-up-to *load-state* (ja-aframe-num 0)))
+             (cond
                ((and (< sv-32 sv-72) (= (current-str-id) spool-sound))
                 (set! sv-56 (+ sv-56 (- (-> *display* base-frame-counter) (-> *display* old-base-frame-counter))))
                 (set! sv-40 (the-as int (-> *display* base-frame-counter))))
@@ -738,12 +736,10 @@
 
 (defbehavior ja-abort-spooled-anim process-drawable ((arg0 spool-anim) (arg1 art-joint-anim) (arg2 int))
   "Abort a spooled animation."
- (if (and
-        (or (not (type-type? (-> self type) fuel-cell)) (not (name= (-> self name) "remote-cell"))) ;; skip restoring load-state after remote cell pickup
-        (or (not (type-type? (-> self type) target)) (= self *target*)) ;; skip restoring load-state after remote target idle animation (idle deloads from remote targets)
-        )
-  (restore-load-state-and-cleanup *load-state*)
-)
+  (if (and (or (not (type-type? (-> self type) fuel-cell)) (not (name= (-> self name) "remote-cell"))) ;; skip restoring load-state after remote cell pickup
+           (or (not (type-type? (-> self type) target)) (= self *target*)) ;; skip restoring load-state after remote target idle animation (idle deloads from remote targets)
+           )
+    (restore-load-state-and-cleanup *load-state*))
   (str-play-stop (-> arg0 name))
   (set! (-> *art-control* active-stream) #f)
   (logclear! (-> self skel status) (janim-status drawn done))

@@ -29,7 +29,7 @@
   0
   (none))
 
-(defmethod collide-y-probe ((this draw-node) (arg0 int) (arg1 collide-list)(coll-work collide-work))
+(defmethod collide-y-probe ((this draw-node) (arg0 int) (arg1 collide-list) (coll-work collide-work))
   (dotimes (s3-0 arg0)
     (if (collide-cache-using-y-probe-test (-> this bsphere) coll-work)
       (collide-y-probe (-> this child) (the-as int (-> this child-count)) arg1 coll-work))
@@ -80,7 +80,7 @@
 (defmethod asize-of ((this drawable-inline-array-node))
   (the-as int (+ (-> drawable-inline-array-node size) (* (+ (-> this length) -1) 32))))
 
-(defmethod collide-with-box ((this drawable-inline-array-node) (arg0 int) (arg1 collide-list)(coll-work collide-work))
+(defmethod collide-with-box ((this drawable-inline-array-node) (arg0 int) (arg1 collide-list) (coll-work collide-work))
   ;; call on the first in the array, then it will loop through all the brothers.
   (collide-with-box (the-as drawable (-> this data)) (-> this length) arg1 coll-work)
   0

@@ -97,7 +97,6 @@
    (max-flee-rotation       float))
   :allow-misaligned)
 
-
 (deftype fleeing-nav-enemy (nav-enemy)
   ((last-reflection-time time-frame)
    (run-blend-interp     float)
@@ -107,7 +106,6 @@
    (flee-info            fleeing-nav-enemy-info :inline))
   (:states
    fleeing-nav-enemy-debug))
-
 
 (defbehavior fleeing-nav-enemy-adjust-nav-info fleeing-nav-enemy ()
   (let ((f30-0 (vector-vector-distance (-> *camera* tpos-curr-adj) (-> *camera* tpos-old-adj))))
@@ -281,8 +279,8 @@
           (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
             (let ((target (get-interactive-target tgt-idx)))
               (if (and target
-                      (>= (-> self flee-info abort-notice-distance)
-                          (vector-vector-distance (-> self collide-info trans) (-> target control trans))))
+                       (>= (-> self flee-info abort-notice-distance)
+                           (vector-vector-distance (-> self collide-info trans) (-> target control trans))))
                 (go-virtual nav-enemy-chase))))
           (suspend)
           (ja :num! (seek! max f30-0))))
@@ -376,7 +374,6 @@
    lightning-mole-head-for-hole
    lightning-mole-hiding
    lightning-mole-yelp))
-
 
 (defskelgroup *lightning-mole-sg*
   lightning-mole
@@ -517,8 +514,7 @@
         (when *enable-ingame-cutscenes?*
           (hide-hud-quick)
           (if *target* (logior! (-> *target* mask) (process-mask sleep)))
-          (ambient-hint-spawn "gamcam20" (the-as vector #f) *entity-pool* 'camera)
-          )
+          (ambient-hint-spawn "gamcam20" (the-as vector #f) *entity-pool* 'camera))
         (ja-channel-push! 1 (seconds 0.2))
         (ja-no-eval :group! lightning-mole-dive-ja :num! (seek! max f30-0) :frame-num 0.0)
         (until (ja-done? 0)
@@ -530,8 +526,7 @@
               (forward-down->inv-matrix *camera-other-matrix* s5-0 (-> *camera* local-down)))
             (set! (-> *camera-other-trans* quad) (-> gp-0 quad))
             (set! (-> *camera-other-root* quad) (-> *lightning-mole-hole* quad))
-            (set! *camera-look-through-other* 2)
-            )
+            (set! *camera-look-through-other* 2))
           (suspend)
           (ja :num! (seek! max f30-0))))
       (lightning-mole-task-complete?)
@@ -898,7 +893,6 @@
    peeper-hide
    peeper-up
    peeper-wait))
-
 
 (defstate peeper-wait (peeper)
   :event

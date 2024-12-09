@@ -422,8 +422,7 @@
           (adjust (-> (the-as target (-> this process)) game) 'life (- (-> *GAME-bank* life-single-inc)) source-handle))))
      ;; some sort of hack for eco vents.
      (b! (and (logtest? (-> (the-as collide-shape (-> this process root)) root-prim prim-core action) (collide-action racer))
-              (or (type-type? (-> (handle->process source-handle) type) vent)
-                  (= amount 5)))
+              (or (type-type? (-> (handle->process source-handle) type) vent) (= amount 5)))
          cfg-80
          :delay (nop!))
      (-> this health))
@@ -508,11 +507,10 @@
        ;; sound and controller vibration.
        (when (not (and (= (handle->process source-handle) (handle->process (-> this eco-source)))
                        (not (time-elapsed? (-> this eco-source-time) (seconds 0.5)))))
-(when (= (-> this process) *target*)
-          (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.2))
-          (cpad-set-buzz! (-> *cpad-list* cpads 0) 0 17 (seconds 0.2))
-          )
-                   (case kind
+         (when (= (-> this process) *target*)
+           (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.2))
+           (cpad-set-buzz! (-> *cpad-list* cpads 0) 0 17 (seconds 0.2)))
+         (case kind
            (((pickup-type eco-blue)) (sound-play "get-blue-eco"))
            (((pickup-type eco-green)) (sound-play "get-green-eco"))
            (((pickup-type eco-yellow)) (sound-play "get-yellow-eco"))

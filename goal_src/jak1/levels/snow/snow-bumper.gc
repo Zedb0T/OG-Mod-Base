@@ -169,7 +169,7 @@
   :trans rider-trans
   :code
     (behavior ()
-	  (runs-on-bumper-deactivate (the-as string (-> self name)))
+      (runs-on-bumper-deactivate (the-as string (-> self name)))
       (local-vars (sv-16 symbol))
       (logclear! (-> self mask) (process-mask actor-pause))
       (sound-play "bumper-pwr-dwn")

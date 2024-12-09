@@ -1175,8 +1175,8 @@
     (toggle-pause))
   (when (or (not *progress-process*) (can-go-back? (-> *progress-process* 0)))
     (if (or (cpad-pressed? 0 select r3 start) ;; push pause
-		(and (-> *pause-handler* active?)  ;; buffered pause from spool anim playing
-                  (>= (-> *display* base-frame-counter) (-> *pause-handler* active_time)))
+            (and (-> *pause-handler* active?) ;; buffered pause from spool anim playing
+                 (>= (-> *display* base-frame-counter) (-> *pause-handler* active_time)))
             (and (logtest? (-> *cpad-list* cpads 0 valid) 128) ;; controller lost
                  (= *master-mode* 'game)
                  (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time))

@@ -155,19 +155,20 @@ eco-door-event-handler
       (suspend)
       (update-transforms! (-> self root))
       (ja-post)
-	(loop
-       (when (and *target* (any-interactive-targets-close? self (-> self open-distance)))
+      (loop
+        (when (and *target* (any-interactive-targets-close? self (-> self open-distance)))
           (eco-door-method-26 self)
           (let ((has-found-close-target #f))
             (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
               (let ((target (get-interactive-target tgt-idx)))
                 (when (and (not has-found-close-target) ;; prevent multi opens if more than 1 target is close
-                      (not (-> self locked))
-                      (or (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete)))
-                        (and (remote-target-process-close? target self (-> self open-distance)) (send-event target 'query 'powerup (pickup-type eco-blue)))
-                        (and (-> self one-way) (< (vector4-dot (-> self out-dir) (target-pos 0)) -8192.0))))
-              (go-virtual door-opening)
-              (set! has-found-close-target #t)))))
+                           (not (-> self locked))
+                           (or (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete)))
+                               (and (remote-target-process-close? target self (-> self open-distance))
+                                    (send-event target 'query 'powerup (pickup-type eco-blue)))
+                               (and (-> self one-way) (< (vector4-dot (-> self out-dir) (target-pos 0)) -8192.0))))
+                  (go-virtual door-opening)
+                  (set! has-found-close-target #t)))))
           (level-hint-spawn (text-id zero) (the-as string #f) (-> self entity) *entity-pool* (game-task none)))
         (suspend))))
 
@@ -179,7 +180,7 @@ eco-door-event-handler
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
         (let ((target (get-interactive-target tgt-idx)))
           (let ((gp-0 (and (not (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete))))
-                          (send-event target 'query 'powerup (pickup-type eco-blue)))))
+                           (send-event target 'query 'powerup (pickup-type eco-blue)))))
             (when (= target *target*)
               (if gp-0 (sound-play "blue-eco-on" :position (the-as symbol (-> self root trans))))
               (sound-play-by-name (-> self open-sound) (new-sound-id) 1024 0 0 (sound-group sfx) #t))
@@ -207,8 +208,7 @@ eco-door-event-handler
       (loop
         (let ((f30-0 (vector4-dot (-> self out-dir) (target-pos 0)))
               (f28-0 (vector4-dot (-> self out-dir) (camera-pos))))
-          (when (and (-> self auto-close)
-                     (or (not *target*) (not (any-interactive-targets-close? self (-> self open-distance)))))
+          (when (and (-> self auto-close) (or (not *target*) (not (any-interactive-targets-close? self (-> self open-distance)))))
             (if (and (>= (* f30-0 f28-0) 0.0) (< 16384.0 (fabs f28-0))) (go-virtual door-closing))))
         (suspend))))
 

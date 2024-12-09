@@ -9,8 +9,6 @@
 
 ;; DECOMP BEGINS
 
-
-
 (define *racer-mods*
   (new 'static
        'surface
@@ -261,7 +259,11 @@
   (let ((gp-0 (new 'stack-no-clear 'vector)))
     (set! (-> gp-0 quad) (-> self control transv quad))
     (let ((f30-0 0.8))
-      (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
+      (fill-cache-integrate-and-collide! (-> self control)
+                                         (-> self control transv)
+                                         (-> self control root-prim collide-with)
+                                         *collide-cache*
+                                         *collide-work*)
       (+! (-> self racer shock-offsetv) (* (- (-> gp-0 y) (-> self control transv y)) f30-0))
       (+! (-> self racer shock-offsetv)
           (+ (* -20.0 (seconds-per-frame) (-> self racer shock-offset))
@@ -389,7 +391,8 @@
 
 (defbehavior racer-buzz target ((arg0 float))
   (let ((f1-0 (lerp-scale 0.2 1.0 (-> self control unknown-float01) 0.0 (-> self racer transv-max))))
-    (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 (the int (* 255.0 (fmin 1.0 (* arg0 f1-0)))) (seconds 0.05))))
+    (if (= self *target*)
+      (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 (the int (* 255.0 (fmin 1.0 (* arg0 f1-0)))) (seconds 0.05))))
   0
   (none))
 
@@ -506,20 +509,20 @@
           (f30-2 (-> *RACER-bank* jump-heat-inc)))
       (case (-> self current-level name)
         (('lavatube)
-        (set! f22-0 (-> *RACER-bank* lavatube-hotcoals-heat-inc))
-        (set! f24-0 (-> *RACER-bank* lavatube-lava-heat-inc))
-        (set! f28-2 (-> *RACER-bank* lavatube-lava-air-heat-inc))
-        (set! f26-0 (-> *RACER-bank* lavatube-surface-heat-inc))
-        (set! f30-2 (-> *RACER-bank* lavatube-jump-heat-inc))))
+         (set! f22-0 (-> *RACER-bank* lavatube-hotcoals-heat-inc))
+         (set! f24-0 (-> *RACER-bank* lavatube-lava-heat-inc))
+         (set! f28-2 (-> *RACER-bank* lavatube-lava-air-heat-inc))
+         (set! f26-0 (-> *RACER-bank* lavatube-surface-heat-inc))
+         (set! f30-2 (-> *RACER-bank* lavatube-jump-heat-inc))))
       (let* ((f20-0 (get-health-percent-lost *game-info* #f))
-            (f22-1 (lerp-scale f22-0 (* 0.5 f22-0) f20-0 0.0 1.0))
-            (f24-1 (lerp-scale f24-0 (* 0.33333334 f24-0) f20-0 0.0 1.0)))
+             (f22-1 (lerp-scale f22-0 (* 0.5 f22-0) f20-0 0.0 1.0))
+             (f24-1 (lerp-scale f24-0 (* 0.33333334 f24-0) f20-0 0.0 1.0)))
         (case (-> self control poly-pat material)
           (((pat-material hotcoals)) (seek! (-> self racer heat) (-> *RACER-bank* heat-max) (* f22-1 (seconds-per-frame))))
           (((pat-material lava))
-          (if (racer-on-ground?)
-            (seek! (-> self racer heat) (-> *RACER-bank* heat-max) (* f24-1 (seconds-per-frame)))
-            (seek! (-> self racer heat) (-> *RACER-bank* heat-max) (* f28-2 (seconds-per-frame)))))
+           (if (racer-on-ground?)
+             (seek! (-> self racer heat) (-> *RACER-bank* heat-max) (* f24-1 (seconds-per-frame)))
+             (seek! (-> self racer heat) (-> *RACER-bank* heat-max) (* f28-2 (seconds-per-frame)))))
           (else (if (not (racer-on-ground?)) (seek! (-> self racer heat) 0.0 (* f26-0 (seconds-per-frame)))))))
       (let ((v1-189 (- (current-time) (-> self control unknown-dword11))))
         (if (and (>= v1-189 (seconds 0.9)) (>= (seconds 3) v1-189)) (seek! (-> self racer heat) 0.0 (* f30-2 (seconds-per-frame))))))
@@ -577,7 +580,8 @@
                         0
                         (sound-group sfx)
                         #t))
-  (when (and (= self *target*) (< (-> self racer heat) (-> *RACER-bank* heat-max))
+  (when (and (= self *target*)
+             (< (-> self racer heat) (-> *RACER-bank* heat-max))
              (and (< (* 0.8 (-> *RACER-bank* heat-max)) (-> self racer heat))
                   (time-elapsed? (-> self racer heat-sound-time)
                                  (the int (* 3000.0 (- 1.0 (/ (-> self racer heat) (-> *RACER-bank* heat-max))))))))
@@ -885,8 +889,7 @@
   (racer-bend-gravity)
   (when (or (= self *target*) (remote-target-in-close-by-environment? self))
     (ja-post)
-    (joint-points)
-    )
+    (joint-points))
   (do-target-shadow)
   (target-powerup-process)
   (vector+! (-> self racer bike-trans) (-> self control trans) (-> self control unknown-vector12))

@@ -1,79 +1,148 @@
 (defun-extern runs-on-jak-death symbol none)
+
 (defun-extern runs-on-jak-spawn none)
+
 (defun-extern runs-on-orb-pickup process-tree none)
+
 (defun-extern runs-on-cell-pickup symbol none)
+
 (defun-extern runs-on-fly-pickup none)
 
 (defun-extern runs-every-frame none)
+
 (defun-extern runs-on-eco-pickup pickup-type process-tree none)
 
 (defun-extern orb-placer-maintenance none)
+
 (defun-extern orb-placer-list-maintenace symbol none)
+
 (define-extern *debug-continue-point* string)
+
 (define-extern *has-landed?* symbol)
+
 (define-extern *allow-zoomer-anywhere* symbol)
+
 (define-extern *allow-flutflut-anywhere* symbol)
+
 (define-extern *mod-version-text* string)
 
 ;;Teamruns stuff here
 (declare-type crate process-drawable)
-(defun-extern get-target int target)
-(defun-extern get-spectator-target target)
-(defun-extern get-closest-interactive-target-to-vector vector target)
-(defun-extern get-closest-interactive-target-with-blue-eco process target)
-(define-extern *spectator-handler* spectator-handler)
-(define-extern *multiplayer-info* multiplayer-info)
-(defun-extern remote-target-in-close-by-environment? target symbol)
-(defun-extern get-interactive-target int target)
-(defun-extern has-camera-type? symbol basic)
-(defun-extern process-close? process-drawable float basic)
-(define-extern safe-deactivate-remote-cell (function none))
-(define-extern remote-target-process-close? (function target process-drawable float basic))
-(define-extern *allow-orb-pickup?* symbol)
-(define-extern *allow-fly-pickup?* symbol)
-(define-extern runs-on-pickup (function pickup-type float process none))
-(define-extern runs-on-level-enter (function none))
-(define-extern runs-on-new-checkpoint (function none))
-(defun-extern runs-on-save symbol none)
-(defun-extern runs-on-load symbol none)
-(defun-extern runs-on-level-status-update none)
-(defun-extern runs-on-debug-toggle none)
-(defun-extern runs-on-task-update game-task task-status none)
-(defun-extern runs-on-warp-gate-open game-task none)
-(defun-extern runs-on-crate-break crate-type float process none)
-(defun-extern runs-on-bumper-deactivate string none)
-(defun-extern runs-on-task-related-death string float none)
-(defun-extern runs-on-dark-crystal-explode string int string none)
-(defun-extern runs-on-new-boss-phase string float string float none)
-(defun-extern runs-on-lpc-chamber-stop float none)
-(defun-extern runs-on-zoomer-entry none)
-(defun-extern runs-on-zoomer-exit none)
-(defun-extern runs-on-fish-caught float none)
-(defun-extern runs-on-fish-missed float none)
-(define-extern *remote-stuck-release-timestamp* time-frame)
-(define-extern *remote-stuck-released* symbol)
-(defun-extern handle-remote-task-update game-task task-status none)
-(defun-extern target-has-mp-state? target symbol symbol)
-(defun-extern target-is-interactive? target symbol)
-(define-extern *pause-handler* time-handler)
-(define-extern *enable-remote-target-eco-pickup* symbol)
-(define-extern *enable-remote-target-money-pickup* symbol)
-(define-extern *enable-remote-target-cell-pickup* symbol)
-(define-extern *enable-remote-target-buzzer-pickup* symbol)
-(define-extern *allow-cell-pickup?* symbol)
-(define-extern *allow-fly-pickup?* symbol)
-(defun-extern get-ogreboss-phase float int float)
-(defun-extern check-allow-final-boss? symbol)
-(define-extern *should-display-idle-deload-info?* symbol)
-(define-extern *player-can-load* symbol)
-(defun-extern get-closest-interactive-target process-drawable target)
-(defun-extern cancel-current-spool-anim none)
-(defun-extern any-interactive-targets-close? process-drawable float basic)
-(defun-extern any-interactive-targets-close-to-vector? vector float symbol)
-(defun-extern remote-target-fake-cpad-circle-pressed? target symbol)
-(define-extern math-camera-pos (function vector))
-(defun-extern target-pos int vector)
-(defun-extern remote-target-pos int target vector)
-(define-extern *racer-mods* surface)
-(defun-extern target-in-level-sphere? symbol symbol)
 
+(defun-extern get-target int target)
+
+(defun-extern get-spectator-target target)
+
+(defun-extern get-closest-interactive-target-to-vector vector target)
+
+(defun-extern get-closest-interactive-target-with-blue-eco process target)
+
+(define-extern *spectator-handler* spectator-handler)
+
+(define-extern *multiplayer-info* multiplayer-info)
+
+(defun-extern remote-target-in-close-by-environment? target symbol)
+
+(defun-extern get-interactive-target int target)
+
+(defun-extern has-camera-type? symbol basic)
+
+(defun-extern process-close? process-drawable float basic)
+
+(define-extern safe-deactivate-remote-cell (function none))
+
+(define-extern remote-target-process-close? (function target process-drawable float basic))
+
+(define-extern *allow-orb-pickup?* symbol)
+
+(define-extern *allow-fly-pickup?* symbol)
+
+(define-extern runs-on-pickup (function pickup-type float process none))
+
+(define-extern runs-on-level-enter (function none))
+
+(define-extern runs-on-new-checkpoint (function none))
+
+(defun-extern runs-on-save symbol none)
+
+(defun-extern runs-on-load symbol none)
+
+(defun-extern runs-on-level-status-update none)
+
+(defun-extern runs-on-debug-toggle none)
+
+(defun-extern runs-on-task-update game-task task-status none)
+
+(defun-extern runs-on-warp-gate-open game-task none)
+
+(defun-extern runs-on-crate-break crate-type float process none)
+
+(defun-extern runs-on-bumper-deactivate string none)
+
+(defun-extern runs-on-task-related-death string float none)
+
+(defun-extern runs-on-dark-crystal-explode string int string none)
+
+(defun-extern runs-on-new-boss-phase string float string float none)
+
+(defun-extern runs-on-lpc-chamber-stop float none)
+
+(defun-extern runs-on-zoomer-entry none)
+
+(defun-extern runs-on-zoomer-exit none)
+
+(defun-extern runs-on-fish-caught float none)
+
+(defun-extern runs-on-fish-missed float none)
+
+(define-extern *remote-stuck-release-timestamp* time-frame)
+
+(define-extern *remote-stuck-released* symbol)
+
+(defun-extern handle-remote-task-update game-task task-status none)
+
+(defun-extern target-has-mp-state? target symbol symbol)
+
+(defun-extern target-is-interactive? target symbol)
+
+(define-extern *pause-handler* time-handler)
+
+(define-extern *enable-remote-target-eco-pickup* symbol)
+
+(define-extern *enable-remote-target-money-pickup* symbol)
+
+(define-extern *enable-remote-target-cell-pickup* symbol)
+
+(define-extern *enable-remote-target-buzzer-pickup* symbol)
+
+(define-extern *allow-cell-pickup?* symbol)
+
+(define-extern *allow-fly-pickup?* symbol)
+
+(defun-extern get-ogreboss-phase float int float)
+
+(defun-extern check-allow-final-boss? symbol)
+
+(define-extern *should-display-idle-deload-info?* symbol)
+
+(define-extern *player-can-load* symbol)
+
+(defun-extern get-closest-interactive-target process-drawable target)
+
+(defun-extern cancel-current-spool-anim none)
+
+(defun-extern any-interactive-targets-close? process-drawable float basic)
+
+(defun-extern any-interactive-targets-close-to-vector? vector float symbol)
+
+(defun-extern remote-target-fake-cpad-circle-pressed? target symbol)
+
+(define-extern math-camera-pos (function vector))
+
+(defun-extern target-pos int vector)
+
+(defun-extern remote-target-pos int target vector)
+
+(define-extern *racer-mods* surface)
+
+(defun-extern target-in-level-sphere? symbol symbol)

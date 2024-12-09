@@ -6,7 +6,6 @@
 
 ;; DECOMP BEGINS
 
-
 (deftype whirlpool (process-drawable)
   ((root             collide-shape :override)
    (spin-ry          float)
@@ -17,7 +16,6 @@
    (whirlpool-method-20 (_type_ float target) cshape-moving-flags))
   (:states
    whirlpool-idle))
-
 
 (defskelgroup *whirlpool-sg*
   whirlpool

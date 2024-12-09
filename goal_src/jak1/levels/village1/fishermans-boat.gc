@@ -8,7 +8,6 @@
 (require "engine/geometry/path-h.gc")
 (declare-type fishermans-boat rigid-body-platform)
 
-
 ;; DECOMP BEGINS
 
 (define *fishermans-boat-constants*
@@ -43,7 +42,6 @@
   ((local-pos vector :inline)
    (normal    vector :inline)))
 
-
 (deftype vehicle-path (structure)
   ((point-array vector 10 :inline)
    (point-count int32))
@@ -53,7 +51,6 @@
    (distance-to-next-point (_type_ int vector) vector)
    (add-point! (_type_ float float float float) none)
    (debug-draw (_type_) symbol)))
-
 
 (defmethod get-point-count ((this vehicle-path))
   (-> this point-count))
@@ -217,7 +214,6 @@
    (vehicle-controller-method-14 (_type_ vector vector) none)
    (vehicle-controller-method-15 (_type_ collide-shape-moving) none)
    (vehicle-controller-method-16 (_type_) none)))
-
 
 (defmethod relocate ((this vehicle-controller) (offset int))
   (if (nonzero? (-> this path)) (&+! (-> this path) offset))
@@ -401,7 +397,6 @@
    fishermans-boat-player-control
    fishermans-boat-ride-to-misty
    fishermans-boat-ride-to-village1))
-
 
 (defskelgroup *fishermans-boat-sg*
   fishermans-boat
@@ -638,38 +633,37 @@
   (let ((gp-0 #f))
     (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
       (let ((target (get-interactive-target tgt-idx)))
-    (when (and (< (vector-vector-distance (remote-target-pos 0 target) (-> self rbody position)) 6144.0)
-               (or (task-complete? *game-info* (game-task jungle-fishgame)) (and *cheat-mode* (cpad-hold? 0 l3)))
-               (or (not (level-hint-displayed?)) (!= target *target*))
-               (time-elapsed? (-> self state-time) (seconds 3))
-               (or (file-status *art-control* (-> self anim name) 0) (!= target *target*)))
-      (cond 
-        ((= target *target*)
-      (hide-hud)
-      (level-hint-surpress!)
-      (kill-current-level-hint '() '(sidekick voicebox) 'exit)
-      (when (and (hud-hidden?) (can-grab-display? self) (= *kernel-boot-message* 'play))
-        (let ((s5-1 (new 'stack 'font-context *font-default-matrix* 32 160 0.0 (font-color default) (font-flags shadow kerning))))
-          (let ((v1-17 s5-1)) (set! (-> v1-17 width) (the float 440)))
-          (let ((v1-18 s5-1)) (set! (-> v1-18 height) (the float 80)))
-          (set! (-> s5-1 flags) (font-flags shadow kerning large))
-          (print-game-text (lookup-text! *common-text* (text-id press-to-use) #f) s5-1 #f 128 22))
-        (when (and (cpad-pressed? 0 circle) (or (not *enable-ingame-cutscenes?*) (process-grab? *target*)))
-          (set! (-> self waiting-for-player) #f)
-          (set! (-> self player-riding) #t)
-          (set! (-> self auto-pilot) #t)
-          (set! (-> self ignition) #t)
-          (set! (-> self anchored) #f)
-          (set! gp-0 #t))))
-        (else 
-        (when (remote-target-fake-cpad-circle-pressed? target)
-          (set! (-> self waiting-for-player) #f)
-          (set! (-> self player-riding) #t)
-          (set! (-> self auto-pilot) #t)
-          (set! (-> self ignition) #t)
-          (set! (-> self anchored) #f)
-          (set! gp-0 #t)
-          ))))))
+        (when (and (< (vector-vector-distance (remote-target-pos 0 target) (-> self rbody position)) 6144.0)
+                   (or (task-complete? *game-info* (game-task jungle-fishgame)) (and *cheat-mode* (cpad-hold? 0 l3)))
+                   (or (not (level-hint-displayed?)) (!= target *target*))
+                   (time-elapsed? (-> self state-time) (seconds 3))
+                   (or (file-status *art-control* (-> self anim name) 0) (!= target *target*)))
+          (cond
+            ((= target *target*)
+             (hide-hud)
+             (level-hint-surpress!)
+             (kill-current-level-hint '() '(sidekick voicebox) 'exit)
+             (when (and (hud-hidden?) (can-grab-display? self) (= *kernel-boot-message* 'play))
+               (let ((s5-1 (new 'stack 'font-context *font-default-matrix* 32 160 0.0 (font-color default) (font-flags shadow kerning))))
+                 (let ((v1-17 s5-1)) (set! (-> v1-17 width) (the float 440)))
+                 (let ((v1-18 s5-1)) (set! (-> v1-18 height) (the float 80)))
+                 (set! (-> s5-1 flags) (font-flags shadow kerning large))
+                 (print-game-text (lookup-text! *common-text* (text-id press-to-use) #f) s5-1 #f 128 22))
+               (when (and (cpad-pressed? 0 circle) (or (not *enable-ingame-cutscenes?*) (process-grab? *target*)))
+                 (set! (-> self waiting-for-player) #f)
+                 (set! (-> self player-riding) #t)
+                 (set! (-> self auto-pilot) #t)
+                 (set! (-> self ignition) #t)
+                 (set! (-> self anchored) #f)
+                 (set! gp-0 #t))))
+            (else
+             (when (remote-target-fake-cpad-circle-pressed? target)
+               (set! (-> self waiting-for-player) #f)
+               (set! (-> self player-riding) #t)
+               (set! (-> self auto-pilot) #t)
+               (set! (-> self ignition) #t)
+               (set! (-> self anchored) #f)
+               (set! gp-0 #t)))))))
     gp-0))
 
 (defbehavior fishermans-boat-enter-dock? fishermans-boat ()
@@ -691,10 +685,8 @@
         (set! (-> self anchored) #t)
         (set! (-> self propeller enable) #t)
         (fishermans-boat-play-sounds)
-        (if (and (not (target-in-level-sphere? 'village1)) (has-camera-type? 'cam-stick)) 
-          (camera-change-to (the-as string 'base) 300 #f)
-          )
-        )
+        (if (and (not (target-in-level-sphere? 'village1)) (has-camera-type? 'cam-stick))
+          (camera-change-to (the-as string 'base) 300 #f)))
       (set-time! (-> self state-time)))
   :trans
     (behavior ()
@@ -706,12 +698,12 @@
       (if *enable-ingame-cutscenes?*
         (set! (-> self anim)
               (new 'static
-                  'spool-anim
-                  :name "fishermans-boat-ride-to-misty"
-                  :index 15
-                  :parts 3
-                  :command-list
-                  '((0 want-levels village1 misty)
+                   'spool-anim
+                   :name "fishermans-boat-ride-to-misty"
+                   :index 15
+                   :parts 3
+                   :command-list
+                   '((0 want-levels village1 misty)
                     (0 shadow target #f)
                     (0 shadow sidekick #f)
                     (250 display-level misty display)
@@ -722,15 +714,18 @@
                     (459 save)
                     (459 blackout 20)
                     (459 shadow target #t))))
-        (set! (-> self anim) (new 'static 'spool-anim
-                              :name "fishermans-boat-ride-to-misty"
-                              :index 15
-                              :parts 3
-                              :command-list '((0 want-levels village1 misty)
-                                (250 display-level misty display)
-                                (250 want-force-vis misty #t)
-                                (459 want-force-vis misty #f)
-                                (459 save)))))
+        (set! (-> self anim)
+              (new 'static
+                   'spool-anim
+                   :name "fishermans-boat-ride-to-misty"
+                   :index 15
+                   :parts 3
+                   :command-list
+                   '((0 want-levels village1 misty)
+                    (250 display-level misty display)
+                    (250 want-force-vis misty #t)
+                    (459 want-force-vis misty #f)
+                    (459 save)))))
       (fishermans-boat-set-dock-point 0)
       (fishermans-boat-set-path-point 0)
       (anim-loop))
@@ -752,20 +747,19 @@
       (when *enable-ingame-cutscenes?*
         (set! (-> self cam-tracker)
               (ppointer->handle (process-spawn camera-tracker
-                                              :init
-                                              camera-tracker-init
-                                              (lambda :behavior fishermans-boat ()
-                                                (camera-change-to "camera-282" 0 #f)
-                                                (while (!= (-> self rbody lin-momentum-damping-factor) 'release)
-                                                  (suspend))
-                                                (set! (-> self rbody lin-momentum-damping-factor) (the-as float #f))
-                                                (camera-change-to (the-as string 'base) 0 #f)
-                                                (none))
-                                              :to
-                                              self)))
+                                               :init
+                                               camera-tracker-init
+                                               (lambda :behavior fishermans-boat ()
+                                                 (camera-change-to "camera-282" 0 #f)
+                                                 (while (!= (-> self rbody lin-momentum-damping-factor) 'release)
+                                                   (suspend))
+                                                 (set! (-> self rbody lin-momentum-damping-factor) (the-as float #f))
+                                                 (camera-change-to (the-as string 'base) 0 #f)
+                                                 (none))
+                                               :to
+                                               self)))
         (send-event (handle->process (-> self cam-tracker)) 'border #t)
-        (send-event (handle->process (-> self cam-tracker)) 'mask #x20800)
-        )
+        (send-event (handle->process (-> self cam-tracker)) 'mask #x20800))
       (fishermans-boat-set-path-point 0)
       (fishermans-boat-next-path-point)
       (loop
@@ -780,8 +774,7 @@
         (when #t
           (when *enable-ingame-cutscenes?*
             (set! (-> *camera* cam-entity) (the-as entity #t))
-            (send-event *camera* 'clear-entity)
-            )
+            (send-event *camera* 'clear-entity))
           (load-commands-set! *level* '())
           (load-state-want-display-level 'village1 'display)
           (load-state-want-force-vis 'village1 #f)
@@ -803,17 +796,14 @@
       (when (not *enable-ingame-cutscenes?*)
         (if (= (-> *game-info* current-continue level) 'misty)
           (load-state-want-display-level 'village1 'special)
-          (load-state-want-display-level 'misty 'special)
-          )
-        (if (and (not (target-in-level-sphere? 'misty)) (has-camera-type? 'cam-stick)) 
-          (camera-change-to (the-as string 'base) 300 #f)
-          )
+          (load-state-want-display-level 'misty 'special))
+        (if (and (not (target-in-level-sphere? 'misty)) (has-camera-type? 'cam-stick))
+          (camera-change-to (the-as string 'base) 300 #f))
         (set! (-> self waiting-for-player) #t)
         (set! (-> self ignition) #f)
         (set! (-> self anchored) #t)
         (set! (-> self propeller enable) #t)
-        (fishermans-boat-play-sounds)
-        )
+        (fishermans-boat-play-sounds))
       (set-time! (-> self state-time)))
   :trans
     (behavior ()
@@ -826,12 +816,12 @@
         (if *enable-ingame-cutscenes?*
           (set! (-> self anim)
                 (new 'static
-                    'spool-anim
-                    :name "fishermans-boat-ride-to-village1"
-                    :index 16
-                    :parts 3
-                    :command-list
-                    '((0 want-levels village1 misty)
+                     'spool-anim
+                     :name "fishermans-boat-ride-to-village1"
+                     :index 16
+                     :parts 3
+                     :command-list
+                     '((0 want-levels village1 misty)
                       (0 shadow target #f)
                       (0 shadow sidekick #f)
                       (250 display-level village1 display)
@@ -842,16 +832,19 @@
                       (459 save)
                       (459 blackout 20)
                       (459 shadow target #t))))
-          (set! (-> self anim) (new 'static 'spool-anim
-                                :name "fishermans-boat-ride-to-village1"
-                                :index 16
-                                :parts 3
-                                :command-list '((0 want-levels village1 misty)
-                                  (250 display-level village1 display)
-                                  (250 display-level misty #f)
-                                  (250 want-force-vis village1 #t)
-                                  (459 want-force-vis village1 #f)
-                                  (459 save)))))
+          (set! (-> self anim)
+                (new 'static
+                     'spool-anim
+                     :name "fishermans-boat-ride-to-village1"
+                     :index 16
+                     :parts 3
+                     :command-list
+                     '((0 want-levels village1 misty)
+                      (250 display-level village1 display)
+                      (250 display-level misty #f)
+                      (250 want-force-vis village1 #t)
+                      (459 want-force-vis village1 #f)
+                      (459 save)))))
         (set! (-> self anim)
               (new 'static
                    'spool-anim
@@ -896,20 +889,19 @@
       (when *enable-ingame-cutscenes?*
         (set! (-> self cam-tracker)
               (ppointer->handle (process-spawn camera-tracker
-                                              :init
-                                              camera-tracker-init
-                                              (lambda :behavior fishermans-boat ()
-                                                (camera-change-to "camera-287" 0 #f)
-                                                (while (!= (-> self rbody lin-momentum-damping-factor) 'release)
-                                                  (suspend))
-                                                (set! (-> self rbody lin-momentum-damping-factor) (the-as float #f))
-                                                (camera-change-to (the-as string 'base) 0 #f)
-                                                (none))
-                                              :to
-                                              self)))
+                                               :init
+                                               camera-tracker-init
+                                               (lambda :behavior fishermans-boat ()
+                                                 (camera-change-to "camera-287" 0 #f)
+                                                 (while (!= (-> self rbody lin-momentum-damping-factor) 'release)
+                                                   (suspend))
+                                                 (set! (-> self rbody lin-momentum-damping-factor) (the-as float #f))
+                                                 (camera-change-to (the-as string 'base) 0 #f)
+                                                 (none))
+                                               :to
+                                               self)))
         (send-event (handle->process (-> self cam-tracker)) 'border #t)
-        (send-event (handle->process (-> self cam-tracker)) 'mask #x20800)
-        )
+        (send-event (handle->process (-> self cam-tracker)) 'mask #x20800))
       (fishermans-boat-set-path-point 4)
       (fishermans-boat-next-path-point)
       (loop
@@ -921,15 +913,14 @@
     (behavior ()
       (when (fishermans-boat-enter-dock?)
         (set! (-> self waiting-for-player) #f)
-        (cond 
+        (cond
           (*enable-ingame-cutscenes?*
-            (level-hint-spawn (text-id sidekick-misty) "sksp0060" (the-as entity #f) *entity-pool* (game-task none))
-            (when #t
-              (set! (-> *camera* cam-entity) (the-as entity #t))
-              (send-event *camera* 'clear-entity)
-              (go fishermans-boat-docked-misty)))
-          (else (go fishermans-boat-docked-misty)
-          )))
+           (level-hint-spawn (text-id sidekick-misty) "sksp0060" (the-as entity #f) *entity-pool* (game-task none))
+           (when #t
+             (set! (-> *camera* cam-entity) (the-as entity #t))
+             (send-event *camera* 'clear-entity)
+             (go fishermans-boat-docked-misty)))
+          (else (go fishermans-boat-docked-misty))))
       (rider-trans))
   :code
     (behavior ()
@@ -1063,12 +1054,11 @@
   (set! (-> this debug-draw) #f)
   (set! (-> this cam-tracker) (the-as handle #f))
   (set! (-> this auto-pilot) #f)
-  (cond 
+  (cond
     ((-> *pause-handler* active?)
-      (if (= (-> *game-info* current-continue level) 'misty) (fishermans-boat-set-dock-point 0) (fishermans-boat-set-dock-point 4))
-      )
+     (if (= (-> *game-info* current-continue level) 'misty) (fishermans-boat-set-dock-point 0) (fishermans-boat-set-dock-point 4)))
     (else
-      (if (= (-> *game-info* current-continue level) 'misty) (fishermans-boat-set-dock-point 4) (fishermans-boat-set-dock-point 0))))
+     (if (= (-> *game-info* current-continue level) 'misty) (fishermans-boat-set-dock-point 4) (fishermans-boat-set-dock-point 0))))
   (fishermans-boat-set-path-point (-> this dock-point-index))
   (fishermans-boat-next-path-point)
   (set! (-> this root-overlay trans quad) (-> this dock-point quad))
@@ -1133,11 +1123,11 @@
   (rigid-body-platform-method-30 this)
   (process-drawable-from-entity! this arg0)
   (rigid-body-platform-method-31 this)
-  (cond 
+  (cond
     ((-> *pause-handler* active?)
-      (if (= (-> *game-info* current-continue level) 'misty) (go fishermans-boat-docked-village) (go fishermans-boat-docked-misty)))
+     (if (= (-> *game-info* current-continue level) 'misty) (go fishermans-boat-docked-village) (go fishermans-boat-docked-misty)))
     (else
-      (if (= (-> *game-info* current-continue level) 'misty) (go fishermans-boat-docked-misty) (go fishermans-boat-docked-village))))
+     (if (= (-> *game-info* current-continue level) 'misty) (go fishermans-boat-docked-misty) (go fishermans-boat-docked-village))))
   (none))
 
 (defbehavior fishermans-boat-reset-physics fishermans-boat ()
@@ -1150,43 +1140,31 @@
   (set! (-> self player-impulse) #f)
   (set! (-> self player-contact) #f)
   0
-  (none)
-  )
+  (none))
 
 (defstate fishermans-boat-ride-to-misty (fishermans-boat)
-  :trans (behavior ()
-    (when (not *enable-ingame-cutscenes?*)
-      (rider-trans)
-      (when (and (target-in-level-sphere? 'misty) (has-camera-type? 'cam-stick)) 
-        (camera-change-to (the-as string 'base) 300 #f) ;; loading once currently depends on this camera state, take this into account if swapping
-        (load-state-want-vis 'mis)
-        )
-      )
-    (none)
-    )
+  :trans
+    (behavior ()
+      (when (not *enable-ingame-cutscenes?*)
+        (rider-trans)
+        (when (and (target-in-level-sphere? 'misty) (has-camera-type? 'cam-stick))
+          (camera-change-to (the-as string 'base) 300 #f) ;; loading once currently depends on this camera state, take this into account if swapping
+          (load-state-want-vis 'mis)))
+      (none))
   :code
     (behavior ()
-      (if (and (not *enable-ingame-cutscenes?*) (= (-> self root-overlay riders num-riders) 0) (not (process-close? self 25000.0))) ;;remove loads from animation if main target is not on the boat
-        (set! (-> self anim) (new 'static 'spool-anim
-                              :name "fishermans-boat-ride-to-misty"
-                              :index 15
-                              :parts 3
-                              :command-list '()
-                              )
-          )
-        )
+      (if (and (not *enable-ingame-cutscenes?*)
+               (= (-> self root-overlay riders num-riders) 0)
+               (not (process-close? self 25000.0))) ;;remove loads from animation if main target is not on the boat
+        (set! (-> self anim) (new 'static 'spool-anim :name "fishermans-boat-ride-to-misty" :index 15 :parts 3 :command-list '())))
       (set! (-> self propeller enable) #f)
       (when (not *enable-ingame-cutscenes?*)
         (let ((gp-1 (-> *display* base-frame-counter)))
           (until (>= (- (-> *display* base-frame-counter) gp-1) (seconds 1.0))
-            (suspend)
-            )
-          )
+            (suspend)))
         (when (or (!= (-> self root-overlay riders num-riders) 0) (process-close? self 25000.0)) ;; rider spot is only allowed for main jak
           (send-event *target* 'no-look-around (seconds 17.5))
-          (camera-change-to (the-as string 'cam-stick) 300 #f)
-          )
-        )
+          (camera-change-to (the-as string 'cam-stick) 300 #f)))
       (quaternion-identity! (-> self root-overlay quat))
       (set! (-> self root-overlay trans quad) (-> self entity extra trans quad))
       (set! (-> self player-riding) #f)
@@ -1203,8 +1181,7 @@
                               (the-as (function process-drawable symbol) false-func))
         (when *enable-ingame-cutscenes?*
           (set! (-> self draw force-lod) -1)
-          (send-event *target* 'blend-shape #f)
-          )
+          (send-event *target* 'blend-shape #f))
         (ja-channel-set! 1)
         (ja :group! fishermans-boat-idle-ja)
         (vector<-cspace! (-> self root-overlay trans) (joint-node fishermans-boat-lod0-jg main))
@@ -1215,18 +1192,14 @@
           (when *enable-ingame-cutscenes?*
             (vector<-cspace! (the-as vector (-> self old-target-pos)) (-> *target* node-list data 3))
             (send-event *target* 'trans 'restore (-> self old-target-pos))
-            (send-event *target* 'end-mode)
-            )
+            (send-event *target* 'end-mode))
           (update-transforms! (-> self root-overlay))
           (when *enable-ingame-cutscenes?*
             (move-to-ground (-> *target* control) 4096.0 40960.0 #t (-> *target* control root-prim collide-with))
             (logior! (-> *target* control status) (cshape-moving-flags onsurf onground tsurf))
             (suspend)
-            (send-event *camera* 'teleport-to-other-start-string)
-            ))
-        (if *enable-ingame-cutscenes?*
-          (set-continue! *game-info* "misty-start")
-          ))
+            (send-event *camera* 'teleport-to-other-start-string)))
+        (if *enable-ingame-cutscenes?* (set-continue! *game-info* "misty-start")))
       (set! (-> self waiting-for-player) #t)
       (set! (-> self ignition) #f)
       (set! (-> self anchored) #t)
@@ -1250,23 +1223,19 @@
       ;; (set! (-> self root-overlay root-prim local-sphere x) (+ (-> *target* control trans x) 60000.0))
       ;; (set! (-> self root-overlay root-prim local-sphere y) (-> *target* control trans y))
       ;; (set! (-> self root-overlay root-prim local-sphere z) (- (-> *target* control trans z) 420000.0))
-      (if (not *enable-ingame-cutscenes?*)
-        (rider-post)
-        )
+      (if (not *enable-ingame-cutscenes?*) (rider-post))
       (fishermans-boat-spawn-particles 81920.0)
       (fishermans-boat-play-sounds)))
 
 (defstate fishermans-boat-ride-to-village1 (fishermans-boat)
-  :trans (behavior ()
-    (when (not *enable-ingame-cutscenes?*)
-      (rider-trans)
-      (when (and (target-in-level-sphere? 'village1) (has-camera-type? 'cam-stick)) 
-        (camera-change-to (the-as string 'base) 600 #f) ;; loading once currently depends on this camera state, take this into account if swapping
-        (load-state-want-vis 'vi1)
-        )
-      )
-    (none)
-    )
+  :trans
+    (behavior ()
+      (when (not *enable-ingame-cutscenes?*)
+        (rider-trans)
+        (when (and (target-in-level-sphere? 'village1) (has-camera-type? 'cam-stick))
+          (camera-change-to (the-as string 'base) 600 #f) ;; loading once currently depends on this camera state, take this into account if swapping
+          (load-state-want-vis 'vi1)))
+      (none))
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
       (case message
@@ -1289,30 +1258,21 @@
          (let ((a0-48 (handle->process (-> self evilsis)))) (if a0-48 (deactivate a0-48))))))
   :code
     (behavior ()
-      (if (and (not *enable-ingame-cutscenes?*) (= (-> self root-overlay riders num-riders) 0) (not (process-close? self 25000.0))) ;;remove loads from animation if main target is not on the boat
-        (set! (-> self anim) (new 'static 'spool-anim
-                                :name "fishermans-boat-ride-to-village1"
-                                :index 16
-                                :parts 3
-                                :command-list '()
-                                )
-          )
-        )
-      
+      (if (and (not *enable-ingame-cutscenes?*)
+               (= (-> self root-overlay riders num-riders) 0)
+               (not (process-close? self 25000.0))) ;;remove loads from animation if main target is not on the boat
+        (set! (-> self anim)
+              (new 'static 'spool-anim :name "fishermans-boat-ride-to-village1" :index 16 :parts 3 :command-list '())))
       (set! (-> self propeller enable) #f)
       (set! (-> self evilbro) (the-as handle #f))
       (set! (-> self evilsis) (the-as handle #f))
       (when (not *enable-ingame-cutscenes?*)
         (let ((gp-1 (-> *display* base-frame-counter)))
           (until (>= (- (-> *display* base-frame-counter) gp-1) (seconds 1.0))
-            (suspend)
-            )
-          )
+            (suspend)))
         (when (or (!= (-> self root-overlay riders num-riders) 0) (process-close? self 25000.0)) ;; rider spot is only allowed for main jak
           (send-event *target* 'no-look-around (seconds 15.5))
-          (camera-change-to (the-as string 'cam-stick) 600 #f)
-          )
-        )
+          (camera-change-to (the-as string 'cam-stick) 600 #f)))
       (quaternion-identity! (-> self root-overlay quat))
       (set! (-> self root-overlay trans quad) (-> self entity extra trans quad))
       (set! (-> self player-riding) #f)
@@ -1323,14 +1283,13 @@
           (send-event *target* 'blend-shape #t)
           (let ((v1-20 (process-spawn othercam self 5 #f #t :to self))) (send-event (ppointer->process v1-20) 'mask 2048))
           (set! (-> self draw force-lod) 0))
-          (ja-play-spooled-anim (-> self anim)
-                                (the-as art-joint-anim fishermans-boat-idle-ja)
-                                (the-as art-joint-anim #f)
-                                (the-as (function process-drawable symbol) false-func))
+        (ja-play-spooled-anim (-> self anim)
+                              (the-as art-joint-anim fishermans-boat-idle-ja)
+                              (the-as art-joint-anim #f)
+                              (the-as (function process-drawable symbol) false-func))
         (when *enable-ingame-cutscenes?*
           (set! (-> self draw force-lod) -1)
-          (send-event *target* 'blend-shape #f)
-          )
+          (send-event *target* 'blend-shape #f))
         (ja-channel-set! 1)
         (ja :group! fishermans-boat-idle-ja)
         (vector<-cspace! (-> self root-overlay trans) (joint-node fishermans-boat-lod0-jg main))
@@ -1341,8 +1300,7 @@
           (when *enable-ingame-cutscenes?*
             (vector<-cspace! (the-as vector (-> self old-target-pos)) (-> *target* node-list data 3))
             (send-event *target* 'trans 'restore (-> self old-target-pos))
-            (send-event *target* 'end-mode)
-            )
+            (send-event *target* 'end-mode))
           (update-transforms! (-> self root-overlay))
           (when *enable-ingame-cutscenes?*
             (update-transforms! (-> self root-overlay))
@@ -1361,8 +1319,6 @@
   :post
     (behavior ()
       (ja-post)
-      (if (not *enable-ingame-cutscenes?*)
-        (rider-post)
-        )
+      (if (not *enable-ingame-cutscenes?*) (rider-post))
       (fishermans-boat-spawn-particles 81920.0)
       (fishermans-boat-play-sounds)))
