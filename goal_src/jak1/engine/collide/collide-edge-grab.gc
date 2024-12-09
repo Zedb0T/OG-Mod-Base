@@ -11,7 +11,7 @@
 
 ;; DECOMP BEGINS
 
-(defmethod find-edge-grabs! ((this target) (arg0 collide-cache))
+(defmethod find-edge-grabs! ((this target) (arg0 collide-cache) (tgt-idx int))
   "Main edge grabbing method.
    Will populate *edge-grab-info* and send *target* an 'edge-grab event if successful."
   (rlet ((vf1 :class vf)
@@ -54,7 +54,8 @@
                                (-> gp-0 cache-fill-box)
                                (-> this control root-prim collide-with)
                                this
-                               (new 'static 'pat-surface :noentity #x1))
+                               (new 'static 'pat-surface :noentity #x1)
+                               (-> *edge-collide-work-list* tgt-idx))
       ;; Filter out tris that can't be grabbed
       (find-grabbable-tris! gp-0)
       (when (nonzero? (-> gp-0 num-tris))
@@ -171,7 +172,7 @@
         (else (set! (-> arg1 actor-cshape-prim-offset) 0) (set! (-> arg1 actor-handle) (the-as handle #f))))))
   #t)
 
-(defmethod edge-grab-info-method-9 ((this edge-grab-info))
+(defmethod edge-grab-info-method-9 ((this edge-grab-info) (tgt-idx int))
   (local-vars (v0-0 symbol) (v1-14 int))
   (rlet ((acc :class vf)
          (Q :class vf)
@@ -247,7 +248,7 @@
         (set! (-> a1-14 ignore-pat) (new 'static 'pat-surface :noentity #x1))
         (set! (-> a1-14 solid-only) #t)
         (label cfg-21)
-        (b! (not (fill-and-probe-using-spheres *collide-cache* a1-14)) cfg-24))
+        (b! (not (fill-and-probe-using-spheres (-> *edge-collide-cache-list* tgt-idx) a1-14 (-> *edge-collide-work-list* tgt-idx))) cfg-24))
       (set! v0-0 #f)
       (b! #t cfg-27 :delay (nop!))
       (the-as none 0)

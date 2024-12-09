@@ -213,7 +213,7 @@
   (ground-object 11) ;; object, like darkecobarray, platforms
   (target-attack 12) ;; all target attacks
   (mother-spider 13)
-  (cak-14 14) ;; unused
+  (target-remote 14) ;; target-remote
   (blue-eco-suck 15) ;; manipy, orb-cache-top,
   (unknown-16 16)
   (unknown-17 17)
@@ -339,7 +339,7 @@
    (find-prim-by-id (_type_ uint) collide-shape-prim)
    (debug-draw-world-sphere (_type_) symbol)
    (add-fg-prim-using-box (_type_ collide-cache) none)
-   (add-fg-prim-using-line-sphere (_type_ collide-cache) none)
+   (add-fg-prim-using-line-sphere (_type_ collide-cache collide-work) none)
    (add-fg-prim-using-y-probe (_type_ collide-cache) none)
    (overlaps-others-test (_type_ overlaps-others-params collide-shape-prim) symbol)
    (overlaps-others-group (_type_ overlaps-others-params collide-shape-prim-group) symbol)
@@ -442,8 +442,8 @@
    (alloc-riders (_type_ int) none)
    (move-to-point! (_type_ vector) none)
    (debug-draw (_type_) none)
-   (fill-cache-for-shape! (_type_ float collide-kind) none)
-   (fill-cache-integrate-and-collide! (_type_ vector collide-kind) none)
+   (fill-cache-for-shape! (_type_ float collide-kind collide-cache collide-work) none)
+   (fill-cache-integrate-and-collide! (_type_ vector collide-kind collide-cache collide-work) none)
    (find-prim-by-id (_type_ uint) collide-shape-prim)
    (detect-riders! (_type_) symbol)
    (build-bounding-box-for-shape (_type_ bounding-box float collide-kind) symbol)

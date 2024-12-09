@@ -290,7 +290,9 @@ nav-enemy-default-event-handler
   (vector-v++! (-> self collide-info transv) (compute-acc-due-to-gravity (-> self collide-info) (new-stack-vector0) 0.0))
   (fill-cache-integrate-and-collide! (-> self collide-info)
                                      (-> self collide-info transv)
-                                     (-> self collide-info root-prim collide-with))
+                                     (-> self collide-info root-prim collide-with)
+                                     *collide-cache*
+                                     *collide-work*)
   (nav-enemy-common-post)
   0
   (none))

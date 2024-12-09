@@ -244,7 +244,8 @@
                            (-> arg0 bbox)
                            (collide-kind background)
                            this
-                           (new 'static 'pat-surface :noentity #x1))
+                           (new 'static 'pat-surface :noentity #x1)
+                           *collide-work*)
   (let ((gp-1 (-> this joints))
         (v1-2 (-> arg0 head)))
     (while (>= v1-2 0)

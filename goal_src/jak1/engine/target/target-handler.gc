@@ -9,14 +9,36 @@
 (defbehavior target-generic-event-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (local-vars (v0-0 object))
   (case arg2
+    (('taunt)
+     (ambient-hint-spawn (the string (-> arg3 param 0)) (-> self control trans) *entity-pool* 'ambient)
+     )
     (('get-pickup)
-     (when (not (logtest? (-> self state-flags) (state-flags dying)))
-       (let ((s4-0 (-> arg3 param 0))
-             (f28-0 (the-as float (-> arg3 param 1))))
-         (if (!= (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) (the-as float 0.0) (the-as handle #f))
-                 (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) f28-0 (process->handle arg0)))
-           #t
-           'full))))
+      (let ((s4-0 (-> arg3 param 0))
+            (f28-0 (the-as float (-> arg3 param 1))))
+        ;; Teamruns same-level pickup flag
+        (when (and (or (!= (the-as pickup-type s4-0) (pickup-type money)) *allow-orb-pickup?*)
+                  (or (!= (the-as pickup-type s4-0) (pickup-type buzzer)) *allow-fly-pickup?*))
+          (when (not (logtest? (-> self state-flags) (state-flags dying)))
+            (let ((s4-0 (-> arg3 param 0))
+                  (f28-0 (the-as float (-> arg3 param 1))))
+                  (let ((trigger-runs-on-pickup ;; needs to be checked before for vent pickup logic
+                          (and
+                            (= self *target*)
+                            (!= (the-as pickup-type s4-0) (pickup-type none))
+                            (!= (the-as pickup-type s4-0) (pickup-type eco-pill-random))
+                            (!= (the-as pickup-type s4-0) (pickup-type eco-pill))
+                            (!= (the-as pickup-type s4-0) (pickup-type fuel-cell)) ;; is instead taken from task-control
+                            ;; makes sure eco vents only runs on enter and not every frame after, can/will cause bugs with remotes standing inside and shooting yellow eco shots as they'll run out eventually with this
+                            (or (not (type-type? (-> arg0 type) vent)) (< 50 (the int (- (-> *display* game-frame-counter) (- (+ (-> self fact eco-pickup-time) (-> self fact eco-timeout)) (-> *FACT-bank* eco-full-timeout))))))
+                            )
+                          )
+                        (pickup-result (if (!= (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) (the-as float 0.0) (the-as handle #f))
+                                (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) f28-0 (process->handle arg0)))
+                          #t
+                          'full)))
+                    (if trigger-runs-on-pickup ;; needs to be executed after to have correct *game-info* money and buzzer count
+                      (runs-on-pickup (the-as pickup-type s4-0) f28-0 arg0))
+                    pickup-result))))))
     (('reset-pickup) (reset! (-> self fact) (the-as symbol (-> arg3 param 0))))
     (('reset-collide)
      (cond
@@ -36,7 +58,8 @@
            (if (and (zero? (-> *game-info* enter-level-time (-> s5-1 index))) (>= (-> *level-task-data-remap* length) (-> s5-1 index)))
              (set-time! (-> *game-info* enter-level-time (-> *level-task-data-remap* (+ (-> s5-1 index) -1))))))
          (send-event (ppointer->process (-> *hud-parts* buzzers)) 'sync)
-         (format #t "GAMEPLAY: enter ~A~%" (-> arg3 param 0)))))
+         (format #t "GAMEPLAY: enter ~A~%" (-> arg3 param 0))
+         (runs-on-level-enter))))
     (('get-attack-count)
      (set! v0-0 (+ (-> self control unknown-dword51) (-> arg3 param 0)))
      (set! (-> self control unknown-dword51) (the-as int v0-0))
@@ -89,7 +112,7 @@
         v0-0)))
     (('sidekick)
      (cond
-       ((and (-> arg3 param 0) (not (-> self sidekick)))
+       ((and (= *target* self) (-> arg3 param 0) (not (-> self sidekick)))
         (let ((gp-2 (get-process *default-dead-pool* sidekick #x4000)))
           (set! v0-0
                 (when gp-2
@@ -118,7 +141,7 @@
        (set! (-> v1-105 param 4) (-> arg3 param 4))
        (set! (-> v1-105 param 5) (-> arg3 param 5))
        (set! (-> v1-105 param 6) (-> arg3 param 6))
-       (send-event-function (ppointer->process (-> self sidekick)) v1-105)))
+       (if (= *target* self) (send-event-function (ppointer->process (-> self sidekick)) v1-105))))
     (('shadow)
      (cond
        ((-> arg3 param 0)
@@ -172,7 +195,7 @@
     (set! (-> s5-0 angle)
           (if (not (logtest? (logior (-> self control status) (-> self control old-status)) (cshape-moving-flags onsurf))) 'air 'shove))
     (set! (-> s5-0 mask) (attack-mask attacker shove-back shove-up angle))
-    (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.1))
+    (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.1)))
     (go arg3 'shove s5-0)))
 
 (defun get-intersect-point ((arg0 vector) (arg1 touching-prims-entry) (arg2 control-info) (arg3 touching-shapes-entry))
@@ -227,7 +250,7 @@
                                     (-> self attack-info-rec invinc-time)
                                     (-> *TARGET-bank* hit-invulnerable-timeout))
                                   self)
-       (cpad-set-buzz! (-> *cpad-list* cpads 0) 0 255 (seconds 0.5))
+       (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 0 255 (seconds 0.5)))
        (sound-play "oof")
        #t)
       (else
@@ -307,7 +330,7 @@
                                        74
                                        #f
                                        (static-sound-name "spin-hit"))
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.2)))
+            (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.2))))
             ((= v1-5 'punch)
              (set! sv-128 (prims-touching? arg2 (-> self control) (the-as uint 64)))
              (cond
@@ -365,7 +388,7 @@
                                        23
                                        #f
                                        (static-sound-name "punch-hit"))
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1)))
+              (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))))
             ((= v1-5 'flip)
              (effect-control-method-12 (-> self skel effect)
                                        (-> self control unknown-symbol30)
@@ -373,7 +396,7 @@
                                        74
                                        #f
                                        (static-sound-name "punch-hit"))
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.1)))
+             (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.1))))
             ((= v1-5 'uppercut)
              (set! sv-176 (prims-touching? arg2 (-> self control) (the-as uint 64)))
              (cond
@@ -432,7 +455,7 @@
                                        23
                                        #f
                                        (static-sound-name "uppercut-hit"))
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1)))
+              (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))))
             ((or (= v1-5 'flop) (= v1-5 'flop-down))
              (effect-control-method-10 (-> self skel effect) 'group-flop-hit (the-as float -1.0) 23)
              (effect-control-method-10 (-> self skel effect) 'group-flop-hit (the-as float -1.0) 17)
@@ -442,7 +465,7 @@
                                        23
                                        #f
                                        (static-sound-name "flop-hit"))
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1)))
+            (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))))
             ((= v1-5 'flut-attack)
              (effect-control-method-12 (-> self skel effect)
                                        (-> self control unknown-symbol30)
@@ -450,7 +473,7 @@
                                        23
                                        #f
                                        (static-sound-name "punch-hit"))
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.2))))))
+              (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.2)))))))
       (the-as symbol gp-0))))
 
 (defbehavior target-apply-tongue target ((arg0 vector))
@@ -472,7 +495,18 @@
     #t))
 
 (defbehavior target-standard-event-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
+    (when (and (not *remote-stuck-released*)
+        (= (-> arg0 type) target) (!= arg0 *target*)
+        (process-close? (the-as process-drawable arg0) 4500.0)
+        )
+    (set! *remote-stuck-released* #t)
+    (set! *remote-stuck-release-timestamp* (+ (current-time) (seconds 0.5)))
+    (logclear! (-> *target* control root-prim collide-with) (collide-kind target-remote))
+    )
   (case arg2
+  (('taunt)
+     (ambient-hint-spawn (the string (-> arg3 param 0)) (-> self control trans) *entity-pool* 'ambient)
+     )
     (('attack 'attack-or-shove 'attack-invinc)
      (target-attacked arg2
                       (the-as attack-info (-> arg3 param 1))

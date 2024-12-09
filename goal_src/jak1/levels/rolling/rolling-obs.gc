@@ -931,5 +931,7 @@
     (set! (-> v1-2 close-fade-dist) 163840.0)
     (set! (-> v1-2 far-fade-dist) 245760.0)
     (set! (-> v1-2 waveform) (the-as ripple-wave-set ripple-for-rolling-water)))
-  (logclear! (-> this flags) (water-flags wt23))
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (logclear! (-> this flags tgt-idx) (water-flags wt23))
+    )
   (none))

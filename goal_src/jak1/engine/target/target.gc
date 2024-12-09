@@ -96,7 +96,10 @@
                  (not (and *cheat-mode* (cpad-hold? (-> self control unknown-cpad-info00 number) r2))))
           #t)
     (logior! (-> self control status) (cshape-moving-flags onsurf))
-    (go target-hit-ground 'stuck))
+    (if (and (!= self *target*) (target-has-mp-state? self 'target-tube)) ;; tube crash fix on remote usage during deload (this one might not be needed?)
+      (go target-jump (-> *TARGET-bank* tube-jump-height-min) (-> *TARGET-bank* tube-jump-height-max) (the-as surface #f))
+      (go target-hit-ground 'stuck)
+      ))
   (if (!= (-> self state-time) (current-time)) (slide-down-test))
   0
   (none))
@@ -397,7 +400,7 @@
         (target-effect-exit)
         (remove-exit)
         (go target-duck-walk))
-      (when (not (move-legs?))
+      (when (and (not (move-legs?)) (= self *target*))
         (target-effect-exit)
         (remove-exit)
         (go target-stance))
@@ -551,6 +554,7 @@
         (let ((f28-2 0.0)
               (f26-1 0.0))
           (loop
+ 			(if (!= self *target*) (set! (-> self control unknown-float01) 40960.0)) ;; set player xz velocity to max run speed for animation
             (let ((f22-0 (fmax -1.0 (fmin 1.0 (* 2.0 (-> self control unknown-float61)))))
                   (f24-0 (fmax -1.0 (fmin 1.0 (* 1.6 (-> self control unknown-float62))))))
               (set! f30-0
@@ -751,8 +755,9 @@
       (if (and (or (not (cpad-hold? (-> self control unknown-cpad-info00 number) l1 r1))
                    (logtest? (-> self state-flags) (state-flags prevent-duck)))
                (let ((v1-13 (ja-group)))
-                 (and (not (or (= v1-13 eichar-duck-roll-end-ja) (= v1-13 eichar-duck-roll-ja))) (can-exit-duck?))))
-        (go target-stance))
+                 (and (not (or (= v1-13 eichar-duck-roll-end-ja) (= v1-13 eichar-duck-roll-ja))) (can-exit-duck?)))
+               (= self *target*))
+      (go target-stance))
       (if (move-legs?) (go target-duck-walk))
       ;; og:preserve-this - High FPS Fix
       (when (and (recently-pressed? x) (can-jump? #f))
@@ -803,9 +808,10 @@
                    (logtest? (-> self state-flags) (state-flags prevent-duck))
                    (and (logtest? (-> self water flags) (water-flags wt10))
                         (>= (- (- (-> self control trans y) (- (-> self water base-height) (-> self water wade-height)))) 2457.6)))
-               (can-exit-duck?))
+               (can-exit-duck?)
+               (= self *target*))
         (go target-walk))
-      (if (not (move-legs?)) (go target-duck-stance))
+      (if (and (not (move-legs?)) (= self *target*)) (go target-duck-stance))
       ;; og:preserve-this - High FPS Fix
       (when (and (recently-pressed? x) (can-jump? #f))
         (if (= (-> *cpad-list* cpads (-> self control unknown-cpad-info00 number) stick0-speed) 0.0)
@@ -822,6 +828,7 @@
         ((ja-group? eichar-duck-stance-ja) (ja-channel-push! 1 (seconds 0.45)) (ja :group! eichar-duck-walk-ja :num! min))
         (else (ja-channel-push! 1 (seconds 0.1)) (ja :group! eichar-duck-walk-ja :num! min)))
       (loop
+		(if (!= self *target*) (set! (-> self control unknown-float01) 40960.0)) ;; set player xz velocity to max run speed for animation
         (if (= (-> self skel root-channel 0) (-> self skel channel)) (set! (-> self control unknown-surface00) *duck-mods*))
         (ja :num!
             (loop! (fmin 1.0
@@ -1157,7 +1164,7 @@
         ((= arg0 'stuck))
         ((let ((v1-4 (ja-group))) (or (= v1-4 eichar-launch-jump-ja) (= v1-4 eichar-launch-jump-loop-ja)))
          (effect-control-method-10 (-> self skel effect) 'group-blue-hit-ground-effect (the-as float 0.0) -1)
-         (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.3)))
+         (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.3))))
         (else
          (let ((f0-1 (vector-dot (-> self control dynam gravity-normal)
                                  (vector-! (new 'stack-no-clear 'vector) (-> self control unknown-vector52) (-> self control trans)))))
@@ -1204,8 +1211,10 @@
   :enter
     (behavior ()
       (set-time! (-> self state-time))
-      (target-start-attack)
-      (target-danger-set! 'spin #f)
+      (when (or (= self *target*) (target-is-interactive? self))
+        (target-start-attack)
+        (target-danger-set! 'spin #f)
+        )
       (set! (-> self control unknown-surface00) *attack-mods*)
       (set! (-> self water drip-mult) 4.0)
       (set! (-> self neck flex-blend) 0.0))
@@ -1224,7 +1233,7 @@
       (until (ja-done? 0)
         (when (and (= (-> self fact eco-type) (pickup-type eco-red)) (>= (-> self fact eco-level) 1.0))
           (effect-control-method-10 (-> self skel effect) 'group-red-eco-spinkick (ja-frame-num 0) 74)
-          (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))
+          (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
           (level-hint-spawn (text-id misty-eco-red-first-use) "sksp0072" (the-as entity #f) *entity-pool* (game-task none)))
         ;; og:preserve-this - High FPS Fix
         (if (and (recently-pressed? x) (can-jump? #f))
@@ -1275,8 +1284,10 @@
       (set! (-> self control unknown-surface00) *run-attack-mods*)
       (set! (-> *run-attack-mods* turnv) 655360.0)
       (set! (-> *run-attack-mods* turnvv) 655360.0)
-      (target-start-attack)
-      (target-danger-set! 'punch #f)
+ 	(when (or (= self *target*) (target-is-interactive? self))
+        (target-start-attack)
+        (target-danger-set! 'punch #f)
+        )
       (if (or (< (fabs (-> self control unknown-float62)) 0.3) (< 0.3 (fabs (-> self control unknown-float61))))
         (set! (-> self control unknown-float81) 1.0)))
   :exit
@@ -1328,7 +1339,7 @@
                          (-> self control transv)))
         (when (and (= (-> self fact eco-type) (pickup-type eco-red)) (>= (-> self fact eco-level) 1.0))
           (effect-control-method-10 (-> self skel effect) 'group-red-eco-spinkick (ja-frame-num 0) 23)
-          (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))
+         (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
           (level-hint-spawn (text-id misty-eco-red-first-use) "sksp0072" (the-as entity #f) *entity-pool* (game-task none)))))
   :code
     (behavior ()
@@ -1395,8 +1406,10 @@
     (behavior ((arg0 symbol))
       (set-time! (-> self state-time))
       (logclear! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
-      (target-start-attack)
-      (target-danger-set! 'spin-air #f)
+      (when (or (= self *target*) (target-is-interactive? self))
+        (target-start-attack)
+        (target-danger-set! 'spin-air #f)
+        )
       (set! (-> self control unknown-surface00) *jump-attack-mods*)
       (let ((f0-1 (vector-dot (-> self control dynam gravity-normal) (-> self control transv))))
         (cond
@@ -1453,7 +1466,7 @@
         (set! (-> self control dynam gravity-length) (-> self control unknown-dynamics00 gravity-length)))
       (when (and (= (-> self fact eco-type) (pickup-type eco-red)) (>= (-> self fact eco-level) 1.0))
         (effect-control-method-10 (-> self skel effect) 'group-red-eco-spinkick (ja-frame-num 0) 70)
-        (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))
+         (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
         (level-hint-spawn (text-id misty-eco-red-first-use) "sksp0072" (the-as entity #f) *entity-pool* (game-task none))))
   :code
     (behavior ((arg0 symbol))
@@ -1499,9 +1512,11 @@
   :enter
     (behavior ((arg0 float) (arg1 float))
       (set-time! (-> self state-time))
-      (target-start-attack)
-      (target-danger-set! 'uppercut #f)
-      (set! (-> self control unknown-surface00) *turn-around-mods*))
+	(when (or (= self *target*) (target-is-interactive? self))
+        (target-start-attack)
+        (target-danger-set! 'uppercut #f)
+        )
+     (set! (-> self control unknown-surface00) *turn-around-mods*))
   :exit target-exit
   :code
     (behavior ((arg0 float) (arg1 float))
@@ -1528,8 +1543,9 @@
       (init-var-jump arg0 arg1 (the-as vector #t) (the-as vector #f) (-> self control transv))
       (logclear! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
       (set! (-> self control unknown-surface00) *uppercut-jump-mods*)
-      (target-start-attack)
-      (target-danger-set! 'uppercut #f))
+      (when (or (= self *target*) (target-is-interactive? self))
+        (target-start-attack)
+        (target-danger-set! 'uppercut #f)))
   :exit target-exit
   :trans
     (behavior ()
@@ -1554,7 +1570,7 @@
       (mod-var-jump #t #t (cpad-hold? (-> self control unknown-cpad-info00 number) x) (-> self control transv))
       (when (and (= (-> self fact eco-type) (pickup-type eco-red)) (>= (-> self fact eco-level) 1.0))
         (effect-control-method-10 (-> self skel effect) 'group-red-eco-spinkick (ja-frame-num 0) 23)
-        (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
+       (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))))
       (if (and (= (-> self control unknown-symbol30) 'uppercut)
                (< (vector-dot (-> self control dynam gravity-normal) (-> self control transv)) -8192.0))
         (target-danger-set! 'harmless #f))
@@ -1638,7 +1654,7 @@
         (when gp-1
           (logior! (-> self control status) (cshape-moving-flags onsurf))
           (when (and (= (-> self fact eco-type) (pickup-type eco-red)) (>= (-> self fact eco-level) 1.0))
-            (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.5))
+             (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.5)))
             (effect-control-method-10 (-> self skel effect) 'group-red-eco-strike-ground (ja-frame-num 0) 0)
             (let ((s5-1 (process-spawn touch-tracker :init touch-tracker-init (-> self control trans) 4096.0 30 :to self)))
               (send-event (ppointer->process s5-1) 'event 'attack 'flop)
@@ -1657,10 +1673,11 @@
                                   'group-red-eco-spinkick
                                   (ja-frame-num 0)
                                   (if (rand-vu-percent? (the-as float 0.5)) 23 17))
-        (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
+        (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))))
       (when (and (not (-> self control unknown-symbol30)) (ja-group? eichar-flop-down-ja) (>= (ja-aframe-num 0) 8.0))
-        (target-start-attack)
-        (target-danger-set! 'flop #f)))
+        (when (or (= self *target*) (target-is-interactive? self))
+          (target-start-attack)
+          (target-danger-set! 'flop #f))))
   :code
     (behavior ((arg0 float) (arg1 float) (arg2 float))
       (ja-channel-set! 2)
@@ -1679,7 +1696,7 @@
                         (the-as float 40960.0))))
       (set! (-> self control dynam gravity-length) (-> self control unknown-dynamics00 gravity-length))
       (set! (-> self control dynam gravity quad) (-> self control unknown-dynamics00 gravity quad))
-      (target-danger-set! 'flop-down #f)
+      (if (or (= self *target*) (target-is-interactive? self)) (target-danger-set! 'flop-down #f))
       (ja :group! eichar-flop-down-loop-ja :num! min)
       (ja :chan 1 :group! eichar-moving-flop-down-loop-ja :num! min)
       (let ((f30-0 1.0))
@@ -1745,7 +1762,7 @@
                               (vector-! (new 'stack-no-clear 'vector) (-> self control unknown-vector111) (-> self control trans)))))
         (if (< (-> *TARGET-bank* fall-far) f0-1) (go target-hit-ground-hard f0-1)))
       (target-land-effect)
-      (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.1))
+      (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.1)))
       (set-time! (-> self state-time))
       (set! (-> self control unknown-uint20) (the-as uint arg0))
       (set-forward-vel (the-as float 0.0))
@@ -1763,7 +1780,7 @@
                                   'group-red-eco-spinkick
                                   (ja-frame-num 0)
                                   (if (rand-vu-percent? (the-as float 0.5)) 23 17))
-        (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
+        (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))))
       (let ((v1-33 (ja-group)))
         (if (and (or (= v1-33 eichar-flop-down-land-ja) (= v1-33 eichar-moving-flop-down-land-ja)) (>= (ja-aframe-num 0) 28.0))
           (logior! (-> *flop-land-mods* flags) (surface-flags allow-edge-grab))))
@@ -1874,8 +1891,10 @@
         (until (or (ja-max? 0) (and (>= (ja-aframe-num 0) 4.0) (logtest? (-> self control status) (cshape-moving-flags onsurf))))
           (when (and (>= (ja-aframe-num 0) 3.0) (not (-> self control unknown-symbol30)))
             (set! (-> self event-hook) target-dangerous-event-handler)
-            (target-start-attack)
-            (target-danger-set! 'flip #f))
+            (when (or (= self *target*) (target-is-interactive? self))
+              (target-start-attack)
+              (target-danger-set! 'flip #f)
+              ))         
           (compute-alignment! (-> self align))
           (if (not (ja-max? 0))
             (align! (-> self align)

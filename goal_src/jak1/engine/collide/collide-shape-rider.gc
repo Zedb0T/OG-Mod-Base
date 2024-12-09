@@ -89,11 +89,13 @@
   "Add a rider to this platform."
   (let ((gp-0 (the-as collide-sticky-rider #f)))
     (cond
-      ((< (-> this num-riders) (-> this allocated-riders))
+      ((or (< (+ (-> this num-riders) 1) (-> this allocated-riders)) (= (the-as target (handle->process arg0)) *target*))
        (set! gp-0 (-> this rider (-> this num-riders)))
        (+! (-> this num-riders) 1)
        (let ((v1-6 gp-0)) (set! (-> v1-6 rider-handle) (the-as handle arg0)) (set! (-> v1-6 sticky-prim) #f)))
-      (else (format 0 "ERROR: Exeeded max number of riders!~%")))
+      (else 
+        (if (= (the-as target (handle->process arg0)) *target*)
+          (format 0 "ERROR: Exeeded max number of riders!~%"))))
     gp-0))
 
 (defmethod detect-riders! ((this collide-shape))
@@ -240,7 +242,7 @@
 
 (defmethod pull-rider! ((this collide-shape) (arg0 pull-rider-info))
   "Move a rider."
-  (local-vars (at-0 int) (sv-160 (function collide-shape-moving float collide-kind none)))
+  (local-vars (at-0 int) (sv-160 (function collide-shape-moving float collide-kind collide-cache collide-work none)))
   (rlet ((vf0 :class vf)
          (vf1 :class vf)
          (vf2 :class vf))
@@ -258,7 +260,7 @@
                (set! sv-160 (method-of-object s0-0 fill-cache-for-shape!))
                (let ((a1-3 (+ 8192.0 (vector-length s3-0)))
                      (a2-0 (-> gp-0 root-prim collide-with)))
-                 (sv-160 s0-0 a1-3 a2-0)))
+                 (sv-160 s0-0 a1-3 a2-0 *collide-cache* *collide-work*)))
              (set! (-> this root-prim prim-core collide-as) s1-0))
            (let ((s2-1 (new 'stack-no-clear 'vector)))
              (set! (-> s2-1 quad) (-> s3-0 quad))

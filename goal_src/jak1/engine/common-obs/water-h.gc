@@ -113,8 +113,8 @@
    (swim-height   meters)
    (bottom-height meters)
    (attack-event  symbol)
-   (target        handle)
-   (flags         water-flags))
+   (target        (array handle))
+   (flags         (array water-flags)))
   (:state-methods
    water-vol-idle
    water-vol-startup)

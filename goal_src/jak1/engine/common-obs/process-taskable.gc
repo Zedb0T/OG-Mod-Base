@@ -191,6 +191,7 @@
     (behavior ()
       (cond
         ((nonzero? (-> self cell-for-task))
+		 (cancel-current-spool-anim)
          (let ((gp-0 (handle->process (-> self cell-x))))
            (when gp-0
              (send-event *target* 'trans 'reset)
@@ -199,6 +200,9 @@
          (format #t "ERROR<GMJ>: ~S no cell spawned~%" (-> self name))
          (send-event *target* 'get-pickup 6 (the float (-> self cell-for-task))))
         (else
+          ;;Teamruns fix for multiplayer crashes just before getting the cell (happens if spool anim is playing on buy)
+          (close-specific-task! (current-task (-> self tasks)) (task-status need-resolution))
+          (go-virtual idle)
          (format #t
                  "ERROR<GMJ>: ~S got into give-cell with give-cell == #f task = ~S~%"
                  (-> self name)
@@ -595,12 +599,14 @@
                   (let ((v1-58 gp-1)) (set! (-> v1-58 height) (the float 60)))
                   (let ((v1-59 gp-1)) (set! (-> v1-59 scale) 0.9))
                   (set! (-> gp-1 flags) (font-flags shadow kerning middle-vert large))
-                  (print-game-text (lookup-text! *common-text* (-> self talk-message) #f) gp-1 #f 128 22))
-                (when (and (cpad-pressed? 0 circle) (process-grab? *target*))
-                  (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons circle))
-                  (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons circle))
-                  (send-event *target* 'trans 'save (-> self old-target-pos))
-                  (go-virtual play-anim))))))))
+                  (if *allow-cell-pickup?* (print-game-text (lookup-text! *common-text* (-> self talk-message) #f) gp-1 #f 128 22)))
+                (if *allow-cell-pickup?*
+                  (when (and (cpad-pressed? 0 circle) (process-grab? *target*))
+                    (safe-deactivate-remote-cell)
+                    (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons circle))
+                    (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons circle))
+                    (send-event *target* 'trans 'save (-> self old-target-pos))
+                    (go-virtual play-anim)))))))))
       (if (= (-> *level* loading-level) (-> *level* level-default)) (process-taskable-method-33 self))
       (draw-npc-shadow self)
       (when (and (-> self been-kicked)

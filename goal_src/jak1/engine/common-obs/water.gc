@@ -912,54 +912,57 @@
   (none))
 
 (defmethod on-exit-water ((this water-vol))
-  (when (handle->process (-> this target))
-    (let ((v1-7 (-> (the-as target (-> this target process 0)) water)))
-      (logclear! (-> v1-7 flags) (water-flags wt01 wt02 wt03 wt08 wt17 wt18 wt19 wt20 wt21 wt23 wt24 wt25 wt26))
-      (set! (-> v1-7 volume) (the-as handle #f)))
-    (set! (-> this target) (the-as handle #f))
-    (iterate-process-tree *entity-pool*
-                          (lambda ((arg0 water-vol))
-                            (with-pp
-                              (if (and (type-type? (-> arg0 type) water-vol) (!= arg0 pp)) (send-event arg0 'update))))
-                          *null-kernel-context*)
-    (process-entity-status! this (entity-perm-status bit-3) #f))
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (when (handle->process (-> this target tgt-idx))
+      (let ((v1-7 (-> (the-as target (-> this target tgt-idx process 0)) water)))
+        (logclear! (-> v1-7 flags) (water-flags wt01 wt02 wt03 wt08 wt17 wt18 wt19 wt20 wt21 wt23 wt24 wt25 wt26))
+        (set! (-> v1-7 volume) (the-as handle #f)))
+      (set! (-> this target tgt-idx) (the-as handle #f))
+      (iterate-process-tree *entity-pool*
+                            (lambda ((arg0 water-vol))
+                              (with-pp
+                                (if (and (type-type? (-> arg0 type) water-vol) (!= arg0 pp)) (send-event arg0 'update))))
+                            *null-kernel-context*)
+      (process-entity-status! this (entity-perm-status bit-3) #f)))
   0
   (none))
 
 (defmethod update! ((this water-vol))
-  (cond
-    ((handle->process (-> this target))
-     (cond
-       ((not (point-in-vol? (-> this vol) (-> (the-as target (-> this target process 0)) control trans))) (on-exit-water this))
-       (else
-        (let ((v1-15 (-> (the-as target (-> this target process 0)) water)))
-          (when (and (logtest? (water-flags wt19) (-> this flags))
-                     (logtest? (-> v1-15 flags) (water-flags wt09))
-                     (>= (-> v1-15 surface-height) (-> v1-15 bottom 0 y)))
-            (let ((v1-18 (-> this attack-event)))
-              (case v1-18
-                ((#f))
-                (('heat) (send-event (handle->process (-> this target)) 'heat (* 10.0 (seconds-per-frame))))
-                (('drown-death 'lava 'dark-eco-pool)
-                 (if (send-event (handle->process (-> this target)) 'attack-invinc #f (static-attack-info ((mode v1-18))))
-                   (send-event this 'notify 'attack)))
-                (else
-                 (if (send-event (handle->process (-> this target)) 'attack #f (static-attack-info ((mode v1-18))))
-                   (send-event this 'notify 'attack))))))))))
-    ((and *target*
-          (and (not (handle->process (-> *target* water volume))) (point-in-vol? (-> this vol) (-> *target* control trans))))
-     (let ((s5-0 (-> *target* water)))
-       (process-entity-status! this (entity-perm-status bit-3) #t)
-       (set! (-> s5-0 volume) (process->handle this))
-       (set! (-> this target) (process->handle *target*))
-       (logior! (-> s5-0 flags) (water-flags wt01))
-       (set! (-> s5-0 base-height) (-> this water-height))
-       (set! (-> s5-0 ocean-offset) 0.0)
-       (logior! (-> s5-0 flags) (-> this flags))
-       (if (< 0.0 (-> this wade-height)) (set! (-> s5-0 wade-height) (-> this wade-height)))
-       (if (< 0.0 (-> this swim-height)) (set! (-> s5-0 swim-height) (-> this swim-height)))
-       (if (< 0.0 (-> this bottom-height)) (set! (-> s5-0 bottom-height) (-> this bottom-height)))
-       (set-zero! (-> s5-0 bob)))))
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (let ((tgt (get-target tgt-idx)))
+      (cond
+        ((handle->process (-> this target tgt-idx))
+        (cond
+          ((not (point-in-vol? (-> this vol) (-> (the-as target (-> this target tgt-idx process 0)) control trans))) (on-exit-water this))
+          (else
+            (let ((v1-15 (-> (the-as target (-> this target tgt-idx process 0)) water)))
+              (when (and (logtest? (water-flags wt19) (-> this flags tgt-idx))
+                        (logtest? (-> v1-15 flags) (water-flags wt09))
+                        (>= (-> v1-15 surface-height) (-> v1-15 bottom 0 y)))
+                (let ((v1-18 (-> this attack-event)))
+                  (case v1-18
+                    ((#f))
+                    (('heat) (send-event (handle->process (-> this target tgt-idx)) 'heat (* 10.0 (seconds-per-frame))))
+                    (('drown-death 'lava 'dark-eco-pool)
+                    (if (send-event (handle->process (-> this target tgt-idx)) 'attack-invinc #f (static-attack-info ((mode v1-18))))
+                      (send-event this 'notify 'attack)))
+                    (else
+                    (if (send-event (handle->process (-> this target tgt-idx)) 'attack #f (static-attack-info ((mode v1-18))))
+                      (send-event this 'notify 'attack))))))))))
+        ((and tgt
+              (and (not (handle->process (-> tgt water volume))) (point-in-vol? (-> this vol) (-> tgt control trans))))
+        (let ((s5-0 (-> tgt water)))
+          (process-entity-status! this (entity-perm-status bit-3) #t)
+          (set! (-> s5-0 volume) (process->handle this))
+          (set! (-> this target tgt-idx) (process->handle tgt))
+          (logior! (-> s5-0 flags) (water-flags wt01))
+          (set! (-> s5-0 base-height) (-> this water-height))
+          (set! (-> s5-0 ocean-offset) 0.0)
+          (logior! (-> s5-0 flags) (-> this flags tgt-idx))
+          (if (< 0.0 (-> this wade-height)) (set! (-> s5-0 wade-height) (-> this wade-height)))
+          (if (< 0.0 (-> this swim-height)) (set! (-> s5-0 swim-height) (-> this swim-height)))
+          (if (< 0.0 (-> this bottom-height)) (set! (-> s5-0 bottom-height) (-> this bottom-height)))
+          (set-zero! (-> s5-0 bob)))))))
   0
   (none))
 
@@ -1012,7 +1015,11 @@
   (set! (-> this vol) (new 'process 'vol-control this))
   (logior! (-> this vol flags) 3)
   (set! (-> this bottom-height) 32768.0)
-  (set! (-> this target) (the-as handle #f))
+  (set! (-> this target) (new 'global 'boxed-array handle MAX_MULTIPLAYER_COUNT))
+  (set! (-> this flags) (the-as (array water-flags) (new 'global 'boxed-array uint32 MAX_MULTIPLAYER_COUNT)))
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (set! (-> this target tgt-idx) (the-as handle #f))
+  )
   (set! sv-16 (new 'static 'res-tag))
   (let ((v1-8 (the-as (pointer float)
                       ((method-of-type res-lump get-property-data)
@@ -1027,14 +1034,17 @@
       (set! (-> this water-height) (-> v1-8 0))
       (set! (-> this wade-height) (-> v1-8 1))
       (set! (-> this swim-height) (-> v1-8 2))
-      (if (>= (-> sv-16 elt-count) (the-as uint 4)) (set! (-> this flags) (the-as water-flags (the int (-> v1-8 3)))))
+      (if (>= (-> sv-16 elt-count) (the-as uint 4)) 
+        (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+          (set! (-> this flags tgt-idx) (the-as water-flags (the int (-> v1-8 3))))))
       (if (>= (-> sv-16 elt-count) (the-as uint 5)) (set! (-> this bottom-height) (-> v1-8 4)))))
-  (logior! (-> this flags) (water-flags wt23))
-  (cond
-    ((zero? (-> this flags))
-     (if (< 0.0 (-> this wade-height)) (logior! (-> this flags) (water-flags wt02)))
-     (if (< 0.0 (-> this swim-height)) (logior! (-> this flags) (water-flags wt03))))
-    (else))
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (set! (-> this flags tgt-idx) (logior (water-flags wt23) (-> this flags tgt-idx)))
+    (cond
+      ((zero? (-> this flags tgt-idx))
+      (if (< 0.0 (-> this wade-height)) (logior! (-> this flags tgt-idx) (water-flags wt02)))
+      (if (< 0.0 (-> this swim-height)) (logior! (-> this flags tgt-idx) (water-flags wt03))))
+      (else)))
   (none))
 
 (defmethod water-vol-method-22 ((this water-vol))
@@ -1059,3 +1069,4 @@
   (water-vol-method-22 this)
   (go (method-of-object this water-vol-startup))
   (none))
+

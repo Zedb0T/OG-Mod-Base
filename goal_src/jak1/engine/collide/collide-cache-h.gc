@@ -2,11 +2,12 @@
 (in-package goal)
 (bundles "ENGINE.CGO" "GAME.CGO")
 (require "kernel-defs.gc")
-(define-extern collide-cache-using-line-sphere-test (function vector symbol))
+(declare-type collide-work structure)
+(define-extern collide-cache-using-line-sphere-test (function vector collide-work symbol))
 
-(define-extern collide-cache-using-y-probe-test (function vector symbol))
+(define-extern collide-cache-using-y-probe-test (function vector collide-work symbol))
 
-(define-extern collide-cache-using-box-test (function vector symbol))
+(define-extern collide-cache-using-box-test (function vector collide-work symbol))
 
 ;; DECOMP BEGINS
 
@@ -93,19 +94,19 @@
   (:methods
    (debug-draw (_type_) none)
    (fill-and-probe-using-line-sphere (_type_ vector vector float collide-kind process collide-tri-result pat-surface) float)
-   (fill-and-probe-using-spheres (_type_ collide-using-spheres-params) symbol)
-   (fill-and-probe-using-y-probe (_type_ vector float collide-kind process-drawable collide-tri-result pat-surface) float)
-   (fill-using-bounding-box (_type_ bounding-box collide-kind process-drawable pat-surface) none)
-   (fill-using-line-sphere (_type_ vector vector float collide-kind process-drawable pat-surface) none)
-   (fill-using-spheres (_type_ collide-using-spheres-params) none)
-   (fill-using-y-probe (_type_ vector float collide-kind process-drawable pat-surface) none)
+   (fill-and-probe-using-spheres (_type_ collide-using-spheres-params collide-work) symbol)
+   (fill-and-probe-using-y-probe (_type_ vector float collide-kind process-drawable collide-tri-result pat-surface collide-work) float)
+   (fill-using-bounding-box (_type_ bounding-box collide-kind process-drawable pat-surface collide-work) none)
+   (fill-using-line-sphere (_type_ vector vector float collide-kind process-drawable pat-surface collide-work) none)
+   (fill-using-spheres (_type_ collide-using-spheres-params collide-work) none)
+   (fill-using-y-probe (_type_ vector float collide-kind process-drawable pat-surface collide-work) none)
    (initialize (_type_) none)
    (probe-using-line-sphere (_type_ vector vector float collide-kind collide-tri-result pat-surface) float)
    (probe-using-spheres (_type_ collide-using-spheres-params) symbol)
    (probe-using-y-probe (_type_ vector float collide-kind collide-tri-result pat-surface) float)
-   (fill-from-background (_type_ (function bsp-header int collide-list none) (function collide-cache object none)) none)
+   (fill-from-background (_type_ (function bsp-header int collide-list collide-work none) (function collide-cache object none) (collide-work)) none)
    (fill-from-foreground-using-box (_type_) none)
-   (fill-from-foreground-using-line-sphere (_type_) none)
+   (fill-from-foreground-using-line-sphere (_type_ collide-work) none)
    (fill-from-foreground-using-y-probe (_type_) none)
    (fill-from-water (_type_ water-control) none)
    (load-mesh-from-spad-in-box (_type_ collide-frag-mesh) none)
@@ -130,13 +131,21 @@
    (inv-mat              matrix :inline)))
 
 (define-perm *collide-work* collide-work (new 'global 'collide-work))
+(define *edge-collide-work-list* (new 'global 'boxed-array collide-work MAX_MULTIPLAYER_COUNT))
+(dotimes (idx (-> *edge-collide-work-list* length))
+  (set! (-> *edge-collide-work-list* idx) (new 'global 'collide-work))
+  )
 
 ;; og:preserve-this
-(defglobalconstant BIG_COLLIDE_CACHE_SIZE 5000)
+(defglobalconstant BIG_COLLIDE_CACHE_SIZE 10000)
 
 (define-perm *collide-cache* collide-cache (new 'global 'collide-cache))
 
-(#when PC_PORT
+(define *edge-collide-cache-list* (new 'global 'boxed-array collide-cache MAX_MULTIPLAYER_COUNT))
+(dotimes (idx (-> *edge-collide-cache-list* length))
+  (set! (-> *edge-collide-cache-list* idx) (new 'global 'collide-cache))
+  )
+  (#when PC_PORT
   ;; disgusting hack to let us overflow the collide cache up to 5k triangles
   (malloc 'global (* (size-of collide-cache-tri) BIG_COLLIDE_CACHE_SIZE))
   ;; but start it at the default.

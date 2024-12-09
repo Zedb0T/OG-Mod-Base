@@ -1004,8 +1004,10 @@
     (set! (-> this draw ripple) v1-2)
     (set! (-> v1-2 global-scale) 2048.0)
     (set! (-> v1-2 waveform) ripple-for-ogre-lava))
-  (logclear! (-> this flags) (water-flags wt23))
-  (logior! (-> this flags) (water-flags wt25))
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (logclear! (-> this flags tgt-idx) (water-flags wt23))
+    (logior! (-> this flags tgt-idx) (water-flags wt25))
+    )
   (set! (-> this attack-event) 'lava)
   (none))
 

@@ -244,6 +244,23 @@
    (update-mouse-controls! (_type_) none)
    (debug-font-scale-factor (_type_) float)))
 
+(deftype teamruns-pc-settings (basic)
+  ((version uint64)
+   (ui-teams int32)
+   (ui-timer int32)
+   (ui-splits int32)
+   (ui-names int32)
+    )
+  (:methods
+    (new (symbol type) _type_)
+    (reset (_type_) none)
+    (read-from-file (_type_ string) symbol)
+    (commit-to-file (_type_) none)
+    (write-to-file (_type_ string) symbol)
+    (load-settings (_type_) int)
+    )
+  )
+
 (defconstant PC_TEMP_STRING_LEN 1024)
 
 (define *pc-temp-string* (new 'global 'string PC_TEMP_STRING_LEN (the string #f)))

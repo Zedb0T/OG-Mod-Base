@@ -43,7 +43,7 @@
    (no-look-around-wait time-frame)
    (burn-proc           handle))
   (:methods
-   (find-edge-grabs! (_type_ collide-cache) object))
+   (find-edge-grabs! (_type_ collide-cache int) object))
   (:states
    target-attack
    (target-attack-air symbol)

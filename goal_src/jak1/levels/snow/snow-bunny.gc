@@ -338,7 +338,8 @@
                                                 (collide-kind background)
                                                 (-> this collide-info process)
                                                 s4-0
-                                                (new 'static 'pat-surface :noentity #x1))))
+                                                (new 'static 'pat-surface :noentity #x1)
+                                                *collide-work*)))
         ;; og:preserve-this yes this is bugged... again
         (if (or (< f0-2 0.0) (= (logand #b111000 (the-as int (-> s4-0 pat))) 8)) (return #f))
         (set! (-> s5-0 y) (- (-> s5-0 y) (* f0-2 f30-0)))))

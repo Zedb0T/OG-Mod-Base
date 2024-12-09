@@ -1048,7 +1048,7 @@
   (sidekick-hint-rounddoor #x23c)
   (sidekick-hint-lurkerm #x23d)
   (sidekick-hint-tower #x23e)
-  
+
   (sidekick-reminder-fish #x240)
 
   (firecanyon-need-cells #x24f)
@@ -11832,7 +11832,7 @@
   (ground-object 11) ;; object, like darkecobarray, platforms
   (target-attack 12) ;; all target attacks
   (mother-spider 13)
-  (cak-14 14) ;; unused
+  (target-remote 14) ;; unused
   (blue-eco-suck 15) ;; manipy, orb-cache-top,
   (unknown-16 16)
   (unknown-17 17)
@@ -17780,9 +17780,9 @@
 
 ;; - Functions
 
-(define-extern collide-cache-using-line-sphere-test (function vector symbol))
-(define-extern collide-cache-using-y-probe-test (function vector symbol))
-(define-extern collide-cache-using-box-test (function vector symbol))
+(define-extern collide-cache-using-line-sphere-test (function vector collide-work symbol))
+(define-extern collide-cache-using-y-probe-test (function vector collide-work symbol))
+(define-extern collide-cache-using-box-test (function vector collide-work symbol))
 (define-extern draw-node-cull (function pointer pointer (inline-array draw-node) int none))
 
 
