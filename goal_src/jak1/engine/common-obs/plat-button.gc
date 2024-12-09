@@ -57,7 +57,8 @@
                      (the-as touching-shapes-entry (-> block param 0))
                      (-> self root)
                      (the-as uint 1))
-                    (or (not (-> self should-grab-player?)) (set! (-> self grab-player?) (process-grab? *target*))))
+                    (or (!= (-> proc type) target) (= (the-as target proc) *target*) (target-is-interactive? (the-as target proc)))
+                  (or (not *enable-ingame-cutscenes?*) (not (-> self should-grab-player?)) (set! (-> self grab-player?) (process-grab? *target*))))
              (go-virtual plat-button-pressed))))))
   :code
     (behavior ()
@@ -125,8 +126,10 @@
     (behavior ()
       (set-time! (-> self state-time))
       (process-entity-status! self (entity-perm-status bit-3) #t)
+		(when (process-close? (the-as process-drawable self) 110000.0) ;; only place where this really affects jak (that I noticed) is citadel elevator
       (plat-button-camera-on)
-      (set-setting! 'allow-look-around #f 0.0 0))
+      (set-setting! 'allow-look-around #f 0.0 0)
+        ))
   :exit
     (behavior ()
       (plat-button-camera-off)
@@ -176,8 +179,10 @@
     (behavior ()
       (set-time! (-> self state-time))
       (process-entity-status! self (entity-perm-status bit-3) #t)
+		(when (process-close? (the-as process-drawable self) 110000.0) ;; only place where this really affects jak (that I noticed) is citadel elevator
       (plat-button-camera-on)
-      (set-setting! 'allow-look-around #f 0.0 0))
+            (set-setting! 'allow-look-around #f 0.0 0)
+      ))
   :exit
     (behavior ()
       (plat-button-camera-off)

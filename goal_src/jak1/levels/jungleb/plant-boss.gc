@@ -4,6 +4,8 @@
 (require "levels/jungleb/aphid.gc")
 (declare-type plant-boss-leaf process-drawable)
 
+
+
 ;; DECOMP BEGINS
 
 (deftype plant-boss (process-drawable)
@@ -40,6 +42,7 @@
    plant-boss-spawn
    plant-boss-vulnerable))
 
+
 (defmethod relocate ((this plant-boss) (offset int))
   (if (nonzero? (-> this neck)) (&+! (-> this neck) offset))
   (if (nonzero? (-> this body)) (&+! (-> this body) offset))
@@ -64,6 +67,7 @@
    (plant-boss-vine-hit basic)
    plant-boss-vine-idle))
 
+
 (deftype plant-boss-leaf (process-drawable)
   ((root             collide-shape-moving :override)
    (side             int32)
@@ -76,6 +80,7 @@
    (plant-boss-leaf-idle symbol)
    (plant-boss-leaf-open symbol)
    (plant-boss-leaf-open-idle symbol)))
+
 
 (defskelgroup *plant-boss-sg*
   plant-boss
@@ -357,8 +362,7 @@
     (behavior ((arg0 symbol))
       (when (not arg0)
         (let ((f30-0 (rand-vu-float-range (the-as float 0.0) (the-as float 1.0))))
-          (suspend-for (the int (* 300.0 f30-0))
-            (ja :num! (loop!))))
+          (suspend-for (the int (* 300.0 f30-0)) (ja :num! (loop!))))
         (ja-channel-push! 1 (seconds 0.25))
         (ja-no-eval :group! plant-boss-vine-die-ja :num! (seek!) :frame-num 0.0)
         (until (ja-done? 0)
@@ -385,7 +389,7 @@
 (defstate plant-boss-root-die (plant-boss-arm)
   :code
     (behavior ((arg0 symbol))
-      (if (not arg0) (suspend-for (seconds 4)   (+! (-> self root trans z) (* -4096.0 (seconds-per-frame))))))
+      (if (not arg0) (suspend-for (seconds 4) (+! (-> self root trans z) (* -4096.0 (seconds-per-frame))))))
   :post ja-post)
 
 (defbehavior plant-boss-arm-init plant-boss-arm ((arg0 vector) (arg1 float) (arg2 int))
@@ -685,9 +689,11 @@
         (ja-no-eval :group! plant-boss-main-initial-ja :num! (seek!) :frame-num 0.0)
         (until (ja-done? 0)
           (seek! (-> self energy) (the-as float 0.25) (seconds-per-frame))
-          (if (and (and *target* (>= 245760.0 (vector-vector-distance (-> self root trans) (-> *target* control trans))))
-                   (< (fabs (- (-> (target-pos 0) y) (-> self root trans y))) 40960.0))
-            (go plant-boss-intro))
+          (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+            (let ((target (get-interactive-target tgt-idx)))
+              (if (and (and target (>= 245760.0 (vector-vector-distance (-> self root trans) (-> target control trans))))
+                      (< (fabs (- (-> (target-pos 0) y) (-> self root trans y))) 40960.0))
+                (go plant-boss-intro))))
           (suspend)
           (ja :num! (seek!)))))
   :post ja-post)
@@ -696,7 +702,7 @@
   :code
     (behavior ()
       (set-setting! 'music 'danger 0.0 0)
-      (send-event *target* 'reset-pickup 'eco)
+      (if (= (get-closest-interactive-target self) *target*) (send-event *target* 'reset-pickup 'eco))
       (let ((v1-9 (-> self entity extra perm)))
         (logior! (-> v1-9 status) (entity-perm-status user-set-from-cstage))
         (b! (zero? (-> v1-9 user-int8 2)) cfg-5 :delay (empty-form)))
@@ -712,7 +718,7 @@
       (set-mode! (-> self body) (joint-mod-handler-mode world-look-at))
       (b! #t cfg-17 :delay (nop!))
       (label cfg-5)
-      (if (not (handle->process (-> self cam-tracker)))
+      (if (and *enable-ingame-cutscenes?* (not (handle->process (-> self cam-tracker))))
         (set! (-> self cam-tracker)
               (ppointer->handle (process-spawn camera-tracker
                                                :init
@@ -769,19 +775,21 @@
       (set! (-> self neck flex-blend) 1.0))
   :trans
     (behavior ()
-      (let ((f30-0 (vector-vector-distance (target-pos 0) (-> self root trans))))
-        (if (< 409600.0 f30-0) (go plant-boss-far-idle))
-        (if (and (< f30-0 143360.0)
-                 (time-elapsed? (-> self state-time)
-                                (cond
-                                  ((>= (-> self try) 15) 1500)
-                                  ((>= (-> self try) 10) 1200)
-                                  ((>= (-> self try) 5) 900)
-                                  (else 600)))
-                 *target*
-                 (not (logtest? (-> *target* state-flags)
-                                (state-flags being-attacked invulnerable timed-invulnerable invuln-powerup do-not-notice dying))))
-          (go plant-boss-attack 1))))
+      (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+        (let ((target (get-interactive-target tgt-idx)))
+          (let ((f30-0 (vector-vector-distance (remote-target-pos 0 target) (-> self root trans))))
+            (if (and (= target *target*) (< 409600.0 f30-0)) (go plant-boss-far-idle))
+            (if (and (< f30-0 143360.0)
+                    (time-elapsed? (-> self state-time)
+                                    (cond
+                                      ((>= (-> self try) 15) 1500)
+                                      ((>= (-> self try) 10) 1200)
+                                      ((>= (-> self try) 5) 900)
+                                      (else 600)))
+                    target
+                    (not (logtest? (-> target state-flags)
+                                    (state-flags being-attacked invulnerable timed-invulnerable invuln-powerup do-not-notice dying))))
+              (go plant-boss-attack 1))))))
   :code
     (behavior ()
       (cond
@@ -880,7 +888,8 @@
                 (the-as collide-shape-moving (-> self root))
                 (the-as uint 1))
            (send-event proc 'shove (-> block param 0) (static-attack-info ((shove-up (meters 2)) (shove-back (meters 6)))))
-           (go plant-boss-hit (the-as symbol (-> block param 1)))))
+           (runs-on-new-boss-phase (the-as string (-> self name)) (- (-> self health) 1.0) (symbol->string (-> *level* level (-> self draw level-index) name)) 0.0)
+         (go plant-boss-hit (the-as symbol (-> block param 1)))))
         (else (plant-boss-generic-event-handler proc argc message block))))
   :enter
     (behavior ()
@@ -1197,9 +1206,7 @@
     (behavior ()
       (ja-channel-set! 1)
       (ja :group! plant-boss-main-die-ja :num! max)
-      (suspend-for (seconds 5)
-        (transform-post)
-        (do-push-aways! (-> self root)))
+      (suspend-for (seconds 5) (transform-post) (do-push-aways! (-> self root)))
       (loop
         (logior! (-> self mask) (process-mask sleep))
         (suspend))))

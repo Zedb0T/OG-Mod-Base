@@ -512,6 +512,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-once *pc-settings* (new 'global 'pc-settings-jak1))
+(define-once *teamruns-pc-settings* (new 'global 'teamruns-pc-settings))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; other

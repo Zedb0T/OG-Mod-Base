@@ -529,8 +529,9 @@
           (let ((gp-1 (cond
                         (arg0 (the-as int #f))
                         (else
-                         (ambient-hint-spawn "gamcam10" (the-as vector #f) *entity-pool* 'camera)
-                         (ppointer->handle (process-spawn pov-camera (-> self root trans) *beachcam-sg* (-> self name) 0 #f '() :to self))))))
+(when *enable-ingame-cutscenes?*
+                          (ambient-hint-spawn "gamcam10" (the-as vector #f) *entity-pool* 'camera)
+                          (ppointer->handle (process-spawn pov-camera (-> self root trans) *beachcam-sg* (-> self name) 0 #f '() :to self)))))))
             (process-drawable-birth-fuel-cell (the-as entity #f) (the-as vector #f) #f)
             (while (handle->process (the-as handle gp-1))
               (suspend)))
@@ -867,23 +868,24 @@
   :code
     (behavior ()
       (local-vars (v1-25 symbol))
-      (process-spawn camera-tracker
-                     :init
-                     camera-tracker-init
-                     (lambda :behavior camera-tracker ()
-                       (while (not (process-grab? *target*))
-                         (suspend))
-                       (camera-change-to "camera-135" 0 #f)
-                       (camera-look-at (the-as pair (ppointer->process (-> self parent))) (the-as uint 9))
-                       (suspend-for (seconds 4))
-                       (while (not (process-release? (handle->process (-> self grab-target))))
-                         (suspend))
-                       (camera-look-at (the-as pair *target*) (the-as uint 0))
-                       (send-event *camera* 'blend-from-as-fixed)
-                       (camera-change-to (the-as string 'base) 75 #f)
-                       (none))
-                     :to
-                     self)
+      (when *enable-ingame-cutscenes?*
+        (process-spawn camera-tracker
+                      :init
+                      camera-tracker-init
+                      (lambda :behavior camera-tracker ()
+                        (while (not (process-grab? *target*))
+                          (suspend))
+                        (camera-change-to "camera-135" 0 #f)
+                        (camera-look-at (the-as pair (ppointer->process (-> self parent))) (the-as uint 9))
+                        (suspend-for (seconds 4))
+                        (while (not (process-release? (handle->process (-> self grab-target))))
+                          (suspend))
+                        (camera-look-at (the-as pair *target*) (the-as uint 0))
+                        (send-event *camera* 'blend-from-as-fixed)
+                        (camera-change-to (the-as string 'base) 75 #f)
+                        (none))
+                      :to
+                      self))
       (close-specific-task! (game-task beach-flutflut) (task-status need-reminder))
       (loop
         (vector-float*! (-> self root transv) (-> self dir) (-> self vel))

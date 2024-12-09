@@ -1866,7 +1866,7 @@
  "nav/navigate-h.gc"
  "load/load-dgo.gc"
  "load/ramdisk.gc"
- "sound/gsound.gc"
+
  "math/transformq.gc"
  "collide/collide-func.gc"
  "anim/joint.gc"
@@ -1877,7 +1877,6 @@
  "gfx/sprite/sprite.gc"
  "gfx/sprite/sprite-distort.gc"
  "debug/debug-sphere.gc"
- "debug/debug.gc"
  "gfx/merc/merc-vu1.gc"
  "gfx/merc/merc-blend-shape.gc"
  "gfx/merc/merc.gc"
@@ -1899,21 +1898,29 @@
  "gfx/shrub/shrubbery.gc"
  "gfx/shrub/shrub-work.gc"
  "gfx/tfrag/tfrag-near.gc"
- "gfx/tfrag/tfrag.gc"
- "gfx/tfrag/tfrag-methods.gc"
- "gfx/tfrag/tfrag-work.gc"
+
+
  "gfx/tie/tie.gc"
  "gfx/tie/tie-near.gc"
  "gfx/tie/tie-work.gc"
  "gfx/tie/tie-methods.gc"
  "util/sync-info.gc"
- "physics/trajectory.gc"
- "gfx/sprite/sparticle/sparticle-launcher.gc"
- "gfx/sprite/sparticle/sparticle.gc"
+
+
  "entity/entity-table.gc"
- "load/loader.gc"
+
  "game/task/task-control-h.gc"
  "mods/mod-declares-h.gc"
+
+  "gfx/sprite/sparticle/sparticle-launcher.gc"
+ "gfx/sprite/sparticle/sparticle.gc"
+ "sound/gsound.gc"
+  "load/loader.gc"
+ "debug/debug.gc"
+  "physics/trajectory.gc"
+ "gfx/tfrag/tfrag.gc"
+  "gfx/tfrag/tfrag-methods.gc"
+ "gfx/tfrag/tfrag-work.gc"
  "game/game-info.gc"
  "game/game-save.gc"
  "game/settings.gc"

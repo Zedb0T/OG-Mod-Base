@@ -7,9 +7,12 @@
 (require "engine/camera/pov-camera-h.gc")
 (require "engine/common-obs/basebutton.gc")
 
+(define-extern remove-remote-collision (function float none))
+
 ;; DECOMP BEGINS
 
 (deftype warpgate (process-hidden) ())
+
 
 (defstate target-warp-in (target)
   :event target-generic-event-handler
@@ -21,6 +24,7 @@
         exit)
   :trans
     (behavior ()
+      (remove-remote-collision 5.0)
       (set! (-> self control transv x) (- (-> self control unknown-vector103 x) (-> self control unknown-vector102 x)))
       (set! (-> self control transv z) (- (-> self control unknown-vector103 z) (-> self control unknown-vector102 z)))
       (vector-xz-normalize! (-> self control transv) 49152.0)
@@ -270,6 +274,7 @@
   (:methods
    (pressable? (_type_) symbol)))
 
+
 (defskelgroup *warp-gate-switch-sg*
   warp-gate-switch
   warp-gate-switch-lod0-jg
@@ -381,7 +386,7 @@
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
       (case message
         (('touch 'attack)
-         (when (pressable? self)
+         (when (and (pressable? self) (or (!= (-> proc type) target) (= (the-as target proc) *target*) (target-is-interactive? (the-as target proc))))
            (basebutton-method-29 self (-> self event-going-down) (-> self notify-actor))
            (go-virtual basebutton-going-down)))
         (('hide) (send-event (handle->process (-> self warp)) message))
@@ -484,6 +489,7 @@
   (:state-methods
    idle))
 
+
 (defmethod relocate ((this village-cam) (offset int))
   (if (nonzero? (-> this root-override)) (&+! (-> this root-override) offset))
   (the-as village-cam ((method-of-type process relocate) this offset)))
@@ -526,7 +532,7 @@
                         (not (logtest? (-> *target* control status) (cshape-moving-flags onsurf))))
               (suspend))
             (set-time! (-> self state-time))
-            (process-grab? *target*)
+            (if *enable-ingame-cutscenes?* (process-grab? *target*))
             (process-entity-status! self (entity-perm-status bit-3) #t)
             (kill-current-level-hint '(ambient) '() 'exit)
             (until (not (or (-> *setting-control* current talking)
@@ -555,7 +561,7 @@
               (kill-current-level-hint '() '() 'die)
               (suspend)
               (kill-current-level-hint '() '() 'die)
-              (process-release? *target*)
+              (if *enable-ingame-cutscenes?* (process-release? *target*))
               (remove-setting! 'movie)
               (apply-settings *setting-control*)
               (suspend)
@@ -569,7 +575,7 @@
                      (cond
                        ((zero? v1-84)
                         (level-hint-spawn (text-id village1cam-enough-cells) "asstvb04" (the-as entity #f) *entity-pool* (game-task none))
-                        (process-spawn pov-camera
+                        (if *enable-ingame-cutscenes?* (process-spawn pov-camera
                                        (-> self entity extra trans)
                                        *village-cam-sg*
                                        "firecanyon-cam"
@@ -586,10 +592,10 @@
                                         (0 alive "money-2677")
                                         (0 alive "money-2678"))
                                        :to
-                                       self))
+                                       self)))
                        ((= v1-84 1)
                         (level-hint-spawn (text-id village1cam-enough-cells2) "asstvb08" (the-as entity #f) *entity-pool* (game-task none))
-                        (process-spawn pov-camera
+                        (if *enable-ingame-cutscenes?* (process-spawn pov-camera
                                        (-> self entity extra trans)
                                        *village-cam-sg*
                                        "firecanyon-alt-cam"
@@ -606,17 +612,17 @@
                                         (0 alive "money-2677")
                                         (0 alive "money-2678"))
                                        :to
-                                       self))))
+                                       self)))))
                    (set! (-> gp-0 user-int8 0) (seekl (the-as int (-> gp-0 user-uint8 0)) 255 1))))
                 ((= v1-79 1))
                 ((= v1-79 2)
                  (when (not (task-closed? (game-task village2-levitator) (task-status need-hint)))
                    (level-hint-spawn (text-id village2-button-reminder2) "asstvb29" (the-as entity #f) *entity-pool* (game-task none))
-                   (process-spawn pov-camera (-> self entity extra trans) *village-cam-sg* "vi2-button-cam" 0 #f '() :to self)))
+                   (if *enable-ingame-cutscenes?* (process-spawn pov-camera (-> self entity extra trans) *village-cam-sg* "vi2-button-cam" 0 #f '() :to self))))
                 ((= v1-79 3)
                  (when (not (task-closed? (game-task village3-button) (task-status need-hint)))
                    (level-hint-spawn (text-id village2-button-reminder3) "asstvb30" (the-as entity #f) *entity-pool* (game-task none))
-                   (process-spawn pov-camera (-> self entity extra trans) *village-cam-sg* "vi3-button-cam" 0 #f '() :to self)))))
+                   (if *enable-ingame-cutscenes?* (process-spawn pov-camera (-> self entity extra trans) *village-cam-sg* "vi3-button-cam" 0 #f '() :to self))))))
             (while (-> self child)
               (suspend))
             (let ((a0-66 (-> self entity)))

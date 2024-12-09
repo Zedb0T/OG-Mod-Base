@@ -7,6 +7,7 @@
 (require "engine/target/sidekick.gc")
 (declare-type fisher-fish process-drawable)
 
+
 ;; DECOMP BEGINS
 
 (deftype fisher-bank (basic)
@@ -14,6 +15,7 @@
    (net-radius meters)
    (max-caught int32)
    (max-missed int32)))
+
 
 (define *FISHER-bank*
   (new 'static 'fisher-bank :width (meters 3.3) :net-radius (meters 0.7) :max-caught #xc8 :max-missed 20))
@@ -147,6 +149,7 @@
    (deadly-percent  float)
    (powerup-percent float))
   :allow-misaligned)
+
 
 (define *fisher-params*
   (new 'static
@@ -696,6 +699,7 @@
    fisher-done
    fisher-playing))
 
+
 (deftype fisher-fish (process-drawable)
   ((dir    vector :inline)
    (offset float)
@@ -707,6 +711,7 @@
    fisher-fish-caught
    fisher-fish-die
    fisher-fish-fall))
+
 
 (defskelgroup *catch-fisha-sg*
   catch-fisha
@@ -822,7 +827,8 @@
         (('deadly 'bad)
          (sound-play "caught-eel")
          (ambient-hint-spawn "sksp0a42" (-> self root trans) *entity-pool* 'ambient)
-         (send-event (ppointer->process (-> self parent)) 'deadly))
+         (send-event (ppointer->process (-> self parent)) 'deadly)
+         (runs-on-fish-missed 20.0))
         (('powerup)
          (process-spawn part-tracker
                         :init
@@ -836,7 +842,8 @@
                         :to
                         *entity-pool*)
          (sound-play "get-big-fish")
-         (send-event (ppointer->process (-> self parent)) 'fisher-fish-caught 5))
+         (send-event (ppointer->process (-> self parent)) 'fisher-fish-caught 5)
+         (runs-on-fish-caught (the float (-> (the-as fisher (ppointer->process (-> self parent))) caught))))
         (else
          (process-spawn part-tracker
                         :init
@@ -850,7 +857,8 @@
                         :to
                         *entity-pool*)
          (sound-play "get-small-fish")
-         (send-event (ppointer->process (-> self parent)) 'fisher-fish-caught 1)))
+         (send-event (ppointer->process (-> self parent)) 'fisher-fish-caught 1)
+         (runs-on-fish-caught (the float (-> (the-as fisher (ppointer->process (-> self parent))) caught)))))
       (set! (-> self vel) (* 0.25 (-> self vel)))
       (while (< 0.1 (-> self root scale x))
         (set! (-> self offset) (-> (the-as fisher (-> self parent 0)) paddle))
@@ -871,7 +879,8 @@
            (if (< 0.5 f0-2)
              (play-ambient (-> (the-as fisher (-> self parent 0)) ambient) "FIS-TA04" #t (-> self root trans))
              (play-ambient (-> (the-as fisher (-> self parent 0)) ambient) "FIS-TA05" #t (-> self root trans))))
-         (send-event (ppointer->process (-> self parent)) 'fisher-fish-die 5))
+         (send-event (ppointer->process (-> self parent)) 'fisher-fish-die 5)
+         (runs-on-fish-missed (the float (-> (the-as fisher (ppointer->process (-> self parent))) missed))))
         (else
          (let ((f0-5 (rand-float-gen)))
            (cond
@@ -886,7 +895,9 @@
              ((< 0.1666 f0-5) (play-ambient (-> (the-as fisher (-> self parent 0)) ambient) "FIS-TA09" #t (-> self root trans)))
              ((> (-> (the-as fisher (-> self parent 0)) missed) 0)
               (play-ambient (-> (the-as fisher (-> self parent 0)) ambient) "FIS-TA10" #t (-> self root trans)))))
-         (send-event (ppointer->process (-> self parent)) 'fisher-fish-die 1)))))
+         (send-event (ppointer->process (-> self parent)) 'fisher-fish-die 1)
+         (runs-on-fish-missed (the float (-> (the-as fisher (ppointer->process (-> self parent))) missed)))))
+         (none)))
 
 (defbehavior fisher-fish-init-by-other fisher-fish ((arg0 symbol) (arg1 float) (arg2 float))
   (set! (-> self mode) arg0)
@@ -1329,7 +1340,10 @@
   :virtual #t
   :enter
     (behavior ()
-      (init! (-> self query)
+      (if (task-closed? (game-task jungle-fishgame) (task-status need-resolution))
+      (go-virtual release)
+      )
+    (init! (-> self query)
              (lookup-text! *common-text* (text-id fish?) #f)
              40
              150
@@ -1538,6 +1552,7 @@
         (else ((-> target-grab event) proc argc message block))))
   :enter
     (behavior ((arg0 handle))
+      (remove-remote-collision 5.0)
       (set! (-> self control unknown-surface00) *empty-mods*)
       (logior! (-> self state-flags) (state-flags invulnerable))
       (set-zero! (-> self control unknown-smush00))

@@ -5,6 +5,7 @@
 (require "engine/common-obs/babak.gc")
 (declare-type babak-with-cannon babak)
 
+
 ;; DECOMP BEGINS
 
 (deftype babak-with-cannon (babak)
@@ -15,6 +16,7 @@
    babak-with-cannon-jump-onto-cannon
    babak-with-cannon-shooting))
 
+
 nav-enemy-default-event-handler
 
 (defstate nav-enemy-idle (babak-with-cannon)
@@ -22,11 +24,13 @@ nav-enemy-default-event-handler
   :event nav-enemy-default-event-handler
   :trans
     (behavior ()
-      (if (and (and *target*
-                    (>= (-> self enemy-info idle-distance)
-                        (vector-vector-distance (-> self collide-info trans) (-> *target* control trans))))
-               (time-elapsed? (-> self state-time) (-> self state-timeout)))
-        (go-virtual nav-enemy-patrol)))
+      (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+        (let ((target (get-interactive-target tgt-idx)))
+          (if (and (and target
+                        (>= (-> self enemy-info idle-distance)
+                            (vector-vector-distance (-> self collide-info trans) (-> target control trans))))
+                  (time-elapsed? (-> self state-time) (-> self state-timeout)))
+            (go-virtual nav-enemy-patrol)))))
   :code
     (behavior ()
       (ja-channel-push! 1 (seconds 0.075))
@@ -44,15 +48,16 @@ nav-enemy-default-event-handler
   :trans
     (behavior ()
       (when (time-elapsed? (-> self state-time) (seconds 0.1))
-        (let ((f30-0 (- (-> (target-pos 0) y) (-> self collide-info trans y))))
-          (if (and (time-elapsed? (-> self state-time) (seconds 3))
-                   (or (or (not *target*)
-                           (< (-> self distance) (vector-vector-distance (-> self collide-info trans) (-> *target* control trans))))
-                       (< f30-0 -40960.0)))
-            (go babak-run-to-cannon)))
+        (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+          (let ((target (get-interactive-target tgt-idx)))
+            (let ((f30-0 (- (-> (remote-target-pos 0 target) y) (-> self collide-info trans y))))
+              (if (and (time-elapsed? (-> self state-time) (seconds 3))
+                      (or (or (not target)
+                              (< (-> self distance) (vector-vector-distance (-> self collide-info trans) (-> target control trans))))
+                          (< f30-0 -40960.0)))
+                (go babak-run-to-cannon)))))
         (when (time-elapsed? (-> self state-time) (-> self state-timeout))
-          (if (or (not *target*)
-                  (< (-> self enemy-info idle-distance) (vector-vector-distance (-> self collide-info trans) (-> *target* control trans))))
+          (if (or (not *target*) (not (any-interactive-targets-close? self (-> self enemy-info idle-distance))))
             (go-virtual nav-enemy-idle)))
         (if (nav-enemy-notice-player?) (go-virtual nav-enemy-notice))))
   :code
@@ -189,10 +194,12 @@ nav-enemy-default-event-handler
   :trans
     (behavior ()
       (let ((f0-1 (- (-> (target-pos 0) y) (-> self collide-info trans y))))
-        (if (and (< -40960.0 f0-1)
-                 (and (and *target* (>= (-> self distance) (vector-vector-distance (-> self collide-info trans) (-> *target* control trans))))
-                      (time-elapsed? (-> self state-time) (seconds 3))))
-          (go babak-with-cannon-jump-off-cannon))))
+        (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+          (let ((target (get-interactive-target tgt-idx)))
+            (if (and (< -40960.0 f0-1)
+                    (and (and target (>= (-> self distance) (vector-vector-distance (-> self collide-info trans) (-> target control trans))))
+                          (time-elapsed? (-> self state-time) (seconds 3))))
+              (go babak-with-cannon-jump-off-cannon))))))
   :code
     (behavior ()
       (loop
@@ -204,8 +211,8 @@ nav-enemy-default-event-handler
   :event nav-enemy-default-event-handler
   :trans
     (behavior ()
-      (if (and *target* (= (-> *target* current-level name) 'beach)) (spool-push *art-control* "beachcam-cannon" 0 self -1.0))
-      (if (and *target* (= (-> *target* current-level name) 'misty)) (spool-push *art-control* "mistycam-cannon" 0 self -1.0))
+      (if (and *enable-ingame-cutscenes?* *target* (= (-> *target* current-level name) 'beach)) (spool-push *art-control* "beachcam-cannon" 0 self -1.0))
+      (if (and *enable-ingame-cutscenes?* *target* (= (-> *target* current-level name) 'misty)) (spool-push *art-control* "mistycam-cannon" 0 self -1.0))
       (call-parent-state-handler trans)))
 
 (defstate nav-enemy-fuel-cell (babak-with-cannon)
@@ -219,8 +226,8 @@ nav-enemy-default-event-handler
       (when (not (task-complete? *game-info* (-> self entity extra perm task)))
         (when (not (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete))))
           (process-entity-status! self (entity-perm-status complete) #t)
-          (if (and *target* (= (-> *target* current-level name) 'beach)) (beachcam-spawn))
-          (if (and *target* (= (-> *target* current-level name) 'misty)) (mistycam-spawn)))
+          (if (and *enable-ingame-cutscenes?* *target* (= (-> *target* current-level name) 'beach)) (beachcam-spawn))
+          (if (and *enable-ingame-cutscenes?* *target* (= (-> *target* current-level name) 'misty)) (mistycam-spawn)))
         (if (not (-> self child))
           (birth-pickup-at-point (-> self collide-info trans)
                                  (pickup-type fuel-cell)
@@ -233,9 +240,10 @@ nav-enemy-default-event-handler
       (cleanup-for-death self)))
 
 (defmethod common-post ((this babak-with-cannon))
-  (cond
-    ((= (level-status *level* 'beach) 'active) (spool-push *art-control* "beachcam-cannon" 0 this -99.0))
-    ((= (level-status *level* 'misty) 'active) (spool-push *art-control* "mistycam-cannon" 0 this -99.0)))
+  (when  *enable-ingame-cutscenes?*
+    (cond
+      ((= (level-status *level* 'beach) 'active) (spool-push *art-control* "beachcam-cannon" 0 this -99.0))
+      ((= (level-status *level* 'misty) 'active) (spool-push *art-control* "mistycam-cannon" 0 this -99.0))))
   ((method-of-type nav-enemy common-post) this)
   (none))
 

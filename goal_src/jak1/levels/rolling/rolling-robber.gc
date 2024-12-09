@@ -5,6 +5,7 @@
 
 ;; note: changed for high fps
 
+
 ;; DECOMP BEGINS
 
 (defstate fuel-cell-spline-slider (fuel-cell)
@@ -13,36 +14,61 @@
     (behavior ((arg0 handle) (arg1 float) (arg2 float))
       (logclear! (-> self mask) (process-mask actor-pause))
       (ja :group! fuel-cell-idle-ja)
-      (if *target* (process-grab? *target*))
-      (hide-hud-quick)
-      (set! *camera-look-through-other* 2)
-      (set! (-> *camera-other-fov* data) 11650.845)
-      (set! (-> *camera-other-trans* quad) (-> *math-camera* trans quad))
-      (set! (-> *camera-other-root* quad) (-> *math-camera* trans quad))
-      (set-time! (-> self state-time))
-      (loop
-        (*! arg2 (- 1.0 (* 0.05 (-> *display* time-adjust-ratio)))) ;; og:preserve-this changed for high fps
-        (when (and (< (fabs arg2) 13.653334) (time-elapsed? (-> self state-time) (seconds 1.5)))
-          (if *target* (process-release? *target*))
-          (go-virtual wait))
-        (set! arg1 (+ arg1 (/ (* arg2 (seconds-per-frame)) (path-distance (-> self path)))))
-        (cond
-          ((< 1.0 arg1) (set! arg1 (+ -1.0 arg1)))
-          ((< arg1 0.0) (set! arg1 (+ 1.0 arg1))))
-        (eval-path-curve! (-> self path) (-> self root trans) arg1 'interp)
-        (+! (-> self root trans y) 8192.0)
-        (set! (-> self root trans y) (fmax 106496.0 (-> self root trans y)))
-        (set! (-> self base quad) (-> self root trans quad))
-        (transform-post)
-        (animate self)
-        (let ((s4-0 (new 'stack-no-clear 'vector)))
-          (vector-! s4-0 (-> self root trans) *camera-other-trans*)
-          (vector-normalize! s4-0 1.0)
-          (forward-down->inv-matrix *camera-other-matrix* s4-0 (new 'static 'vector :y -1.0 :w 1.0)))
+      (when *enable-ingame-cutscenes?*
+        (if *target* (process-grab? *target*))
+        (hide-hud-quick)
         (set! *camera-look-through-other* 2)
-        (set-letterbox-frames (seconds 0.035))
-        (suspend)
-        (ja :num! (loop! 0.5)))))
+        (set! (-> *camera-other-fov* data) 11650.845)
+        (set! (-> *camera-other-trans* quad) (-> *math-camera* trans quad))
+        (set! (-> *camera-other-root* quad) (-> *math-camera* trans quad))
+        )
+      (set-time! (-> self state-time))
+      (if *enable-ingame-cutscenes?*
+        (loop
+          (*! arg2 (- 1.0 (* 0.05 (-> *display* time-adjust-ratio)))) ;; og:preserve-this changed for high fps
+          (when (and (< (fabs arg2) 13.653334) (time-elapsed? (-> self state-time) (seconds 1.5)))
+            (if *target* (process-release? *target*))
+            (go-virtual wait))
+          (set! arg1 (+ arg1 (/ (* arg2 (seconds-per-frame)) (path-distance (-> self path)))))
+          (cond
+            ((< 1.0 arg1) (set! arg1 (+ -1.0 arg1)))
+            ((< arg1 0.0) (set! arg1 (+ 1.0 arg1))))
+          (eval-path-curve! (-> self path) (-> self root trans) arg1 'interp)
+          (+! (-> self root trans y) 8192.0)
+          (set! (-> self root trans y) (fmax 106496.0 (-> self root trans y)))
+          (set! (-> self base quad) (-> self root trans quad))
+          (transform-post)
+          (animate self)
+          (let ((s4-0 (new 'stack-no-clear 'vector)))
+            (vector-! s4-0 (-> self root trans) *camera-other-trans*)
+            (vector-normalize! s4-0 1.0)
+            (forward-down->inv-matrix *camera-other-matrix* s4-0 (new 'static 'vector :y -1.0 :w 1.0)))
+          (set! *camera-look-through-other* 2)
+          (set-letterbox-frames (seconds 0.035))
+          (suspend)
+          (ja :num! (loop! 0.5)))
+        (loop
+          (*! arg2 (- 1.0 (* 0.05 (-> *display* time-adjust-ratio)))) ;; changed for high fps
+          (when (and (< (fabs arg2) 13.653334) (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 1.5)))
+            (go-virtual wait)
+            )
+          (set! arg1 (+ arg1 (/ (* arg2 (-> *display* seconds-per-frame)) (path-distance (-> self path)))))
+          (cond
+            ((< 1.0 arg1)
+            (set! arg1 (+ -1.0 arg1))
+            )
+            ((< arg1 0.0)
+            (set! arg1 (+ 1.0 arg1))
+            )
+            )
+          (eval-path-curve! (-> self path) (-> self root trans) arg1 'interp)
+          (+! (-> self root trans y) 8192.0)
+          (set! (-> self root trans y) (fmax 106496.0 (-> self root trans y)))
+          (set! (-> self base quad) (-> self root trans quad))
+          (transform-post)
+          (animate self)
+          (suspend)
+          (ja :num! (loop! 0.5))))))
 
 (defbehavior fuel-cell-init-as-spline-slider fuel-cell ((arg0 handle) (arg1 float) (arg2 float) (arg3 int))
   (initialize self)
@@ -226,6 +252,7 @@
   :event process-drawable-death-event-handler
   :code
     (behavior ()
+      (runs-on-task-related-death (the-as string (-> self name)) 0.0)
       (let ((gp-0 #t))
         (when (robber-task-complete?)
           (let ((v1-3 (-> self entity extra perm)))
@@ -234,16 +261,27 @@
               ((zero? (-> v1-3 user-object 1))
                (set! (-> v1-3 user-object 1) 1)
                (set! (-> v1-3 user-object 0) (-> self curve-position))
-               (let ((f30-0 (if (>= (-> self speed) 0.0) 163840.0 -163840.0)))
-                 (process-spawn fuel-cell
-                                :init
-                                fuel-cell-init-as-spline-slider
-                                (process->handle self)
-                                (-> self curve-position)
-                                f30-0
-                                (-> self entity extra perm task)
-                                :to
-                                self)))
+              (if *enable-ingame-cutscenes?*
+                (let ((f30-0 (if (>= (-> self speed) 0.0) 163840.0 -163840.0)))
+                  (process-spawn fuel-cell
+                                  :init
+                                  fuel-cell-init-as-spline-slider
+                                  (process->handle self)
+                                  (-> self curve-position)
+                                  f30-0
+                                  (-> self entity extra perm task)
+                                  :to
+                                  self))
+                  (let ((s5-1 (new 'stack-no-clear 'vector)))
+                    (eval-path-curve! (-> self path) s5-1 (the-as float (-> v1-3 user-object 0)) 'interp)
+                    (+! (-> s5-1 y) 8192.0)
+                    (birth-pickup-at-point
+                      s5-1
+                      (pickup-type fuel-cell)
+                      (the float (-> self entity extra perm task))
+                      #f
+                      self
+                      (the-as fact-info #f)))))
               (else
                (set! gp-0 #f)
                (logior! (-> self draw status) (draw-status hidden))

@@ -5,6 +5,9 @@
 (require "engine/common-obs/plat-eco.gc")
 (require "engine/common-obs/plat-button.gc")
 
+(define-extern process-close? (function process-drawable float basic))
+(define-extern any-interactive-targets-close? (function process-drawable float basic))
+
 ;; DECOMP BEGINS
 
 (defskelgroup *plat-citb-sg*
@@ -341,10 +344,12 @@
     (behavior ()
       (when (time-elapsed? (-> self state-time) (seconds 0.1))
         (set-time! (-> self state-time))
-        (if (and (and *target*
-                      (>= (-> self info idle-distance) (vector-vector-distance (-> self root-overlay trans) (-> *target* control trans))))
-                 (send-event *target* 'query 'powerup (pickup-type eco-blue)))
-          (go-virtual rigid-body-platform-float))))
+        (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+          (let ((target (get-interactive-target tgt-idx)))
+            (if (and (and target
+                          (>= (-> self info idle-distance) (vector-vector-distance (-> self root-overlay trans) (-> target control trans))))
+                    (send-event target 'query 'powerup (pickup-type eco-blue)))
+              (go-virtual rigid-body-platform-float))))))
   :code
     (behavior ()
       (anim-loop))
@@ -361,20 +366,22 @@
       (stop! (-> self sound)))
   :trans
     (behavior ()
-      (cond
-        ((and (and *target*
-                   (>= (-> self info idle-distance) (vector-vector-distance (-> self root-overlay trans) (-> *target* control trans))))
-              (send-event *target* 'query 'powerup (pickup-type eco-blue)))
-         (when (not (time-elapsed? (-> self state-time) (seconds 1)))
-           (if (rand-vu-percent? 0.05) (spawn-projectile-blue *target*)))
-         (seek! (-> self float-height-offset) (-> self float-offset) (* 8192.0 (seconds-per-frame)))
-         (draw-eco-beam (-> self root-overlay trans) (-> self beam-end))
-         (update-trans! (-> self sound) (-> self root-overlay trans))
-         (update! (-> self sound)))
-        (else
-         (seek! (-> self float-height-offset) (-> self idle-offset) (* 16384.0 (seconds-per-frame)))
-         (stop! (-> self sound))
-         (if (= (-> self float-height-offset) (-> self idle-offset)) (go citb-chain-plat-settle)))))
+      (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+        (let ((target (get-interactive-target tgt-idx)))
+          (when target
+          (cond
+            ((and (and (>= (-> self info idle-distance) (vector-vector-distance (-> self root-overlay trans) (-> target control trans))))
+                  (send-event target 'query 'powerup (pickup-type eco-blue)))
+            (when (not (time-elapsed? (-> self state-time) (seconds 1)))
+              (if (rand-vu-percent? 0.05) (spawn-projectile-blue target)))
+            (seek! (-> self float-height-offset) (-> self float-offset) (* 8192.0 (seconds-per-frame)))
+            (draw-eco-beam (-> self root-overlay trans) (-> self beam-end))
+            (update-trans! (-> self sound) (-> self root-overlay trans))
+            (update! (-> self sound)))
+            ((not (any-interactive-targets-close? self (-> self info idle-distance)))
+            (seek! (-> self float-height-offset) (-> self idle-offset) (* 16384.0 (seconds-per-frame)))
+            (stop! (-> self sound))
+            (if (= (-> self float-height-offset) (-> self idle-offset)) (go citb-chain-plat-settle))))))))
   :code
     (behavior ()
       (anim-loop))
@@ -786,7 +793,7 @@
       (let ((gp-0 (new 'stack-no-clear 'vector)))
         (set! (-> gp-0 quad) (-> self root trans quad))
         (let ((t9-1 (-> (the-as (state plat-button) (find-parent-state)) trans))) (if t9-1 (t9-1)))
-        (citb-exit-plat-move-player gp-0)))
+        (if (process-close? (the-as process-drawable self) 110000.0) (citb-exit-plat-move-player gp-0))))
   :post transform-post)
 
 (defstate plat-button-move-upward (citb-exit-plat)
@@ -796,7 +803,7 @@
       (let ((gp-0 (new 'stack-no-clear 'vector)))
         (set! (-> gp-0 quad) (-> self root trans quad))
         (let ((t9-1 (-> (the-as (state plat-button) (find-parent-state)) trans))) (if t9-1 (t9-1)))
-        (citb-exit-plat-move-player gp-0)))
+        (if (process-close? (the-as process-drawable self) 110000.0) (citb-exit-plat-move-player gp-0))))
   :post transform-post)
 
 (defmethod can-activate? ((this citb-exit-plat))

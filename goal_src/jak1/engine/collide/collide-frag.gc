@@ -22,6 +22,7 @@
 (defmethod unpack-vis ((this drawable-tree-collide-fragment) (arg0 (pointer int8)) (arg1 (pointer int8)))
   arg1)
 
+;;(collide-with-box (-> this data 0) (-> this length) arg1 coll-work)
 (defmethod collide-with-box ((this drawable-tree-collide-fragment) (arg0 int) (arg1 collide-list) (coll-work collide-work))
   "Collide everything in the tree with a box. Length arg doesn't matter here."
   (collide-with-box (-> this data-override) (-> this length) arg1 coll-work)

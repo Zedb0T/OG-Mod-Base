@@ -17,15 +17,18 @@
   (:state-methods
    falling))
 
+
 (deftype gnawer-segment-info (structure)
   ((num-joints  int32)
    (joint-index int8 8)))
+
 
 (deftype gnawer-segment (structure)
   ((place                      int32)
    (world-pos                  vector :inline)
    (anim-to-local-trans-offset vector :inline)
    (orient-mat                 matrix :inline)))
+
 
 (deftype gnawer-route (structure)
   ((src-pt-index      int32)
@@ -39,6 +42,7 @@
    (src-pt-offset     vector :inline)
    (dest-pt-offset    vector :inline)
    (surface-dir       vector :inline)))
+
 
 (deftype gnawer (process-drawable)
   ((root           collide-shape :override)
@@ -80,6 +84,7 @@
    gnawer-retreat-into-post
    gnawer-run
    gnawer-wait-to-run))
+
 
 (defskelgroup *gnawer-sg*
   gnawer
@@ -604,7 +609,9 @@
       (stop! (-> self sound2)))
   :trans
     (behavior ()
-      (if (and *target* (>= 81920.0 (vector-vector-distance (target-pos 0) (-> self root trans)))) (go gnawer-retreat-into-post)))
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+        (if (and target (>= 81920.0 (vector-vector-distance (remote-target-pos 0 target) (-> self root trans)))) (go gnawer-retreat-into-post)))))
   :code
     (behavior ()
       (ja-channel-push! 1 (seconds 0.075))
@@ -780,6 +787,7 @@
       (spool-push *art-control* "maincavecam-gnawer-fuel-cell" 0 self -1.0))
   :code
     (behavior ()
+      (runs-on-task-related-death (the-as string (-> self name)) (the float (-> self total-money)))
       (logclear! (-> self mask) (process-mask actor-pause))
       (process-entity-status! self (entity-perm-status bit-3) #t)
       (ja-channel-push! 1 (seconds 0.1))
@@ -863,14 +871,26 @@
             (set! (-> (the-as maincavecam
                               (-> (when s5-0
                                     (let ((t9-4 (method-of-type maincavecam activate))) (t9-4 s5-0 self 'maincavecam (the-as pointer #x70004000)))
-                                    (run-now-in-process s5-0
-                                                        pov-camera-init-by-other
-                                                        gp-0
-                                                        *maincavecam-sg*
-                                                        (new 'static 'spool-anim :name "maincavecam-gnawer-fuel-cell" :index 3 :parts 1 :command-list '())
-                                                        0
-                                                        self
-                                                        '())
+                                    (if *enable-ingame-cutscenes?*
+                                      (run-now-in-process s5-0
+                                                          pov-camera-init-by-other
+                                                          gp-0
+                                                          *maincavecam-sg*
+                                                          (new 'static 'spool-anim :name "maincavecam-gnawer-fuel-cell" :index 3 :parts 1 :command-list '())
+                                                          0
+                                                          self
+                                                          '())
+                                      (let ((a0-7 (new 'stack-no-clear 'vector)))
+                                        (set-vector! a0-7 4485903.0 51184.027 -12815461.0 1.0)
+                                        (birth-pickup-at-point
+                                          a0-7
+                                          (pickup-type fuel-cell)
+                                          (the float (-> self entity extra perm task))
+                                          #f
+                                          self
+                                          (the-as fact-info #f)
+                                          )
+                                        ))
                                     (-> s5-0 ppointer))
                                   0))
                       seq)

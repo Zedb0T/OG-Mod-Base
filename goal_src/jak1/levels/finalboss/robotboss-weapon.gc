@@ -188,7 +188,7 @@
                      *entity-pool*)
       (logior! (-> self draw status) (draw-status hidden))
       (cond
-        ((or arg0 (and *target* (< (-> (target-pos 0) y) (+ 40960.0 (-> self entity extra trans y)))))
+        ((or arg0 (and *target* (not (-> *spectator-handler* is_spectator?)) (< (-> (target-pos 0) y) (+ 40960.0 (-> self entity extra trans y)))))
          (if *target* (logior! (-> *target* mask) (process-mask sleep)))
          (send-event (ppointer->process (-> self parent)) 'bomb-going)
          (send-event *camera* 'change-to-entity-by-name "camera-402")
@@ -201,17 +201,43 @@
          (if *target* (logclear! (-> *target* mask) (process-mask sleep)))
          (send-event *target* 'attack-invinc #f (static-attack-info ((mode 'instant-death)))))
         (else (send-event (ppointer->process (-> self parent)) 'bomb-done)))
-      (deactivate self))
+      (when (not *enable-ingame-cutscenes?*)
+      (let ((vent (process-by-ename "ecovent-274")))
+        (if vent
+          (go-process vent vent-blocked)
+          )
+        )
+      )
+    (deactivate self))
   :post ja-post)
 
 (defbehavior darkecobomb-handler darkecobomb ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (case arg2
-    (('touch 'attack) (go darkecobomb-explode #t))))
+    (('touch 'attack)
+      (if (or (not (type-type? (-> arg0 type) target)) (= arg0 *target*)) (go darkecobomb-explode #t))
+     )
+    )
+  )
 
 (defbehavior darkecobomb-explode-if-player-high-enough darkecobomb ()
-  (if (and (not (movie?)) *target* (< (+ 409600.0 (-> self entity extra trans y)) (-> (target-pos 0) y)))
-    (go darkecobomb-explode #f))
-  (none))
+  (cond
+    ((-> *spectator-handler* is_spectator?)
+      (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+        (let ((target (get-interactive-target tgt-idx)))
+          (when (and (not (movie?)) target (< (+ 409600.0 (-> self entity extra trans y)) (-> (remote-target-pos 0 target) y)))
+          (go darkecobomb-explode #f)
+            )
+          )
+        )
+      )
+    (else
+      (if (and (not (movie?)) *target* (< (+ 409600.0 (-> self entity extra trans y)) (-> (target-pos 0) y)))
+          (go darkecobomb-explode #f)
+          )
+      )
+    )
+  (none)
+  )
 
 (defstate darkecobomb-countdown (darkecobomb)
   :event darkecobomb-handler
@@ -564,7 +590,7 @@
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
       (case message
         (('touch 'attack)
-         (when (= (-> proc type) target)
+         (when (and (= (-> proc type) target) (= proc *target*))
            (send-event *target* 'attack (-> block param 0) (static-attack-info ((mode 'generic))))
            (send-event (ppointer->process (-> self parent)) 'hit-jak)))))
   :enter

@@ -66,6 +66,7 @@
    seagull-soaring
    seagull-takeoff))
 
+
 (deftype seagullflock (process)
   ((self-override      seagullflock :overlay-at self)
    (path               path-control)
@@ -90,6 +91,7 @@
   (:states
    seagullflock-at-waterfall
    seagullflock-idle))
+
 
 (defmethod relocate ((this seagullflock) (offset int))
   (if (nonzero? (-> this path)) (&+! (-> this path) offset))
@@ -291,10 +293,12 @@
         (when (zero? (-> self scared))
           (restore-collide-with-as (-> self root))
           (go seagull-takeoff)))
-      (when *target*
-        (let ((v1-12 (vector-! (new 'stack-no-clear 'vector) (-> *target* control trans) (-> self root trans))))
-          (when (< (vector-dot v1-12 v1-12) 1677721600.0)
-            (let ((v1-14 (-> self flock))) (play-hint (if v1-14 (-> v1-14 0 self-override)) (-> self index)))))))
+      (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+        (let ((target (get-interactive-target tgt-idx)))
+        (when target
+          (let ((v1-12 (vector-! (new 'stack-no-clear 'vector) (-> target control trans) (-> self root trans))))
+            (when (< (vector-dot v1-12 v1-12) 1677721600.0)
+              (let ((v1-14 (-> self flock))) (play-hint (if v1-14 (-> v1-14 0 self-override)) (-> self index)))))))))
   :code
     (behavior ()
       (+! (-> self root trans y) 20480.0)
@@ -850,7 +854,7 @@
       (dotimes (v1-13 (-> self birds))
         (set! (-> self bird v1-13 0 teleport) #t))
       (let ((gp-0 (-> self link next)))
-        (set-blackout-frames (seconds 2))
+        (if *enable-ingame-cutscenes?* (set-blackout-frames (seconds 2)))
         (suspend)
         (let ((a1-6 (new 'stack-no-clear 'event-message-block)))
           (set! (-> a1-6 from) self)
@@ -868,8 +872,12 @@
     (behavior ()
       (loop
         (if (> (-> self teleport-frames) 0) (go seagullflock-at-waterfall))
-        (if (and *target* (>= 102400.0 (vector-vector-distance (-> self trans) (-> *target* control trans))))
-          (level-hint-spawn (text-id zero) (the-as string #f) (-> self entity) *entity-pool* (game-task none)))
+        (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+          (let ((target (get-interactive-target tgt-idx)))
+            (if (and target (>= 102400.0 (vector-vector-distance (-> self trans) (-> target control trans))))
+                (level-hint-spawn (text-id zero) (the-as string #f) (-> self entity) *entity-pool* (game-task none)))
+                )
+            )
         (suspend))))
 
 (defmethod init-from-entity! ((this seagullflock) (arg0 entity-actor))
@@ -916,7 +924,7 @@
     (+! (-> this birds) 1)
     v0-0))
 
-(defun-debug beach-rock-trigger ()
+(defun beach-rock-trigger ()
   (set! (-> (the-as seagullflock (search-process-tree *active-pool* (lambda ((arg0 process)) (= (-> arg0 type) seagullflock))))
             teleport-frames)
         600))

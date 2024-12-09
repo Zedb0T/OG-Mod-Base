@@ -611,6 +611,27 @@
 
 (defun-extern camera-pos vector)
 
+;; (defun ear-trans ()
+;;   "Return the trans for the game ear"
+;;   (cond
+;;     ((or (movie?) *external-cam-mode*)
+;;      (math-camera-pos)
+;;      )
+;;     (*target*
+;;       (if (-> *spectator-handler* is_spectator?)
+;;         (if (has-camera-type? 'cam-string)
+;;           (remote-target-pos 0 (get-spectator-target))
+;;           (camera-pos)
+;;           )
+;;         (target-pos 0)
+;;         )
+;;      )
+;;     (else
+;;      (camera-pos)
+;;      )
+;;     )
+;;   )
+
 (defun ear-trans ()
   "Return the trans for the game ear"
   (cond

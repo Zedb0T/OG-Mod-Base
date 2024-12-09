@@ -6,7 +6,10 @@
 (require "levels/finalboss/final-door.gc")
 (require "engine/ui/credits.gc")
 
+
+
 ;; DECOMP BEGINS
+
 
 (defskelgroup *robotboss-cinematic-sg*
   robotboss-cinematic
@@ -47,6 +50,7 @@
    (speed      float)
    (touch-time time-frame)))
 
+
 (defmethod get-unlit-skel ((this plat-eco-finalboss))
   *plat-eco-finalboss-unlit-sg*)
 
@@ -57,7 +61,10 @@
   (set! (-> this force-dest) -1.0)
   (set! (-> this targ-dest) -1.0)
   (set! (-> this dest) 0.0)
-  (set! (-> this speed) 0.1)
+  (if (= (check-allow-final-boss?) #t)
+    (set! (-> this speed) 0.1)
+    (set! (-> this speed) 0.0)
+  )
   (logclear! (-> this mask) (process-mask actor-pause))
   (process-entity-status! this (entity-perm-status bit-3) #t)
   (none))
@@ -87,7 +94,7 @@
       (process-entity-status! self (entity-perm-status complete) #t)
       (cond
         (arg0)
-        (else (dotimes (gp-1 5) (spawn-projectile-blue *target*)))))
+        (else (dotimes (gp-1 5) (spawn-projectile-blue (get-closest-interactive-target-with-blue-eco self))))))
   :trans
     (behavior ()
       (let ((s5-0 (eval-path-curve! (-> self path) (new 'stack-no-clear 'vector) 0.0 'interp))
@@ -106,6 +113,7 @@
         (sound-play "eco-plat-hover" :id (-> self sound-id) :position (the-as symbol (-> self root trans))))
       (plat-trans)
       (when (send-event *target* 'query 'powerup (pickup-type eco-yellow))
+        (if (= (check-allow-final-boss?) #f) (set-continue! *game-info* "finalboss-start"))
         (process-entity-status! self (entity-perm-status complete) #t)
         (set! (-> self force-dest) 0.0))))
 
@@ -113,6 +121,7 @@
   ((part   sparticle-launch-control)
    (active symbol))
   :allow-misaligned)
+
 
 (deftype sage-finalboss (process-taskable)
   ((redsage           handle)
@@ -134,6 +143,7 @@
    (credits-played    symbol))
   (:states
    sage-finalboss-credits))
+
 
 (defmethod relocate ((this sage-finalboss) (offset int))
   (dotimes (v1-0 9)
@@ -438,7 +448,11 @@
       (when (= (current-status (-> self tasks)) (task-status invalid))
         (cond
           ((not (-> self credits-played)) (set! (-> self kick-the-credits) #t))
-          (else (set-blackout-frames 0) (initialize! *game-info* 'game (the-as game-save #f) "title-start"))))
+          (else 
+            (set-blackout-frames 0) 
+            (if *enable-ingame-cutscenes?*
+              (initialize! *game-info* 'game (the-as game-save #f) "title-start")
+              (start 'play (get-continue-by-name *game-info* "finalboss-start"))))))
       (let ((a0-4 (handle->process (-> self redsage)))) (if a0-4 (deactivate a0-4)))
       (let ((a0-8 (handle->process (-> self bluesage)))) (if a0-8 (deactivate a0-8)))
       (let ((a0-12 (handle->process (-> self yellowsage)))) (if a0-12 (deactivate a0-12)))
@@ -472,7 +486,8 @@
       (cond
         ((= (current-status (-> self tasks)) (task-status need-reward-speech))
          (if (target-has-all-the-cells?)
-           (set! (-> self kick-in-the-door) #t)
+           (set! (-> self kick-in-the-door) #t))
+         (when (not (target-has-all-the-cells?))
            (start 'play (get-continue-by-name *game-info* "finalboss-start"))))
         ((= (current-status (-> self tasks)) (task-status invalid)))
         (else (set-blackout-frames (seconds 100))))
@@ -577,7 +592,9 @@
     (behavior ()
       (when (= (current-status (-> self tasks)) (task-status invalid))
         (set-blackout-frames 0)
-        (initialize! *game-info* 'game (the-as game-save #f) "title-start")))
+        (if *enable-ingame-cutscenes?*
+          (initialize! *game-info* 'game (the-as game-save #f) "title-start")
+          (start 'play (get-continue-by-name *game-info* "finalboss-start")))))
   :code
     (behavior ()
       (local-vars (s5-0 symbol))

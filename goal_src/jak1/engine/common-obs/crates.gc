@@ -450,6 +450,8 @@
            (s5-0 (-> arg3 param 3)))
        (case (-> self defense)
          (('iron)
+		  ;; Teamruns same-level pickup flag
+		  (if *allow-fly-pickup?*
           (case (-> arg3 param 1)
             (('flop 'uppercut 'explode 'darkeco 'eco-yellow 'bonk 'racer 'tube 'flut-bonk 'flut-attack)
              (if (and (logtest? (-> self fact options) (fact-options require-zoomer))
@@ -459,6 +461,7 @@
              (increment-success-for-hint (text-id sidekick-hint-crate-iron))
              (increment-success-for-hint (text-id training-ironcrate))
              (send-event arg0 'get-attack-count 1)
+			(runs-on-crate-break (crate-type crate-iron) (-> self fact pickup-amount) self)
              (go-virtual die #f (the-as int s5-0)))
             (else
              (when (and (!= s4-0 (-> self incomming-attack-id)) (= (-> self root trans y) (-> self base y)))
@@ -473,8 +476,11 @@
                (if (not (!= (-> self smush amp) 0.0)) (sound-play "icrate-nobreak"))
                (activate! (-> self smush) 0.1 90 150 1.0 1.0)
                (go-virtual bounce-on))
-             #f)))
-         (('steel)
+                #f))
+              (return #f)))
+           (('steel)
+		;; Teamruns same-level pickup flag
+            (if (or *allow-orb-pickup?* (!= (-> self fact pickup-type) (pickup-type money))) 
           (case (-> arg3 param 1)
             (('explode 'darkeco 'eco-yellow 'bonk 'tube 'flut-bonk 'flut-attack 'racer)
              (send-event arg0 'get-attack-count 1)
@@ -490,6 +496,7 @@
                                  (the-as entity #f)
                                  *entity-pool*
                                  (game-task none)))
+			(runs-on-crate-break (crate-type crate-steel) (-> self fact pickup-amount) self)
              (go-virtual die #f (the-as int s5-0)))
             (else
              (when (and (!= s4-0 (-> self incomming-attack-id)) (= (-> self root trans y) (-> self base y)))
@@ -498,7 +505,7 @@
                (if (not (!= (-> self smush amp) 0.0)) (sound-play "scrate-nobreak"))
                (activate! (-> self smush) 0.1 90 150 1.0 1.0)
                (go-virtual bounce-on))
-             #f)))
+             #f))))
          (('darkeco)
           (send-event arg0 'attack (-> arg3 param 0) (static-attack-info ((mode 'darkeco))))
           (when (= (-> arg0 type) target)
@@ -514,11 +521,22 @@
               (('firecanyon)
                (level-hint-spawn (text-id firecanyon-crate-darkeco2) "sksp0082" (the-as entity #f) *entity-pool* (game-task none))
                (level-hint-spawn (text-id firecanyon-crate-darkeco1) "sksp0081" (the-as entity #f) *entity-pool* (game-task none)))))
+			(runs-on-crate-break (crate-type crate-darkeco) (-> self fact pickup-amount) self)
           (go-virtual die #f (the-as int s5-0)))
-         (else (send-event arg0 'get-attack-count 1) (go-virtual die #f (the-as int s5-0))))))
+                  (else (send-event arg0 'get-attack-count 1) 
+
+          (runs-on-crate-break (crate-type crate-normal) (-> self fact pickup-amount) self)
+             
+          (go-virtual die #f (the-as int s5-0))))))
     (('touch)
      (case (-> self defense)
-       (('darkeco) (send-event arg0 'attack (-> arg3 param 0) (static-attack-info ((mode 'darkeco)))) (go-virtual die #f 0))))
+       
+       (('darkeco) 
+        (send-event arg0 'attack (-> arg3 param 0) (static-attack-info ((mode 'darkeco)))) 
+
+        (runs-on-crate-break (crate-type crate-darkeco) (-> self fact pickup-amount) self)
+        
+        (go-virtual die #f 0))))
     (('bonk)
      (when (= (-> self root trans y) (-> self base y))
        (activate! (-> self smush) -0.1 75 150 1.0 1.0)
@@ -580,6 +598,20 @@
                        (f30-0 (vector-vector-distance (the-as vector gp-2) (the-as vector a1-3))))
                   (when (and (< f30-0 (-> *FACT-bank* suck-suck-dist)) (!= (-> self defense) 'steel))
                     (logior! (-> self fact options) (fact-options can-collect))
+				(case (-> self defense)
+                      (('iron)
+                        (runs-on-crate-break (crate-type crate-iron) (-> self fact pickup-amount) self)
+                        )
+                      (('steel)
+                        (runs-on-crate-break (crate-type crate-steel) (-> self fact pickup-amount) self)
+                        )
+                      (('darkeco)
+                        (runs-on-crate-break (crate-type crate-darkeco) (-> self fact pickup-amount) self)
+                        )
+                      (else
+                        (runs-on-crate-break (crate-type crate-normal) (-> self fact pickup-amount) self)
+                        )
+                      )
                     (go-virtual die #f 0))
                   (when (rand-vu-percent? 0.5)
                     (let ((s5-0 (new 'stack-no-clear 'vector)))
@@ -630,6 +662,8 @@
       (clear-collide-with-as (-> self root))
       (if (nonzero? (-> self sound)) (stop! (-> self sound)))
       (if (and *target*
+				(or (!= (-> self look) 'iron) (= (get-closest-interactive-target self) *target*)) ;; make sure instant-collect on scoutfly crate is only run for self if closest to broken crate
+              (or (!= (-> self look) 'steel) (= (get-closest-interactive-target self) *target*)) ;; make sure instant-collect on orb crate is only run for self if closest to broken crate
                (and (logtest? (-> *target* control root-prim prim-core action) (collide-action racer snowball tube flut))
                     (!= (-> self fact pickup-type) 6)
                     (not arg0)))

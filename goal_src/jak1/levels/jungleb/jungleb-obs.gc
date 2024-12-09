@@ -197,6 +197,7 @@
                        (-> self root trans)
                        :to
                        *entity-pool*)
+	(when *enable-ingame-cutscenes?*
         (set! (-> self cam-tracker)
               (ppointer->handle (process-spawn camera-tracker
                                                :init
@@ -218,7 +219,7 @@
                                                  (send-event (ppointer->process (-> *hud-parts* fuel-cell)) 'show)
                                                  (none))
                                                :to
-                                               self)))
+                                                 self))))
         (save-reminder (get-task-control (-> self entity extra perm task)) 2 0)
         (sound-play "jngb-eggtop-seq")
         (ja-no-eval :group! eggtop-idle-ja :num! (seek!) :frame-num 0.0)

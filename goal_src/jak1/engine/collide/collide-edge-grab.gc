@@ -13,7 +13,7 @@
 
 (defmethod find-edge-grabs! ((this target) (arg0 collide-cache) (tgt-idx int))
   "Main edge grabbing method.
-   Will populate *edge-grab-info* and send *target* an 'edge-grab event if successful."
+   Will populate *edge-grab-info-list* and send *target* an 'edge-grab event if successful."
   (rlet ((vf1 :class vf)
          (vf2 :class vf)
          (vf3 :class vf)
@@ -21,7 +21,7 @@
          (vf5 :class vf)
          (vf6 :class vf)
          (vf7 :class vf))
-    (let ((gp-0 *collide-edge-work*))
+    (let ((gp-0 (-> *collide-edge-work-list* tgt-idx)))
       ;; reset the edge work...
       (set! (-> gp-0 num-verts) (the-as uint 0))
       (set! (-> gp-0 num-edges) (the-as uint 0))
@@ -63,19 +63,19 @@
         (find-grabbable-edges! gp-0)
         (when (nonzero? (-> gp-0 num-edges))
           ;;
-          (set! (-> gp-0 search-pt quad) (-> *target* control unknown-vector90 quad))
+          (set! (-> gp-0 search-pt quad) (-> this control unknown-vector90 quad))
           ;; for the search, we either use the direction of the stick, or the heading of target.
-          (when (!= (-> *cpad-list* cpads (-> *target* control unknown-cpad-info00 number) stick0-speed) 0.0)
+          (when (!= (-> *cpad-list* cpads (-> this control unknown-cpad-info00 number) stick0-speed) 0.0)
             ;; use stick
-            (set! (-> gp-0 search-dir-vec quad) (-> *target* control unknown-vector20 quad))
+            (set! (-> gp-0 search-dir-vec quad) (-> this control unknown-vector20 quad))
             (search-for-edges gp-0 (-> gp-0 hold-list))
-            (when (find-best-grab! gp-0 (-> gp-0 hold-list) *edge-grab-info*)
-              (send-event *target* 'edge-grab)
+            (when (and (find-best-grab! gp-0 (-> gp-0 hold-list) (-> *edge-grab-info-list* tgt-idx)) (= this *target*))
+              (send-event this 'edge-grab)
               (return (the-as object #f))))
           ;; use target's heading
-          (vector-z-quaternion! (-> gp-0 search-dir-vec) (-> *target* control unknown-quaternion00))
+          (vector-z-quaternion! (-> gp-0 search-dir-vec) (-> this control unknown-quaternion00))
           (search-for-edges gp-0 (-> gp-0 hold-list))
-          (if (find-best-grab! gp-0 (-> gp-0 hold-list) *edge-grab-info*) (send-event *target* 'edge-grab))
+(if (and (find-best-grab! gp-0 (-> gp-0 hold-list) (-> *edge-grab-info-list* tgt-idx)) (= this *target*)) (send-event this 'edge-grab))
           0)))
     0))
 
@@ -138,7 +138,11 @@
     (set! (-> arg1 center-hold quad) (-> arg0 center-pt quad))
     (set! (-> arg1 world-vertex 0 quad) (-> s3-0 vertex-ptr 0 0 quad))
     (set! (-> arg1 world-vertex 1 quad) (-> s3-0 vertex-ptr 1 0 quad))
-    (set! (-> arg1 hanging-matrix vector 1 quad) (-> *target* control dynam gravity-normal quad))
+   (dotimes (tgt-idx (-> *edge-grab-info-list* length))
+      (when (and (get-target tgt-idx) (= arg1 (-> *edge-grab-info-list* tgt-idx)))
+        (set! (-> arg1 hanging-matrix vector 1 quad) (-> (get-target tgt-idx) control dynam gravity-normal quad))
+        )
+      )
     (vector-normalize! (vector-! (-> arg1 hanging-matrix vector 2) (-> arg1 world-vertex 1) (the-as vector (-> arg1 world-vertex)))
                        1.0)
     (vector-normalize! (vector-cross! (the-as vector (-> arg1 hanging-matrix))
@@ -217,7 +221,7 @@
           (set! v0-0 #f)
           (b! #t cfg-27 :delay (nop!))
           (label cfg-17)
-          (set! (-> this hanging-matrix vector 1 quad) (-> *target* control dynam gravity-normal quad))
+          (set! (-> this hanging-matrix vector 1 quad) (-> (get-target tgt-idx) control dynam gravity-normal quad))
           (vector-normalize! (vector-! (-> this hanging-matrix vector 2) (-> this world-vertex 1) (the-as vector (-> this world-vertex)))
                              1.0)
           (vector-normalize! (vector-cross! (the-as vector (-> this hanging-matrix))
@@ -228,11 +232,11 @@
                          (the-as vector (-> this hanging-matrix))
                          (-> this hanging-matrix vector 1))
           (set! (-> this hanging-matrix vector 3 quad) (-> this center-hold quad))
-          (let ((v1-21 *collide-edge-work*))
+          (let ((v1-21 (-> *collide-edge-work-list* tgt-idx)))
             (transform-vectors! (-> this hanging-matrix) (-> v1-21 world-player-spheres) (-> v1-21 local-player-spheres) 12))))
-      (let ((v1-22 *collide-edge-work*)
+      (let ((v1-22 (-> *collide-edge-work-list* tgt-idx))
             (a1-14 (new 'stack-no-clear 'collide-using-spheres-params)))
-        (let ((a0-24 'target-edge-grab-jump)) (b! (!= (-> *target* next-state name) a0-24) cfg-20 :delay (nop!)))
+        (let ((a0-24 'target-edge-grab-jump)) (b! (!= (-> (get-target tgt-idx) next-state name) a0-24) cfg-20 :delay (nop!)))
         (set! (-> a1-14 spheres) (-> v1-22 world-player-leap-up-spheres))
         (set! (-> a1-14 num-spheres) (the-as uint 6))
         (set! (-> a1-14 collide-with) (-> v1-22 cshape root-prim collide-with))

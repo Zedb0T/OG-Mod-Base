@@ -235,7 +235,7 @@
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
       (case message
         (('touch 'attack)
-         (when (= (-> proc type) target)
+         (when (and (= (-> proc type) target) (= proc *target*))
            (do-push-aways! (-> self root))
            (when (time-elapsed? (-> self hit-player-time) (seconds 0.5))
              (set-time! (-> self hit-player-time))

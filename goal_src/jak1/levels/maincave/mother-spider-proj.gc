@@ -9,6 +9,7 @@
   ((parent-process (pointer projectile) :overlay-at parent)
    (facing-dir     vector :inline)))
 
+
 (defpartgroup group-mother-spider-proj-fly
   :id 326
   :duration (seconds 1)
@@ -271,7 +272,7 @@
   0
   (none))
 
-(defmethod projectile-method-27 ((this mother-spider-proj))
+(defmethod projectile-method-27 ((this mother-spider-proj) (handle-from handle))
   (set! (-> this part) (create-launch-control (-> *part-group-id-table* 326) this))
   (set! (-> this max-speed) 32768.0)
   (set! (-> this update-velocity) mother-spider-proj-update-velocity)

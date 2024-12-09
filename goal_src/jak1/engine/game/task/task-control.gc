@@ -100,7 +100,10 @@
     ((= (-> this current-stage) -1)
      ;; no current stage, do nothing
      )
-    (else (close-task! (-> this stage (-> this current-stage)))))
+    (else
+      (let ((task-stage (-> this stage (-> this current-stage))))
+        (runs-on-task-update (-> task-stage game-task) (-> task-stage status))
+        (close-task! task-stage))))
   ;; attempt to update the current task
   (first-any this #t))
 
@@ -114,7 +117,10 @@
     (dotimes (v1-1 (-> this stage length))
       (when (and (= a0-2 (-> this stage v1-1 game-task)) (= arg0 (-> this stage v1-1 status)))
         ;; found it! close and update current stage
-        (close-task! (-> this stage v1-1))
+        (let ((task-stage (-> this stage v1-1)))
+          (runs-on-task-update (-> task-stage game-task) (-> task-stage status))
+          (close-task! task-stage)
+          )
         (return (first-any this #t))))
     ;; nope, complain.
     (format 0
@@ -4998,12 +5004,18 @@
 
 (defun close-specific-task! ((arg0 game-task) (arg1 task-status))
   "Close a cstage for a game-task"
+ (runs-on-task-update arg0 arg1)
   (let ((gp-0 (get-task-control arg0)))
     (when gp-0
       (dotimes (v1-1 (-> gp-0 stage length))
         (when (and (= arg0 (-> gp-0 stage v1-1 game-task)) (= arg1 (-> gp-0 stage v1-1 status)))
           (close-task! (-> gp-0 stage v1-1))
-          (return (first-any gp-0 #t))))
+          (if (and (= arg1 (task-status need-hint)) (or (or (= arg0 (game-task village2-levitator)) (= arg0 (game-task village3-button)) (= arg0 (game-task village4-button)))))
+            (runs-on-warp-gate-open arg0)
+          )
+          (return (first-any gp-0 #t))
+          )
+        )
       (format 0
               "ERROR<GMJ>: close-specific! received non-existent task-cstage(~S ~S)--returning #t.~%"
               (game-task->string arg0)

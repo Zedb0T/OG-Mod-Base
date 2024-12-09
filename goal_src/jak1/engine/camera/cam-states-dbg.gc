@@ -63,7 +63,7 @@
   ((speed     float)
    (rot-speed degrees)))
 
-(define *CAM_FREE-bank* (new 'static 'cam-free-bank :speed 1600.0 :rot-speed (degrees 0.6)))
+(define *CAM_FREE-bank* (new 'static 'cam-free-bank :speed 800.0 :rot-speed (degrees 0.45)))
 
 (defun cam-free-floating-input ((arg0 vector) (arg1 vector) (arg2 symbol) (arg3 int))
   (when (and (!= *master-mode* 'menu) (not *cam-layout*))
@@ -229,10 +229,10 @@
             (set! (-> arg0 y) (- (-> arg0 y) (* 0.5 (-> *CAM_FREE-bank* rot-speed) (- f24-0))))
             (set! (-> arg0 x) (- (-> arg0 x) (* 0.5 (-> *CAM_FREE-bank* rot-speed) (- f26-0)))))
            (else
-            (set! (-> arg0 y) (- (-> arg0 y) (* (- f24-0) (-> *CAM_FREE-bank* rot-speed))))
-            (set! (-> arg0 x) (- (-> arg0 x) (* (- f26-0) (-> *CAM_FREE-bank* rot-speed))))))
-         (+! (-> arg1 x) (* 0.2 (-> *CAM_FREE-bank* speed) f28-14))
-         (+! (-> arg1 z) (* 0.2 (-> *CAM_FREE-bank* speed) f30-14)))
+            (set! (-> arg0 y) (- (-> arg0 y) (* (- f24-0) (* 2.8 (-> *CAM_FREE-bank* rot-speed)))))
+            (set! (-> arg0 x) (- (-> arg0 x) (* (- f26-0) (* 2.8 (-> *CAM_FREE-bank* rot-speed)))))))
+         (+! (-> arg1 x) (* 3.5 (-> *CAM_FREE-bank* speed) f28-14))
+         (+! (-> arg1 z) (* 3.5 (-> *CAM_FREE-bank* speed) f30-14)))
         ((cpad-hold? arg3 l2)
          (+! (-> arg1 x) (* f28-14 (-> *CAM_FREE-bank* speed)))
          (+! (-> arg1 y) (* f26-0 (-> *CAM_FREE-bank* speed)))

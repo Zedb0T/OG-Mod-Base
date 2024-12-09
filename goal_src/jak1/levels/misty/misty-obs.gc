@@ -958,6 +958,7 @@
   (:states
    boatpaddle-idle))
 
+
 (defskelgroup *boatpaddle-sg*
   boatpaddle
   boatpaddle-lod0-jg
@@ -998,6 +999,7 @@
    (angle-speed           float))
   (:states
    windturbine-idle))
+
 
 (defskelgroup *windturbine-sg*
   windturbine
@@ -1041,6 +1043,7 @@
    (mis-bone-bridge-fall symbol)
    mis-bone-bridge-hit
    mis-bone-bridge-idle))
+
 
 (defskelgroup *mis-bone-bridge-sg*
   mis-bone-bridge
@@ -1200,6 +1203,7 @@
    breakaway-fall
    breakaway-idle))
 
+
 (defstate breakaway-idle (breakaway)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
@@ -1274,9 +1278,12 @@
 
 (deftype breakaway-right (breakaway) ())
 
+
 (deftype breakaway-mid (breakaway) ())
 
+
 (deftype breakaway-left (breakaway) ())
+
 
 (defskelgroup *breakaway-right-sg*
   breakaway-right
@@ -1346,6 +1353,7 @@
 
 (deftype bone-platform (rigid-body-platform)
   ((anchor-point vector :inline)))
+
 
 (defskelgroup *mis-bone-platform-sg*
   mis-bone-platform
@@ -1444,6 +1452,7 @@
 
 (deftype mistycam (process-hidden) ())
 
+
 (defskelgroup *mistycam-sg*
   mistycam
   mistycam-lod0-jg
@@ -1475,13 +1484,15 @@
 
 (deftype misty-battlecontroller (battlecontroller) ())
 
+
 (defstate battlecontroller-play-intro-camera (misty-battlecontroller)
   :virtual #t
   :code
     (behavior ()
-      (let ((gp-1 (ppointer->handle (process-spawn pov-camera (-> self root trans) *mistycam-sg* "lurkerattack" 0 #f '() :to self))))
-        (while (handle->process (the-as handle gp-1))
-          (suspend)))
+      (when *enable-ingame-cutscenes?*
+        (let ((gp-1 (ppointer->handle (process-spawn pov-camera (-> self root trans) *mistycam-sg* "lurkerattack" 0 #f '() :to self))))
+          (while (handle->process (the-as handle gp-1))
+            (suspend))))
       (go-virtual battlecontroller-active)))
 
 (defmethod battlecontroller-method-27 ((this misty-battlecontroller))
@@ -1532,6 +1543,7 @@
    boat-fuelcell-idle
    boat-fuelcell-spawn))
 
+
 (defstate boat-fuelcell-idle (boat-fuelcell)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
@@ -1547,7 +1559,7 @@
   :code
     (behavior ()
       (process-drawable-birth-fuel-cell (the-as entity #f) (the-as vector #f) #f)
-      (when (and *target* (-> self play-cutscene?))
+      (when (and *enable-ingame-cutscenes?* *target* (-> self play-cutscene?))
         (ambient-hint-spawn "gamcam02" (the-as vector #f) *entity-pool* 'camera)
         (let ((gp-1 (ppointer->handle (process-spawn pov-camera (-> self root trans) *mistycam-sg* "mistycam-balloon-fuel-cell" 0 #f '() :to self))))
           (while (handle->process (the-as handle gp-1))

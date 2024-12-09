@@ -131,7 +131,8 @@
          (set! (-> this current-continue) s4-3))))
     (when (!= s5-0 (-> this current-continue))
       (set! (-> this continue-deaths) 0)
-      (set-time! (-> this continue-time))))
+      (set-time! (-> this continue-time))
+      (if (-> this current-continue level) (runs-on-new-checkpoint))))
   (-> this current-continue))
 
 (defmethod get-entity-task-perm ((this game-info) (arg0 game-task))
@@ -421,7 +422,8 @@
           (adjust (-> (the-as target (-> this process)) game) 'life (- (-> *GAME-bank* life-single-inc)) source-handle))))
      ;; some sort of hack for eco vents.
      (b! (and (logtest? (-> (the-as collide-shape (-> this process root)) root-prim prim-core action) (collide-action racer))
-              (type-type? (-> (handle->process source-handle) type) vent))
+              (or (type-type? (-> (handle->process source-handle) type) vent)
+                  (= amount 5)))
          cfg-80
          :delay (nop!))
      (-> this health))
@@ -506,9 +508,11 @@
        ;; sound and controller vibration.
        (when (not (and (= (handle->process source-handle) (handle->process (-> this eco-source)))
                        (not (time-elapsed? (-> this eco-source-time) (seconds 0.5)))))
-         (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.2))
-         (cpad-set-buzz! (-> *cpad-list* cpads 0) 0 17 (seconds 0.2))
-         (case kind
+(when (= (-> this process) *target*)
+          (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.2))
+          (cpad-set-buzz! (-> *cpad-list* cpads 0) 0 17 (seconds 0.2))
+          )
+                   (case kind
            (((pickup-type eco-blue)) (sound-play "get-blue-eco"))
            (((pickup-type eco-green)) (sound-play "get-green-eco"))
            (((pickup-type eco-yellow)) (sound-play "get-yellow-eco"))
@@ -648,7 +652,7 @@
   0
   (none))
 
-(defun-debug game-task->string ((arg0 game-task))
+(defun game-task->string ((arg0 game-task))
   (enum->string game-task arg0))
 
 (defmethod debug-print ((this game-info) (arg0 symbol))

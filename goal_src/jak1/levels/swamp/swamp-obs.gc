@@ -120,6 +120,7 @@
   (:states
    swamp-spike-idle))
 
+
 (defskelgroup *swamp-spike-sg*
   swamp-spike
   swamp-spike-lod0-jg
@@ -302,6 +303,7 @@
    swamp-spike-gate-down
    swamp-spike-gate-up))
 
+
 (defmethod init-from-entity! ((this swampgate) (arg0 entity-actor))
   (init! this)
   (if (logtest? (-> arg0 extra perm status) (entity-perm-status complete)) (go swamp-spike-gate-down) (go swamp-spike-gate-up))
@@ -317,6 +319,7 @@
    (got-grow symbol))
   (:states
    balance-plat-idle))
+
 
 (defskelgroup *balance-plat-sg*
   balance-plat
@@ -406,6 +409,7 @@
   (:states
    swamp-rock-break
    swamp-rock-idle))
+
 
 (defpartgroup group-swamp-rock-explosion
   :id 291
@@ -604,6 +608,7 @@
   ((anchor-point vector :inline)
    (float-height float)))
 
+
 (defmethod rigid-body-platform-method-22 ((this tar-plat) (arg0 vector) (arg1 float))
   (+ (-> this float-height)
      (-> this float-height-offset)
@@ -689,7 +694,9 @@
 
 (deftype swamp-barrel (barrel) ())
 
+
 (deftype swampcam (process-hidden) ())
+
 
 (defskelgroup *swampcam-sg*
   swampcam
@@ -700,15 +707,17 @@
 
 (deftype swamp-battlecontroller (battlecontroller) ())
 
+
 (defstate battlecontroller-play-intro-camera (swamp-battlecontroller)
   :virtual #t
   :code
     (behavior ()
       (suspend)
-      (process-drawable-delay-player (seconds 1))
-      (let ((gp-1 (ppointer->handle (process-spawn pov-camera (-> self root trans) *swampcam-sg* "swamp-ambush" 0 #f '() :to self))))
-        (while (handle->process (the-as handle gp-1))
-          (suspend)))
+      (when *enable-ingame-cutscenes?*
+        (process-drawable-delay-player (seconds 1))
+        (let ((gp-1 (ppointer->handle (process-spawn pov-camera (-> self root trans) *swampcam-sg* "swamp-ambush" 0 #f '() :to self))))
+          (while (handle->process (the-as handle gp-1))
+            (suspend))))
       (go-virtual battlecontroller-active)))
 
 (defstate battlecontroller-die (swamp-battlecontroller)

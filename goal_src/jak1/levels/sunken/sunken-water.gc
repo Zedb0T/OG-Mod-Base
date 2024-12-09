@@ -20,6 +20,7 @@
   (:methods
    (draw-ripple (_type_) symbol)))
 
+
 (define ripple-for-sunken-water
   (new 'static
        'ripple-wave-set
@@ -93,7 +94,9 @@
                 (vector-lerp! (-> self draw color-mult) (-> self safe-color-mult) (-> self deadly-color-mult) f30-0)
                 (vector-lerp! (-> self draw color-emissive) (-> self safe-color-emissive) (-> self deadly-color-emissive) f30-0)
                 (set! (-> self draw color-mult w) 0.5)
-                (if (= f30-0 1.0) (logior! (-> self flags) (water-flags wt19)))))
+                (if (= f30-0 1.0) 
+                  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+                    (logior! (-> self flags tgt-idx) (water-flags wt19))))))
             (draw-ripple self)
             (when (not (-> self playing-deadly-sound?))
               (set! (-> self playing-deadly-sound?) #t)
@@ -102,14 +105,14 @@
            (else
             (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
               (logclear! (-> self flags tgt-idx) (water-flags wt19)))
-
             (when (!= (-> self deadly-fade) 0.0)
               (seek! (-> self deadly-fade) 0.0 (* 8.0 (seconds-per-frame)))
               (let ((f30-1 (-> self deadly-fade)))
                 (vector-lerp! (-> self draw color-mult) (-> self safe-color-mult) (-> self deadly-color-mult) f30-1)
                 (vector-lerp! (-> self draw color-emissive) (-> self safe-color-emissive) (-> self deadly-color-emissive) f30-1)
                 (set! (-> self draw color-mult w) 0.5)
-                (if (= f30-1 0.0)               (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+                (if (= f30-1 0.0) 
+                 (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
                   (logclear! (-> self flags tgt-idx) (water-flags wt19))))))
             (when (-> self playing-deadly-sound?)
               (set! (-> self playing-deadly-sound?) #f)

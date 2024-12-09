@@ -6,6 +6,7 @@
 (require "engine/collide/collide-cache.gc")
 (require "engine/entity/entity.gc")
 
+
 ;; DECOMP BEGINS
 
 (defskelgroup *ogrecam-sg*
@@ -23,6 +24,7 @@
    plunger-lurker-flee
    plunger-lurker-idle
    plunger-lurker-plunge))
+
 
 (defskelgroup *plunger-lurker-sg*
   plunger-lurker
@@ -234,6 +236,7 @@
    flying-lurker-idle
    flying-lurker-sleep
    flying-lurker-start))
+
 
 (defskelgroup *flying-lurker-sg*
   flying-lurker
@@ -559,59 +562,125 @@
      (go flying-lurker-fly))))
 
 (defbehavior flying-lurker-play-intro flying-lurker ()
-  (logclear! (-> self mask) (process-mask actor-pause))
-  (close-specific-task! (game-task plunger-lurker-hit) (task-status unknown))
-  (while (and *target*
-              (logtest? (-> *target* control unknown-surface00 flags) (surface-flags jump))
-              (not (logtest? (-> *target* control status) (cshape-moving-flags onsurf))))
-    (suspend))
-  (while (not (process-grab? *target*))
-    (suspend))
-  (kill-current-level-hint '(notice) '() 'exit)
-  (while (or (-> *setting-control* current talking)
-             (-> *setting-control* current spooling)
-             (-> *setting-control* current hint)
-             (!= (-> *level* loading-level) (-> *level* level-default)))
-    (suspend))
-  (suspend)
-  (kill-current-level-hint '() '() 'die)
-  (suspend)
-  (let ((gp-1 (ppointer->handle (manipy-spawn (-> self entity extra trans) (-> self entity) *ogrecam-sg* #f :to self))))
-    (let ((s5-0 (the-as othercam (get-process *default-dead-pool* othercam #x4000))))
-      (ppointer->handle (when s5-0
-                          (let ((t9-8 (method-of-type othercam activate))) (t9-8 s5-0 (-> gp-1 process 0) 'othercam (the-as pointer #x70004000)))
-                          (run-now-in-process s5-0 othercam-init-by-other (-> gp-1 process 0) 4 #f #t)
-                          (-> s5-0 ppointer))))
-    (send-event (handle->process gp-1)
-                'eval
-                (lambda :behavior manipy ()
-                  (let ((v0-0 (logior (-> self draw status) (draw-status skip-bones))))
-                    (set! (-> self draw status) v0-0)
-                    (the-as uint v0-0))))
-    (send-event (-> gp-1 process 0) 'clone-copy-trans #f)
-    (send-event (-> gp-1 process 0) 'anim-mode 'clone-anim)
-    (let ((a1-12 (new 'stack-no-clear 'event-message-block)))
-      (set! (-> a1-12 from) self)
-      (set! (-> a1-12 num-params) 2)
-      (set! (-> a1-12 message) 'clone)
-      (set! (-> a1-12 param 0) (the-as uint (process->handle self)))
-      (set! (-> a1-12 param 1) (the-as uint 2))
-      (let ((t9-13 send-event-function)
-            (v1-58 (-> self link next)))
-        (t9-13 (if v1-58 (-> v1-58 extra process)) a1-12)))
-    (ja-play-spooled-anim (new 'static 'spool-anim :name "flying-lurker-intro" :index 7 :parts 2 :command-list '())
-                          (the-as art-joint-anim #f)
-                          (the-as art-joint-anim #f)
-                          (the-as (function process-drawable symbol) false-func))
-    (if (handle->process gp-1) (deactivate (-> gp-1 process 0))))
-  (process-release? *target*)
-  (process-spawn-function process
-    (lambda :behavior process ()
-      (suspend-for (seconds 0.1))
-      (level-hint-spawn (text-id ogre-race-hint) "asstvb24" (the-as entity #f) *entity-pool* (game-task none))
-      (none))
-    :to
-    self)
+  (cond
+    (*enable-ingame-cutscenes?*
+      (logclear! (-> self mask) (process-mask actor-pause))
+      (close-specific-task! (game-task plunger-lurker-hit) (task-status unknown))
+      (while (and *target*
+                  (logtest? (-> *target* control unknown-surface00 flags) (surface-flags jump))
+                  (not (logtest? (-> *target* control status) (cshape-moving-flags onsurf))))
+        (suspend))
+      (while (not (process-grab? *target*))
+        (suspend))
+      (kill-current-level-hint '(notice) '() 'exit)
+      (while (or (-> *setting-control* current talking)
+                (-> *setting-control* current spooling)
+                (-> *setting-control* current hint)
+                (!= (-> *level* loading-level) (-> *level* level-default)))
+        (suspend))
+      (suspend)
+      (kill-current-level-hint '() '() 'die)
+      (suspend)
+      (let ((gp-1 (ppointer->handle (manipy-spawn (-> self entity extra trans) (-> self entity) *ogrecam-sg* #f :to self))))
+        (let ((s5-0 (the-as othercam (get-process *default-dead-pool* othercam #x4000))))
+          (ppointer->handle (when s5-0
+                              (let ((t9-8 (method-of-type othercam activate))) (t9-8 s5-0 (-> gp-1 process 0) 'othercam (the-as pointer #x70004000)))
+                              (run-now-in-process s5-0 othercam-init-by-other (-> gp-1 process 0) 4 #f #t)
+                              (-> s5-0 ppointer))))
+        (send-event (handle->process gp-1)
+                    'eval
+                    (lambda :behavior manipy ()
+                      (let ((v0-0 (logior (-> self draw status) (draw-status skip-bones))))
+                        (set! (-> self draw status) v0-0)
+                        (the-as uint v0-0))))
+        (send-event (-> gp-1 process 0) 'clone-copy-trans #f)
+        (send-event (-> gp-1 process 0) 'anim-mode 'clone-anim)
+        (let ((a1-12 (new 'stack-no-clear 'event-message-block)))
+          (set! (-> a1-12 from) self)
+          (set! (-> a1-12 num-params) 2)
+          (set! (-> a1-12 message) 'clone)
+          (set! (-> a1-12 param 0) (the-as uint (process->handle self)))
+          (set! (-> a1-12 param 1) (the-as uint 2))
+          (let ((t9-13 send-event-function)
+                (v1-58 (-> self link next)))
+            (t9-13 (if v1-58 (-> v1-58 extra process)) a1-12)))
+        (ja-play-spooled-anim (new 'static 'spool-anim :name "flying-lurker-intro" :index 7 :parts 2 :command-list '())
+                              (the-as art-joint-anim #f)
+                              (the-as art-joint-anim #f)
+                              (the-as (function process-drawable symbol) false-func))
+        (if (handle->process gp-1) (deactivate (-> gp-1 process 0))))
+      (process-release? *target*)
+      (process-spawn-function process
+        (lambda :behavior process ()
+          (suspend-for (seconds 0.1))
+          (level-hint-spawn (text-id ogre-race-hint) "asstvb24" (the-as entity #f) *entity-pool* (game-task none))
+          (none))
+        :to
+        self))
+    (else
+      (close-specific-task! (game-task plunger-lurker-hit) (task-status unknown))
+      (kill-current-level-hint '(notice) '() 'exit)
+      (while (or (-> *setting-control* current talking)
+                (-> *setting-control* current spooling)
+                (-> *setting-control* current hint)
+                (!= (-> *level* loading-level) (-> *level* level-default))
+                )
+        (suspend)
+        )
+      (suspend)
+      (kill-current-level-hint '() '() 'die)
+      (suspend)
+      (let ((gp-1
+              (ppointer->handle (manipy-spawn (-> self entity extra trans) (-> self entity) *ogrecam-sg* #f :to self))
+              )
+            )
+        (send-event
+          (handle->process gp-1)
+          'eval
+          (lambda :behavior manipy () (let ((v0-0 (logior (-> self draw status) (draw-status skip-bones))))
+                                        (set! (-> self draw status) v0-0)
+                                        (the-as uint v0-0)
+                                        )
+                                  )
+          )
+        (send-event (-> gp-1 process 0) 'clone-copy-trans #f)
+        (send-event (-> gp-1 process 0) 'anim-mode 'clone-anim)
+        (let ((a1-12 (new 'stack-no-clear 'event-message-block)))
+          (set! (-> a1-12 from) self)
+          (set! (-> a1-12 num-params) 2)
+          (set! (-> a1-12 message) 'clone)
+          (set! (-> a1-12 param 0) (the-as uint (process->handle self)))
+          (set! (-> a1-12 param 1) (the-as uint 2))
+          (let ((t9-13 send-event-function)
+                (v1-58 (-> self link next))
+                )
+            (t9-13
+              (if v1-58
+                  (-> v1-58 extra process)
+                  )
+              a1-12
+              )
+            )
+          )
+        (ja-play-spooled-anim
+          (new 'static 'spool-anim :name "flying-lurker-intro" :index 7 :parts 2 :command-list '())
+          (the-as art-joint-anim #f)
+          (the-as art-joint-anim #f)
+          (the-as (function process-drawable symbol) false-func)
+          )
+        (if (handle->process gp-1)
+            (deactivate (-> gp-1 process 0))
+            )
+        )
+      (process-spawn-function
+        process
+        (lambda :behavior process
+          ()
+          (suspend-for (seconds 0.1))
+          (level-hint-spawn (text-id ogre-race-hint) "asstvb24" (the-as entity #f) *entity-pool* (game-task none))
+          (none)
+          )
+        :to self)))
   (none))
 
 (defstate flying-lurker-start (flying-lurker)
@@ -624,7 +693,10 @@
       (when (play-movie?)
         (set-setting! 'allow-progress #f 0.0 0)
         (flying-lurker-play-intro))
-      (flying-lurker-inc-try-count)
+      (while (< (-> *racer-mods* target-speed) 100000.0)
+        (suspend)
+        )
+    (flying-lurker-inc-try-count)
       (ja-channel-set! 1)
       (ja :group! flying-lurker-fly-ja)
       (let* ((v1-8 (/ (the-as int (rand-uint31-gen *random-generator*)) 256))
@@ -760,9 +832,9 @@
            (ja-channel-set! 0)
            (if (= (get-task-status (game-task plunger-lurker-hit)) (task-status invalid)) (go flying-lurker-die))
            (when (and *target* (>= 172032.0 (vector-vector-xz-distance (-> self root trans) (-> *target* control trans))))
-             (process-grab? *target*)
+             (if *enable-ingame-cutscenes?* (process-grab? *target*))
              (suspend-for (seconds 1))
-             (process-release? *target*)
+             (if *enable-ingame-cutscenes?* (process-release? *target*))
              (send-event self 'saw-player))
            (suspend)
            0)

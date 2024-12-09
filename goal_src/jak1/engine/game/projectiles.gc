@@ -636,7 +636,7 @@
       (suspend)
       (go-virtual projectile-die)))
 
-(defmethod projectile-method-27 ((this projectile))
+(defmethod projectile-method-27 ((this projectile) (handle-from handle))
   0
   (none))
 
@@ -677,7 +677,7 @@
   ((method-of-type process-drawable deactivate) this)
   (none))
 
-(defbehavior projectile-init-by-other projectile ((arg0 entity-actor) (arg1 vector) (arg2 vector) (arg3 uint) (arg4 handle))
+(defbehavior projectile-init-by-other projectile ((arg0 entity-actor) (arg1 vector) (arg2 vector) (arg3 uint) (arg4 handle) (handle-from handle))
   (stack-size-set! (-> self main-thread) 512)
   (set! (-> self entity) arg0)
   (set! (-> self attack-mode) #f)
@@ -705,7 +705,7 @@
   (vector-normalize-copy! (-> self base-vector) arg2 1.0)
   (vector+float*! (-> self target) (-> self root trans) (-> self root transv) 2.0)
   (set! (-> self target-base quad) (-> self target quad))
-  (projectile-method-27 self)
+  (projectile-method-27 self handle-from)
   (projectile-method-24 self)
   (when (not (type-type? (-> self type) projectile-blue))
     (let ((a1-8 (new 'stack-no-clear 'overlaps-others-params)))
@@ -716,8 +716,8 @@
   (projectile-method-25 self)
   (none))
 
-(defmethod projectile-method-27 ((this projectile-yellow))
-  (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 204 (seconds 0.1))
+(defmethod projectile-method-27 ((this projectile-yellow) (handle-from handle))
+  (if (= *target* (handle->process handle-from)) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 204 (seconds 0.1)))
   (set! (-> this attack-mode) 'eco-yellow)
   (set! (-> this mode) 1)
   (set! (-> this max-speed) (vector-length (-> this root transv)))
@@ -842,8 +842,8 @@
   0
   (none))
 
-(defmethod projectile-method-27 ((this projectile-blue))
-  (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 204 (seconds 0.1))
+(defmethod projectile-method-27 ((this projectile-blue) (handle-from handle))
+  (if (= *target* (handle->process handle-from)) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 204 (seconds 0.1)))
   (sound-play "blue-eco-on")
   (set! (-> this mode) 2)
   (set! (-> this max-speed) (-> *TARGET-bank* yellow-projectile-speed))
@@ -902,14 +902,15 @@
               (let ((a3-1 (vector<-cspace! (new 'stack-no-clear 'vector) (-> arg0 node-list data s3-0)))
                     (t1-0 8)
                     (t2-0 (process->handle pp)))
-                ((the-as (function process function object object object object object object) s2-0)
+                ((the-as (function process function object object object object object object object) s2-0)
                  s1-0
                  s0-0
                  sv-48
                  a3-1
                  gp-0
                  t1-0
-                 t2-0)))
+                 t2-0
+                 #f)))
             (-> s4-1 ppointer)))))
     0
     (none)))

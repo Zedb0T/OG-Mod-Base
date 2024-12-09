@@ -10,6 +10,7 @@
 (deftype village2cam (pov-camera)
   ((seq uint64)))
 
+
 (defskelgroup *village2cam-sg*
   village2cam
   village2cam-lod0-jg
@@ -75,6 +76,7 @@
   (:states
    pontoon-die
    pontoon-hidden))
+
 
 (defstate pontoon-hidden (pontoon)
   :enter
@@ -193,7 +195,9 @@
 
 (deftype pontoonfive (pontoon) ())
 
+
 (deftype pontoonten (pontoon) ())
+
 
 (defskelgroup *pontoonfive-sg*
   pontoonfive
@@ -375,6 +379,7 @@
   (:states (allpontoons-be-clone handle)
    allpontoons-idle))
 
+
 (defskelgroup *allpontoons-sg*
   allpontoons
   allpontoons-lod0-jg
@@ -442,6 +447,7 @@
   (:states (fireboulder-be-clone handle)
    fireboulder-hover
    fireboulder-idle))
+
 
 (defskelgroup *fireboulder-sg*
   fireboulder
@@ -621,6 +627,7 @@
   (:states
    ceilingflag-idle))
 
+
 (defskelgroup *ceilingflag-sg*
   ceilingflag
   ceilingflag-geo-jg
@@ -654,6 +661,7 @@
    exit-chamber-dummy-idle
    exit-chamber-dummy-wait-to-appear))
 
+
 (defskelgroup *exit-chamber-dummy-sg*
   exit-chamber-dummy
   exit-chamber-dummy-lod0-jg
@@ -672,6 +680,7 @@
       (logior! (-> self draw status) (draw-status hidden))
       (while (not (skip-reminder? self))
         (suspend))
+    (load-state-want-display-level 'sunken 'special)
       (when (and (not (task-complete? *game-info* (game-task sunken-room))) (not (-> self child)))
         (let ((a0-3 (new 'stack-no-clear 'vector)))
           (set! (-> a0-3 quad) (-> self root trans quad))
@@ -698,6 +707,20 @@
                 (send-event a0-7 'trans v1-14))))
           (suspend)))
       (let ((a0-11 (handle->process (-> self fcell-handle)))) (if a0-11 (deactivate a0-11)))
+      (when (not *enable-ingame-cutscenes?*) ;;inits chamber once if never done as it's requried to ever spawn
+        (let ((chamber (the-as exit-chamber (process-by-ename "exit-chamber-1"))))
+          (when (and (= (get-reminder (get-task-control (game-task sunken-room)) 0) 2)
+              (not chamber))
+            (load-state-want-display-level 'sunken 'display)
+            (let ((gp-1 (-> *display* base-frame-counter)))
+              (until (>= (- (-> *display* base-frame-counter) gp-1) (seconds 0.1))
+                (suspend)
+                )
+              )
+            (load-state-want-display-level 'sunken 'special)
+            )
+          )
+        )
       (go exit-chamber-dummy-wait-to-appear))
   :post ja-post)
 
@@ -722,6 +745,7 @@
   (:states
    ogreboss-village2-idle
    ogreboss-village2-throw))
+
 
 (defskelgroup *ogreboss-village2-sg*
   ogreboss-village2
@@ -1116,7 +1140,9 @@
 
 (deftype villageb-ogreboss (ogreboss-village2) ())
 
+
 (deftype villageb-water (water-anim) ())
+
 
 (define ripple-for-villageb-water
   (new 'static

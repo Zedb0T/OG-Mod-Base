@@ -10,6 +10,7 @@
 
 (define-extern *ogreboss* ogreboss)
 
+
 ;; DECOMP BEGINS
 
 (defskelgroup *ogreboss-sg*
@@ -105,6 +106,7 @@
    ogreboss-missile-idle
    ogreboss-missile-impact
    ogreboss-missile-seek))
+
 
 (defstate ogreboss-missile-idle (ogreboss-missile)
   :enter
@@ -272,6 +274,7 @@
    (blast-radius float)
    (pickup-type  pickup-type)))
 
+
 (defbehavior ogreboss-missile-init-by-other ogreboss-missile ((arg0 ogreboss-missile-init-data) (arg1 entity-actor))
   (set! (-> self entity) arg1)
   (let ((s5-0 (new 'process 'collide-shape-moving self (collide-list-enum hit-by-player))))
@@ -337,6 +340,7 @@
    ogreboss-super-boulder-land
    ogreboss-super-boulder-roll
    ogreboss-super-boulder-throw))
+
 
 (defbehavior ogreboss-super-boulder-event-handler ogreboss-super-boulder ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (case arg2
@@ -594,6 +598,7 @@
   (:states
    ogreboss-bounce-boulder-idle))
 
+
 (defbehavior ogreboss-bounce-boulder-event-handler ogreboss-bounce-boulder ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (case arg2
     (('touch)
@@ -722,6 +727,7 @@
    ogreboss-stage3-throw
    ogreboss-wait-for-player))
 
+
 (defbehavior ogreboss-inc-try-count ogreboss ()
   (when (not (-> self try-counted))
     (set! (-> self try-counted) #t)
@@ -733,7 +739,15 @@
   (none))
 
 (defbehavior ogreboss-player-inside-range? ogreboss ((arg0 float))
-  (< (vector-vector-distance (-> self far-pos) (target-pos 0)) arg0))
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (let ((target (get-interactive-target tgt-idx)))
+      (if (< (vector-vector-distance (-> self far-pos) (remote-target-pos 0 target)) arg0)
+        (return #t)
+        )
+      )
+    )
+    #f
+  )
 
 (defun ogreboss-set-stage1-camera ()
   0
@@ -797,13 +811,15 @@
           (send-event (ppointer->process gp-0) 'draw #t))))
   :trans
     (behavior ()
-      (try-preload-stream *art-control* "$GAMCAM23" 0 self (the-as float -99.0))
-      (when *target*
-        (let ((gp-0 (-> *target* control trans)))
-          (if (and (< 122880.0 (-> gp-0 y))
-                   (< (-> gp-0 x) 892928.0)
-                   (and (ogreboss-player-inside-range? (the-as float 737280.0)) (< 0.0 (vector4-dot gp-0 (-> self z-plane)))))
-            (go ogreboss-intro)))))
+      (if *enable-ingame-cutscenes?* (try-preload-stream *art-control* "$GAMCAM23" 0 self (the-as float -99.0)))
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+        (when target
+          (let ((gp-0 (-> target control trans)))
+            (if (and (< 122880.0 (-> gp-0 y))
+                    (< (-> gp-0 x) 892928.0)
+                    (and (ogreboss-player-inside-range? (the-as float 737280.0)) (< 0.0 (vector4-dot gp-0 (-> self z-plane)))))
+              (go ogreboss-intro)))))))
   :code
     (behavior ()
       (ogreboss-reset-camera)
@@ -814,30 +830,43 @@
   :code
     (behavior ()
       (when (zero? (-> self try-count))
-        (process-drawable-delay-player (seconds 1))
-        (let ((gp-0 (get-process *default-dead-pool* pov-camera #x4000)))
-          (ppointer->handle (when gp-0
-                              (let ((t9-2 (method-of-type pov-camera activate)))
-                                (t9-2 (the-as pov-camera gp-0) self 'pov-camera (the-as pointer #x70004000)))
-                              (run-now-in-process gp-0
-                                                  pov-camera-init-by-other
-                                                  (-> self root trans)
-                                                  *ogreboss-cam-sg*
-                                                  "ogreboss-cam-intro"
-                                                  0
-                                                  #f
-                                                  '((0 setting-reset music ogreboss) (2 ambient camera "gamcam23")))
-                              (-> gp-0 ppointer))))
-        (send-event (handle->process (-> self column)) 'anim-mode 'play1)
-        (send-event (handle->process (-> self column)) 'art-joint-anim "ogreboss-column-intro" 0)
-        (ja-no-eval :group! ogreboss-intro-ja :num! (seek!) :frame-num 0.0)
-        (until (ja-done? 0)
-          (suspend)
-          (ja :num! (seek!)))
-        (close-specific-task! (game-task ogre-boss) (task-status need-hint))
-        (suspend)
-        (send-event *target* 'continue (get-continue-by-name *game-info* "ogre-start"))
-        (ogreboss-inc-try-count))
+        (cond
+          (*enable-ingame-cutscenes?*
+            (process-drawable-delay-player (seconds 1))
+            (let ((gp-0 (get-process *default-dead-pool* pov-camera #x4000)))
+              (ppointer->handle (when gp-0
+                                  (let ((t9-2 (method-of-type pov-camera activate)))
+                                    (t9-2 (the-as pov-camera gp-0) self 'pov-camera (the-as pointer #x70004000)))
+                                  (run-now-in-process gp-0
+                                                      pov-camera-init-by-other
+                                                      (-> self root trans)
+                                                      *ogreboss-cam-sg*
+                                                      "ogreboss-cam-intro"
+                                                      0
+                                                      #f
+                                                      '((0 setting-reset music ogreboss) (2 ambient camera "gamcam23")))
+                                  (-> gp-0 ppointer))))
+            (send-event (handle->process (-> self column)) 'anim-mode 'play1)
+            (send-event (handle->process (-> self column)) 'art-joint-anim "ogreboss-column-intro" 0)
+            (ja-no-eval :group! ogreboss-intro-ja :num! (seek!) :frame-num 0.0)
+            (until (ja-done? 0)
+              (suspend)
+              (ja :num! (seek!)))
+            (close-specific-task! (game-task ogre-boss) (task-status need-hint))
+            (suspend)
+            (send-event *target* 'continue (get-continue-by-name *game-info* "ogre-start"))
+            (ogreboss-inc-try-count))
+          (else
+            (send-event (handle->process (-> self column)) 'anim-mode 'play1)
+            (send-event (handle->process (-> self column)) 'art-joint-anim "ogreboss-column-intro" 0)
+            (ja-no-eval :group! ogreboss-intro-ja :num! (seek!) :frame-num 0.0)
+            (until (ja-done? 0)
+              (suspend)
+              (ja :num! (seek!))
+              )
+            (close-specific-task! (game-task ogre-boss) (task-status need-hint))
+            (suspend)
+            (ogreboss-inc-try-count))))
       (set-setting! 'music 'ogreboss 0.0 0)
       (go ogreboss-wait-for-player))
   :post ja-post)
@@ -997,7 +1026,13 @@
 
 (defbehavior ogreboss-post ogreboss ()
   (transform-post)
-  (send-event *camera* 'point-of-interest (-> self node-list data 5 bone transform vector 3))
+  (if (or *enable-ingame-cutscenes?* (name= (-> *game-info* current-continue name) "ogre-start"))
+    (send-event *camera* 'point-of-interest (-> self node-list data 5 bone transform vector 3))
+    (when (and (-> *camera* child 0) (type-type? (-> (the-as process (-> *camera* child 0)) type) camera-slave) (-> (the-as camera-slave (-> *camera* child 0)) tracking use-point-of-interest))
+      (camera-change-to (the-as string 'base) 300 #f)
+      (send-event *camera* 'point-of-interest #f)
+      )
+    )
   0
   (none))
 
@@ -1017,6 +1052,7 @@
         (go ogreboss-stage2)))
   :code
     (behavior ()
+      (runs-on-new-boss-phase (the-as string (-> self name)) (get-ogreboss-phase (-> self level) 1) (symbol->string (-> *level* level (-> self draw level-index) name)) 0.0)
       (logior! (-> self mask) (process-mask enemy))
       (ogreboss-set-stage1-camera)
       (ogreboss-move-near (seconds 3) (the-as float 1.0))
@@ -1133,7 +1169,9 @@
            ((= v1-17 1) (sound-play "ogre-grunt2" :position (the-as symbol (-> self root trans))))
            (else (sound-play "ogre-grunt3" :position (the-as symbol (-> self root trans))))))
        (+! (-> self hit-count) 1)
-       (if (>= (-> self hit-count) (-> self max-hit-count)) (go ogreboss-stage3-hit))
+       (when (>= (-> self hit-count) (-> self max-hit-count)) 
+        (runs-on-new-boss-phase (the-as string (-> self name)) (get-ogreboss-phase (-> self level) 3) (symbol->string (-> *level* level (-> self draw level-index) name)) 0.0)
+        (go ogreboss-stage3-hit))
        (send-event (handle->process (-> self boulder)) 'speedup))
      #t)))
 
@@ -1147,6 +1185,7 @@
       0)
   :code
     (behavior ()
+      (runs-on-new-boss-phase (the-as string (-> self name)) (get-ogreboss-phase (-> self level) 2) (symbol->string (-> *level* level (-> self draw level-index) name)) 0.0)
       (ogreboss-set-stage2-camera)
       (ogreboss-move-far (seconds 0.1) (the-as float 2.0))
       (let ((f30-0 (* 0.75 (-> self difficulty))))
@@ -1325,8 +1364,10 @@
   :code
     (behavior ()
       (ogreboss-reset-camera)
+      (if (!= (-> self boulder) 0)
       (send-event (handle->process (-> self boulder)) 'go-die)
-      (ja-channel-push! 1 (seconds 0.2))
+        )
+    (ja-channel-push! 1 (seconds 0.2))
       (ja-no-eval :group! ogreboss-hit-ja :num! (seek!) :frame-num 0.0)
       (until (ja-done? 0)
         (transform-post)

@@ -12,6 +12,7 @@
 (deftype snowcam (pov-camera)
   ((seq uint64)))
 
+
 (defskelgroup *snowcam-sg*
   snowcam
   snowcam-lod0-jg
@@ -81,6 +82,7 @@
    snow-eggtop-activate
    snow-eggtop-idle-down
    snow-eggtop-idle-up))
+
 
 (defskelgroup *snow-eggtop-sg*
   snow-eggtop
@@ -277,18 +279,19 @@
                      (-> self root trans)
                      :to
                      *entity-pool*)
-      (let ((v1-7 (process-spawn snowcam
-                                 :init
-                                 pov-camera-init-by-other
-                                 (-> self spawn-trans)
-                                 *snowcam-sg*
-                                 "gearstart"
-                                 0
-                                 self
-                                 '((0 ambient camera "gamcam38") (10 alive "ecovent-278"))
-                                 :to
-                                 self)))
-        (set! (-> (the-as snowcam (-> v1-7 0)) seq) (the-as uint 2)))
+      (if *enable-ingame-cutscenes?*
+        (let ((v1-7 (process-spawn snowcam
+                                  :init
+                                  pov-camera-init-by-other
+                                  (-> self spawn-trans)
+                                  *snowcam-sg*
+                                  "gearstart"
+                                  0
+                                  self
+                                  '((0 ambient camera "gamcam38") (10 alive "ecovent-278"))
+                                  :to
+                                  self)))
+          (set! (-> (the-as snowcam (-> v1-7 0)) seq) (the-as uint 2))))
       (change-sound! (-> self sound) (static-sound-name "snw-eggtop-seq"))
       (save-reminder (get-task-control (-> self entity extra perm task)) 2 4)
       (ja-no-eval :group! snow-eggtop-idle-ja :num! (seek!) :frame-num 0.0)
@@ -369,6 +372,7 @@
    (sync        sync-info-paused :inline))
   (:states
    snowpusher-idle))
+
 
 (defskelgroup *snowpusher-sg*
   snowpusher
@@ -451,6 +455,7 @@
   (:states
    snow-spatula-idle))
 
+
 (defskelgroup *snow-spatula-sg*
   snow-spatula
   snow-spatula-lod0-jg
@@ -524,6 +529,7 @@
    snow-fort-gate-activate
    snow-fort-gate-idle-closed
    snow-fort-gate-idle-open))
+
 
 (defskelgroup *snow-fort-gate-sg*
   snow-fort-gate
@@ -817,6 +823,7 @@
    snow-gears-idle
    snow-gears-stopped))
 
+
 (defskelgroup *snow-gears-sg*
   snow-gears
   snow-gears-lod0-jg
@@ -981,6 +988,7 @@
    snow-switch-idle-down
    snow-switch-idle-up))
 
+
 (defskelgroup *snow-switch-sg*
   snow-switch
   snow-switch-lod0-jg
@@ -1020,26 +1028,28 @@
   :code
     (behavior ()
       (local-vars (v1-1 symbol))
-      (until v1-1
-        (suspend)
-        (set! v1-1 (or (not *target*) (not (logtest? (-> *target* state-flags) (state-flags grabbed))))))
+      (if *enable-ingame-cutscenes?*
+        (until v1-1
+          (suspend)
+          (set! v1-1 (or (not *target*) (not (logtest? (-> *target* state-flags) (state-flags grabbed)))))))
       (sound-play "prec-button1" :pitch -1)
-      (let ((gp-1 (get-process *default-dead-pool* snowcam #x4000)))
-        (set! (-> (the-as snowcam
-                          (-> (when gp-1
-                                (let ((t9-3 (method-of-type snowcam activate))) (t9-3 (the-as snowcam gp-1) self 'snowcam (the-as pointer #x70004000)))
-                                (run-now-in-process gp-1
-                                                    pov-camera-init-by-other
-                                                    (new 'static 'vector :x 3411656.8 :y 779689.56 :z -13573010.0 :w 1.0)
-                                                    *snowcam-sg*
-                                                    "gearstart"
-                                                    0
-                                                    self
-                                                    '())
-                                (-> gp-1 ppointer))
-                              0))
-                  seq)
-              (the-as uint 0)))
+      (if *enable-ingame-cutscenes?*
+        (let ((gp-1 (get-process *default-dead-pool* snowcam #x4000)))
+          (set! (-> (the-as snowcam
+                            (-> (when gp-1
+                                  (let ((t9-3 (method-of-type snowcam activate))) (t9-3 (the-as snowcam gp-1) self 'snowcam (the-as pointer #x70004000)))
+                                  (run-now-in-process gp-1
+                                                      pov-camera-init-by-other
+                                                      (new 'static 'vector :x 3411656.8 :y 779689.56 :z -13573010.0 :w 1.0)
+                                                      *snowcam-sg*
+                                                      "gearstart"
+                                                      0
+                                                      self
+                                                      '())
+                                  (-> gp-1 ppointer))
+                                0))
+                    seq)
+                (the-as uint 0))))
       0
       (let ((gp-2 #f))
         (loop
@@ -1119,6 +1129,7 @@
    snow-log-active
    snow-log-hidden
    snow-log-wait-for-master))
+
 
 (defskelgroup *snow-log-sg*
   snow-log
@@ -1257,6 +1268,7 @@
    snow-log-button-activate
    snow-log-button-idle-down
    snow-log-button-idle-up))
+
 
 (defbehavior snow-log-button-event-handler snow-log-button ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (local-vars (v0-2 basic))
