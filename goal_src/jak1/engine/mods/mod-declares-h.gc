@@ -146,3 +146,7 @@
 (define-extern *racer-mods* surface)
 
 (defun-extern target-in-level-sphere? symbol symbol)
+
+(defun-extern is-connected? symbol)
+
+(defun-extern set-singleplayer-options none)

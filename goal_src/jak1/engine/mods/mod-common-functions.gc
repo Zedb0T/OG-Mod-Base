@@ -166,7 +166,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (((tgt-color pink)) (color-target-rgb tgt 1.0 0.0 1.0))
     (((tgt-color light-blue)) (color-target-rgb tgt 0.0 1.0 1.0))
     ;; (((tgt-color holo))
-    ;;   (color-target-rgb tgt 
+    ;;   (color-target-rgb tgt
     ;;     (rand-vu-float-range 0.0 5.0)
     ;;     (rand-vu-float-range 0.0 5.0)
     ;;     (rand-vu-float-range 0.0 5.0))
@@ -201,7 +201,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun update-debug-self-multiplayer-info ()
   (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) username) "DEBUG")
-  (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) color) (tgt-color red))
+  (if *debug-segment*
+    (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) color) (tgt-color red))
+    (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) color) (tgt-color normal)))
   (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) trans_x) (-> *target* root trans x))
   (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) trans_y) (-> *target* root trans y))
   (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) trans_z) (-> *target* root trans z))
@@ -217,7 +219,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (when (not *self-player-info*)
     (set! *self-player-info* (new 'global 'remote-player-info))
     (set! (-> *self-player-info* username) (new 'global 'string MAX_USERNAME_LEN "local_player"))
-    (set! (-> *self-player-info* color) (tgt-color red))
     (set! (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-interactive))
     (set! (-> *self-player-info* mp_state_check) (mp-tgt-state mp-tgt-interactive))
     (set! (-> *multiplayer-info* client_version) (new 'global 'string INTERACTION_STRING_LEN "Not Connected"))
@@ -227,6 +228,12 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           (-> *self-player-info* current_level))
     (dotimes (idx (-> *interaction-update-buffer* length))
       (set! (-> *interaction-update-buffer* idx) (new 'global 'interaction-info)))
+      ;;This needs to be moved to a better spot
+    (if (or *debug-segment* (is-connected?))
+      (set! (-> *self-player-info* color) (tgt-color red))
+      (begin
+        (set! (-> *self-player-info* color) (tgt-color normal))
+        (set-singleplayer-options)))
     (set! *self-setup-completed* #t)
     (update-self-multiplayer-info)
     (pc-connect-mp-info *multiplayer-info* *self-player-info* *teamrun-info* *teamrun-levels-info*))
@@ -526,13 +533,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
              (let ((remote-target (the-as target (handle->process (-> *remote-targets* idx)))))
                (set! (-> remote-target saved-owner) idx) ;; used to identify remote index from target
                (handle-new-mp-state idx remote-target)))
-           ;; assume target spawned at this point 
+           ;; assume target spawned at this point
            ;; position/color remote targets
            (let ((p (-> *multiplayer-info* players idx))
                  (obj (the process-drawable (handle->process (-> *remote-targets* idx)))))
              (when obj
                (if (and *target*
-                        (!= (-> *target* state name) 'target-warp-out) ;; avoids potential portal softlocks 
+                        (!= (-> *target* state name) 'target-warp-out) ;; avoids potential portal softlocks
                         (or (is-interactive? idx) (-> *spectator-handler* is_spectator?)))
                  (handle-remote-interaction p idx))
                (if (has-new-mp-state? idx) (handle-new-mp-state idx (the-as target obj)))
@@ -908,6 +915,16 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun has-camera-type? ((camera-type symbol))
   (and (-> *camera* child 0) (= (-> (the-as camera-slave (-> *camera* child 0)) state name) camera-type)))
+
+;;Forces certain settings for single player and then returns t/f
+(defun is-connected? ()
+  (not (string= (-> *multiplayer-info* client_version) "Not Connected")))
+
+(defun set-singleplayer-options ()
+  (when (not (is-connected?))
+    (set! *enable-multiplayer-save-and-load* #f)
+    (set! *enable-ingame-cutscenes?* #t))
+    (none))
 
 ;; This returns true or false if jak is within a bubble defined by coordinates and width
 (defun in-bubble? ((x float) (y float) (z float) (w float))
