@@ -279,6 +279,7 @@ set(RUNTIME_SOURCE
         overlord/jak3/soundcommon.cpp
         overlord/jak3/streamlist.cpp
         runtime.cpp
+		multiplayer.cpp
         sce/deci2.cpp
         sce/iop.cpp
         sce/libcdvd_ee.cpp

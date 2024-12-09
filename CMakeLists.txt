@@ -250,6 +250,12 @@ add_subdirectory(lsp)
 # build libco and zstd
 build_third_party_lib(libco libco)
 build_third_party_lib(zstd libzstd_static)
+#asio
+include_directories(third-party/asio/include)
+
+# websocketpp
+add_subdirectory(third-party/websocketpp EXCLUDE_FROM_ALL)
+include_directories(third-party/websocketpp)
 
 # build SDL
 include(SDLOptions)

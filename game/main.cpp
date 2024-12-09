@@ -23,6 +23,7 @@
 
 #include "third-party/CLI11.hpp"
 
+#include "multiplayer.h"
 #ifdef _WIN32
 extern "C" {
 __declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
@@ -102,6 +103,7 @@ int main(int argc, char** argv) {
   std::string gpu_test = "";
   std::string gpu_test_out_path = "";
   int port_number = -1;
+  int socket_port = 8111;
   fs::path project_path_override;
   fs::path user_config_dir_override;
   std::vector<std::string> game_args;
@@ -112,6 +114,7 @@ int main(int argc, char** argv) {
   app.add_flag(
       "--port", port_number,
       "Specify port number for listener connection (default is 8112 for Jak 1 and 8113 for Jak 2)");
+  app.add_option("--socketport", socket_port, "Specify socket port.  Defaults to 8111");
   app.add_flag("--no-avx2", disable_avx2, "Disable AVX2 for testing");
   app.add_flag("--no-display", disable_display, "Disable video display");
   app.add_flag("--profile", enable_profiling, "Enables profiling immediately from startup");
@@ -148,6 +151,7 @@ int main(int argc, char** argv) {
     lg::info("Overriding config directory with: {}", user_config_dir_override.string());
     file_util::override_user_config_dir(user_config_dir_override, !disable_save_location_override);
   }
+  start_socket(socket_port);
 
   if (show_version) {
     lg::print("{}", build_revision());
