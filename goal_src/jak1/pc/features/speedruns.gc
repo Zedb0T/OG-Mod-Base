@@ -138,7 +138,7 @@
   (set! (-> *pc-settings* cheats) (the-as pc-cheats #x0))
   ;; ensure PS2 actor vis is enabled
   ;;TODO Make this more multiplayer friendly
-  (set! (-> *pc-settings* ps2-actor-vis?) #t)
+  (if (not (is-connected?)) (set! (-> *pc-settings* ps2-actor-vis?) #f) (set! (-> *pc-settings* ps2-actor-vis?) #t))
   ;; ensure FPS set to `60`
   (when (!= (-> *pc-settings* target-fps) 60)
     (set-frame-rate! *pc-settings* 60 #t))
