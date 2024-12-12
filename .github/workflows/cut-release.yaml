@@ -1,4 +1,4 @@
-name: Cut Mod Release ⭐
+name:  Cut Mod Releasee ⭐
 
 on:
   workflow_dispatch:
@@ -68,7 +68,7 @@ jobs:
           echo "REPO=$REPO" >> $GITHUB_OUTPUT
 
   cut_mod_release:
-    name: "Cut Mod Release"
+    name: " Cut Mod Releasee"
     needs: prep_vars
     uses: ./.github/workflows/mod-release-pipeline.yml
     with:
