@@ -5,6 +5,8 @@
 (require "engine/common-obs/generic-obs.gc")
 (require "engine/entity/ambient.gc")
 (require "engine/game/task/task-control.gc")
+(define-extern *allow-zoomer-anywhere* symbol)
+
 (define-extern blocking-plane-destroy (function none))
 
 (define-extern blocking-plane-spawn (function curve-control none :behavior process))

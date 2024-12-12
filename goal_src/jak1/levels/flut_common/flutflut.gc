@@ -7,6 +7,8 @@
 
 ;; DECOMP BEGINS
 
+(define-extern *allow-flutflut-anywhere* symbol)
+
 (if (not (nmember "flutp" *kernel-packages*)) (set! *kernel-packages* (cons "flutp" *kernel-packages*)))
 
 (deftype flutflut (process-drawable)
@@ -154,8 +156,8 @@
               (let ((v1-35 gp-0)) (set! (-> v1-35 height) (the float 80)))
               (set! (-> gp-0 flags) (font-flags shadow kerning large))
               (print-game-text (lookup-text! *common-text* (text-id press-to-use) #f) gp-0 #f 128 22))
-            (if (and (cpad-pressed? 0 circle) (send-event *target* 'change-mode 'flut self))
-              (go-virtual pickup (method-of-object self wait-for-return)))))
+              (if (and (cpad-pressed? 0 circle) (send-event *target* 'change-mode 'flut self))
+                (go-virtual pickup (method-of-object self wait-for-return)))))
         (flutflut-effect)
         (suspend)
         (ja :num! (loop!))))

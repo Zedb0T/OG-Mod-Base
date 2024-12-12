@@ -694,6 +694,7 @@
             (else
              (let ((s5-1 (-> *level* loading-level)))
                (when (or (not s5-1) (= (-> s5-1 name) 'default))
+               (when (or (not s5-1) (= (-> s5-1 name) 'default))
                  (login this) ;; not part of level load, just normal login.
                  (when (needs-link? this)
                    (format 0 "bonus link~%")
