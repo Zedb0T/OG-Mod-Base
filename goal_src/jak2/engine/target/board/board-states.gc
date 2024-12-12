@@ -25,6 +25,8 @@
 (define-extern target-hit-orient (function attack-info vector symbol :behavior target))
 (define-extern target-hit-move (function attack-info symbol (function none :behavior target) float none :behavior target))
 
+(define-extern *target-board-hold-tricks* int)
+
 (declare-type grenade projectile)
 
 ;; DECOMP BEGINS
@@ -66,8 +68,8 @@
           )
       )
     (set! (-> self board turn-anim-targ) (+ (lerp-scale
-                                              (* 0.5 (-> *TARGET_BOARD-bank* turn-frames))
-                                              (* -0.5 (-> *TARGET_BOARD-bank* turn-frames))
+                                              (/ (-> *TARGET_BOARD-bank* turn-frames) 2)
+                                              (/ (-> *TARGET_BOARD-bank* turn-frames) -2)
                                               f26-0
                                               -5461.3335
                                               5461.3335
@@ -80,8 +82,8 @@
                                               32768.0
                                               )
                                             (lerp-scale
-                                              (* 0.2 (-> *TARGET_BOARD-bank* turn-frames))
-                                              (* -0.2 (-> *TARGET_BOARD-bank* turn-frames))
+                                              (/ (-> *TARGET_BOARD-bank* turn-frames) 5)
+                                              (/ (-> *TARGET_BOARD-bank* turn-frames) -5)
                                               (-> self board turn-anim-mag)
                                               1.0
                                               -1.0
@@ -89,7 +91,7 @@
                                             )
           )
     (when (and (or (< (* f30-0 (-> self board turn-anim-targ)) 0.0) (= f30-0 0.0))
-               (and (< (* 0.2 (-> *TARGET_BOARD-bank* turn-frames)) (fabs (- f30-0 (-> self board turn-anim-targ))))
+               (and (< (/ (-> *TARGET_BOARD-bank* turn-frames) 5) (fabs (- f30-0 (-> self board turn-anim-targ))))
                     (>= (current-time) (-> self control turn-lockout-end-time))
                     )
                )
@@ -119,6 +121,7 @@
     )
   (none)
   )
+
 
 ;; WARN: Return type mismatch object vs none.
 (defbehavior target-board-spin-check target ()
@@ -245,6 +248,7 @@
                         )
                    )
           (set! (-> self board unknown-float01) f28-1)
+          (+! *target-board-hold-tricks* 1)
           (go
             target-board-hold
             (-> *TARGET_BOARD-bank* tricky-jump-height-min)
@@ -1665,6 +1669,9 @@
     (set! (-> self control dynam gravity-length) 147456.0)
     )
   :exit (behavior ()
+    (when (and (-> self next-state) (!= 'target-board-hold (-> self next-state name)))
+      (set! *target-board-hold-tricks* 0)
+      )
     (set! (-> self board unknown-float01) 0.0)
     (set-time! (-> self board unknown-time-frame05))
     (let ((v1-3 (the-as sound-rpc-set-param (get-sound-buffer-entry))))
@@ -2187,7 +2194,7 @@
       (else
         (let ((f30-1
                 (* (lerp-scale 0.7 1.0 (fabs (-> self board ride-lean)) 0.0 1.0)
-                   (lerp-scale 0.8 1.0 (fabs (-> self board ride-speed)) 0.0 (* 0.5 (-> self control mod-surface transv-max)))
+                   (lerp-scale 0.8 1.0 (fabs (-> self board ride-speed)) 0.0 (/ (-> self control mod-surface transv-max) 2))
                    )
                 )
               (f0-23
@@ -2973,7 +2980,8 @@
                  (let ((s4-1 (new-stack-vector0)))
                    (set! (-> s4-1 quad) (-> self control last-trans-on-ground quad))
                    (ja-channel-set! 0)
-                   (suspend-for (seconds 1))
+                   (suspend-for (seconds 1)
+                     )
                    (move-to-point! (-> self control) s4-1)
                    )
                  (set! (-> self control camera-pos quad) (-> self control trans quad))

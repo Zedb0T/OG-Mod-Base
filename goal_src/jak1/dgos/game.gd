@@ -355,7 +355,7 @@
   "mod-text-render.o" ;; added
   "mod-remote-interaction.o" ;; added
   "mod-common-functions.o" ;; added
-  "orb-placer.o" ;; added  
+  "orb-placer.o" ;; added
   "taunt-menu.o" ;; added
   "taunt-info.go" ;; added
   "mod-custom-code.o" ;; added

@@ -20,6 +20,10 @@
 
 ;; DECOMP BEGINS
 
+(define-extern runs-on-jak-death (function symbol none))
+
+;; DECOMP BEGINS
+
 ;;;;;;;;;;;;;;;;;;
 ;; border plane
 ;;;;;;;;;;;;;;;;;;
@@ -199,7 +203,7 @@
      (set-time! (-> this continue-time))
      (set-time! (-> this death-time))
      (set-time! (-> this hit-time))
-     (dotimes (v1-50 (the int (game-task max)))
+     (dotimes (v1-50 (the int (game-task max))) ;; changed from hard-coded 116 to (game-task max) mod-base-change
        (set! (-> this fuel-cell-time 0) 0)
        (nop!))
      (dotimes (v1-53 32)

@@ -1006,6 +1006,8 @@
   (set! *print-login* #f)
   0)
 
+(define-extern *debug-continue-point* string)
+
 (defun play ((use-vis symbol) (init-game symbol))
   "The entry point to the actual game! This allocates the level heaps, loads some data, sets some default parameters and sets the startup level."
   ;; temp
