@@ -990,7 +990,7 @@
     (seek-toward-heading-vec!
       (-> self root)
       (-> self face-dir)
-      (/ (-> self nav max-rotation-rate) 2)
+      (* 0.5 (-> self nav max-rotation-rate))
       (seconds 0.02)
       )
     (nav-enemy-simple-post)

@@ -57,8 +57,6 @@
 #include "common/util/Assert.h"
 #include "common/util/crc32.h"
 
-#include "fmt/core.h"
-
 namespace goos {
 
 /*!
@@ -236,14 +234,10 @@ class Object {
 
   ObjectType type = ObjectType::INVALID;
 
- private:
-  bool disallow_hex_for_int = false;
-
- public:
   std::string print() const {
     switch (type) {
       case ObjectType::INTEGER:
-        return disallow_hex_for_int ? fmt::format("{}", integer_obj.value) : integer_obj.print();
+        return integer_obj.print();
       case ObjectType::FLOAT:
         return float_obj.print();
       case ObjectType::CHAR:
@@ -281,14 +275,6 @@ class Object {
     Object o;
     o.type = ObjectType::INTEGER;
     o.integer_obj.value = value;
-    return o;
-  }
-
-  static Object make_integer_no_hex(IntType value) {
-    Object o;
-    o.type = ObjectType::INTEGER;
-    o.integer_obj.value = value;
-    o.disallow_hex_for_int = true;
     return o;
   }
 

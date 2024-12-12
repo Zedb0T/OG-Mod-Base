@@ -149,11 +149,6 @@ SimpleAtom SimpleAtom::make_static_address(int static_label_id) {
   return result;
 }
 
-void SimpleAtom::mark_as_no_hex() {
-  ASSERT(is_int() && !is_integer_promoted_to_float());
-  m_no_display_int_as_hex = true;
-}
-
 /*!
  * Mark this atom as a float. It will be printed as a float.
  * This can only be applied to an "integer" atom.
@@ -199,8 +194,6 @@ goos::Object SimpleAtom::to_form(const std::vector<DecompilerLabel>& labels, con
         if (std::abs(m_int) > INT32_MAX) {
           u64 v = m_int;
           return pretty_print::to_symbol(fmt::format("#x{:x}", v));
-        } else if (m_no_display_int_as_hex) {
-          return goos::Object::make_integer_no_hex(m_int);
         } else {
           return goos::Object::make_integer(m_int);
         }

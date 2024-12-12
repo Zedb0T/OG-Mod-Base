@@ -30,7 +30,6 @@
   (:state-methods
    idle))
 
-
 (defskelgroup *logtrap-sg*
   logtrap
   logtrap-lod0-jg
@@ -88,7 +87,6 @@
   (:states
    towertop-idle))
 
-
 (defskelgroup *towertop-sg*
   towertop
   towertop-lod0-jg
@@ -122,7 +120,6 @@
   (:states
    lurkerm-tall-sail-idle))
 
-
 (defskelgroup *lurkerm-tall-sail-sg*
   lurkerm-tall-sail
   lurkerm-tall-sail-lod0-jg
@@ -142,11 +139,11 @@
   :code
     (behavior ()
       (loop
-        (ja-no-eval :group! lurkerm-tall-sail-idle-ja :num! (seek! max (/ (-> self speed) 2)) :frame-num 0.0)
+        (ja-no-eval :group! lurkerm-tall-sail-idle-ja :num! (seek! max (* 0.5 (-> self speed))) :frame-num 0.0)
         (until (ja-done? 0)
           (quaternion-rotate-local-y! (-> self root quat) (-> self root quat) (* 12743.111 (seconds-per-frame) (-> self speed)))
           (suspend)
-          (ja :num! (seek! max (/ (-> self speed) 2))))))
+          (ja :num! (seek! max (* 0.5 (-> self speed)))))))
   :post rider-post)
 
 (defmethod init-from-entity! ((this lurkerm-tall-sail) (arg0 entity-actor))
@@ -192,7 +189,6 @@
   (:states
    lurkerm-short-sail-idle))
 
-
 (defskelgroup *lurkerm-short-sail-sg*
   lurkerm-short-sail
   0
@@ -209,11 +205,11 @@
   :code
     (behavior ()
       (loop
-        (ja-no-eval :group! (-> self draw art-group data 4) :num! (seek! max (/ (-> self speed) 2)) :frame-num 0.0)
+        (ja-no-eval :group! (-> self draw art-group data 4) :num! (seek! max (* 0.5 (-> self speed))) :frame-num 0.0)
         (until (ja-done? 0)
           (quaternion-rotate-local-y! (-> self root quat) (-> self root quat) (* -12743.111 (seconds-per-frame) (-> self speed)))
           (suspend)
-          (ja :num! (seek! max (/ (-> self speed) 2))))))
+          (ja :num! (seek! max (* 0.5 (-> self speed)))))))
   :post rider-post)
 
 (defmethod init-from-entity! ((this lurkerm-short-sail) (arg0 entity-actor))
@@ -276,7 +272,6 @@
    (alt-actor entity-actor))
   (:states
    lurkerm-piston-idle))
-
 
 (defskelgroup *lurkerm-piston-sg*
   lurkerm-piston
@@ -355,7 +350,6 @@
   (:states
    accordian-idle))
 
-
 (defskelgroup *accordian-sg*
   accordian
   accordian-lod0-jg
@@ -400,9 +394,7 @@
 
 (deftype junglecam (process-hidden) ())
 
-
 (deftype precurbridgecam (pov-camera) ())
-
 
 (defstate pov-camera-playing (precurbridgecam)
   :virtual #t
@@ -423,7 +415,6 @@
 
 (deftype precurbridge-span (structure) ())
 
-
 (deftype precurbridge (process-drawable)
   ((root             collide-shape-moving :override)
    (smush            smush-control :inline)
@@ -434,7 +425,6 @@
    precurbridge-activate
    (precurbridge-active symbol)
    precurbridge-idle))
-
 
 (defskelgroup *precurbridge-sg*
   precurbridge
@@ -708,7 +698,6 @@
   (:states (maindoor-closed symbol)
    (maindoor-open symbol)))
 
-
 (defskelgroup *maindoor-sg*
   maindoor
   maindoor-lod0-jg
@@ -785,7 +774,6 @@
 
 (deftype sidedoor (eco-door) ())
 
-
 (defskelgroup *sidedoor-sg*
   sidedoor
   sidedoor-geo-jg
@@ -825,10 +813,9 @@
   (:states
    jngpusher-idle))
 
-
-(defmethod relocate ((this jngpusher) (offset int))
-  (if (nonzero? (-> this back-prim)) (&+! (-> this back-prim) offset))
-  (call-parent-method this offset))
+(defmethod relocate ((this jngpusher) (arg0 int))
+  (if (nonzero? (-> this back-prim)) (&+! (-> this back-prim) arg0))
+  (call-parent-method this arg0))
 
 (defskelgroup *jngpusher-sg*
   jngpusher
@@ -894,7 +881,6 @@
   (none))
 
 (deftype jungle-water (water-anim) ())
-
 
 (define ripple-for-jungle-water
   (new 'static

@@ -31,7 +31,6 @@
 (deftype cylinder-verts (structure)
   ((vert vector 24 :inline)))
 
-
 (defmethod debug-draw ((this cylinder) (arg0 vector4w))
   "Debug draw a cylinder. This is slow and ugly"
   (local-vars
@@ -64,7 +63,7 @@
         (vector-cross! s1-0 (-> this axis) (new 'static 'vector :z 1.0))
         (vector-cross! s1-0 (-> this axis) (new 'static 'vector :y 1.0)))
       (vector-normalize! s1-0 (-> this radius))
-      (vector-float*! s0-0 (-> this axis) (/ (-> this length) 8))
+      (vector-float*! s0-0 (-> this axis) (* 0.125 (-> this length)))
       (let ((s5-0 (new 'stack-no-clear 'cylinder-verts))
             (s4-0 (new 'stack-no-clear 'cylinder-verts))
             (s3-0 (new 'stack-no-clear 'matrix)))
@@ -151,7 +150,6 @@
 (deftype cylinder-flat-verts (structure)
   ((vert vector 10 :inline)))
 
-
 (defmethod debug-draw ((this cylinder-flat) (arg0 vector4w))
   (local-vars (sv-448 vector) (sv-464 int))
   (rlet ((vf0 :class vf)
@@ -165,7 +163,7 @@
         (vector-cross! s1-0 (-> this axis) (new 'static 'vector :z 1.0))
         (vector-cross! s1-0 (-> this axis) (new 'static 'vector :y 1.0)))
       (vector-normalize! s1-0 (-> this radius))
-      (vector-float*! s0-0 (-> this axis) (/ (-> this length) 7))
+      (vector-float*! s0-0 (-> this axis) (* 0.14285715 (-> this length)))
       (let ((s5-0 (new 'stack-no-clear 'cylinder-flat-verts))
             (s4-0 (new 'stack-no-clear 'cylinder-flat-verts))
             (s3-0 (new 'stack-no-clear 'matrix)))

@@ -51,7 +51,6 @@
    (citb-base-plat-active () _type_ :state)
    (citb-base-plat-method-24 (_type_) none)))
 
-
 (defstate citb-base-plat-idle (citb-base-plat)
   :virtual #t
   :trans
@@ -113,7 +112,6 @@
 
 (deftype citb-plat-eco (plat-eco) ())
 
-
 (defmethod baseplat-method-24 ((this citb-plat-eco))
   (let ((s5-0 (new 'process 'collide-shape-moving this (collide-list-enum hit-by-others))))
     (set! (-> s5-0 dynam) (copy *standard-dynamics* 'process))
@@ -147,7 +145,6 @@
 
 (deftype citb-plat (plat)
   ((trans-offset vector :inline)))
-
 
 (defstate plat-path-active (citb-plat)
   :virtual #t
@@ -211,7 +208,6 @@
    (rise-height float)
    (delay       time-frame)
    (rise        symbol)))
-
 
 (defstate citb-base-plat-idle (citb-stair-plat)
   :virtual #t
@@ -316,11 +312,10 @@
   (:states
    citb-chain-plat-settle))
 
-
 (defmethod rigid-body-platform-method-22 ((this citb-chain-plat) (arg0 vector) (arg1 float))
   (+ 12288.0
      (* 2048.0
-        (fmax 0.0 (fmin 1.0 (/ (-> this float-height-offset) (meters 10))))
+        (fmax 0.0 (fmin 1.0 (* 0.000024414063 (-> this float-height-offset))))
         (cos (* 109.22667 (+ (* 60.0 arg1) (* 0.03 (-> arg0 x)) (* 0.03 (-> arg0 z))))))
      (-> this float-height-offset)
      (-> this orig-trans y)))
@@ -469,7 +464,6 @@
 
 (deftype citb-rotatebox (citb-base-plat) ())
 
-
 (defstate citb-base-plat-active (citb-rotatebox)
   :virtual #t
   :trans rider-trans
@@ -519,7 +513,6 @@
 (deftype citb-donut (citb-base-plat)
   ((sync sync-info :inline)))
 
-
 (defstate citb-base-plat-active (citb-donut)
   :virtual #t
   :post
@@ -564,7 +557,6 @@
   :bounds (static-spherem 0 -2 0 5.5))
 
 (deftype citb-stopbox (plat) ())
-
 
 (defstate plat-path-active (citb-stopbox)
   :virtual #t
@@ -615,7 +607,6 @@
    citb-firehose-active
    citb-firehose-blast
    citb-firehose-idle))
-
 
 (defskelgroup *citb-firehose-sg*
   citb-firehose
@@ -747,7 +738,6 @@
   (:states
    citb-exit-plat-idle
    citb-exit-plat-rise))
-
 
 (defstate citb-exit-plat-idle (citb-exit-plat)
   :event
