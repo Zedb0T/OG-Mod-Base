@@ -61,7 +61,7 @@
   // All art groups you want to use in your custom level. Will add their models and corresponding textures to the FR3 file.
   // Note: You will still have to add them to your level's .gd file.
   // "art_groups": ["plat-ag"],
-  "art_groups": ["babak-ag", "plat-ag", "plat-eco-ag", "swamp-rock-ag", "lurkerworm-ag", "swamp-rock-ag"],
+  "art_groups": ["babak-ag", "plat-ag", "plat-eco-ag", "shortcut-boulder-ag", "lurkerworm-ag"],
 
   // If you have any custom models in the "custom_assets/jak1/models/custom_levels" folder that you want to use in your level, add them to this list.
   // Note: Like with art groups, these should also be added to your level's .gd file.
@@ -177,14 +177,38 @@
     },
 
     {
-      "trans": [-695.369, 32.9321, 283.221], // translation
-      "etype": "villagea-part", // actor type
+      "trans": [-748.52, 45.5064, 156.014], // translation
+      "etype": "beach-part", // actor type
       "game_task": "(game-task none)", // associated game task (for powercells, etc)
       "quat": [0, -0.425, 0, 0.905], // quaternion
-      "bsphere": [-695.369, 32.9321, 283.221, 10], // bounding sphere
+      "bsphere": [-748.52, 45.5064, 156.014, 10], // bounding sphere
       "lump": {
-        "name": "snp-moth1",
-        "art-name": "group-village1-moth"   //Doesn't work
+        "name": "snp-drips-1",
+        "art-name": "group-beach-grotto-2"
+      }
+    },
+
+    {
+      "trans": [-826.5, 62.2963, 88.0051], // translation
+      "etype": "beach-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, -0.425, 0, 0.905], // quaternion
+      "bsphere": [-826.5, 62.2963, 88.0051, 10], // bounding sphere
+      "lump": {
+        "name": "snp-drips-2",
+        "art-name": "group-beach-grotto-2"
+      }
+    },
+
+    {
+      "trans": [-912.759, 65.2677, 104.212], // translation
+      "etype": "beach-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, -0.425, 0, 0.905], // quaternion
+      "bsphere": [-912.759, 65.2677, 104.212, 10], // bounding sphere
+      "lump": {
+        "name": "snp-drips-3",
+        "art-name": "group-beach-grotto-2"
       }
     },
 
@@ -242,17 +266,31 @@
           "scale": [ "float", 1.0, 1.0, 1.0, 1.0 ]
         }
       },
-        //CAVEROCK ACTOR NOT WORKING - FIX THIS
+        //CAVEROCK ACTOR
       {
         "aid": 59999,
         "trans": [-893.985, 36.4137, 217.445], // translation
-        "etype": "swamp-rock",  // actor type
+        "etype": "shortcut-boulder",  // actor type
         "game_task": 0, // associated game task (for powercells, etc)
         "quat": [0, 0, 0, 1], // quaternion
         "bsphere": [-893.985, 36.4137, 217.445, 10], // bounding sphere
         "lump": {
-          "name": "swamp-rock-1",
-          "scale": [ "float", 1.0, 1.0, 1.0, 1.0 ],
+          "name": "snp-boulder-1",
+          "scale": ["float", 0.5, 0.5, 0.5, 0.5],
+          "scale-factor": 1.5
+        }
+      },
+
+      {
+        "aid": 60000,
+        "trans": [-814.106, 30.2665, 248.323], // translation
+        "etype": "shortcut-boulder",  // actor type
+        "game_task": 0, // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-814.106 , 30.2665, 248.323, 10], // bounding sphere
+        "lump": {
+          "name": "snp-boulder-2",
+          "scale": ["float", 0.5, 0.5, 0.5, 0.5],
           "scale-factor": 1.5
         }
       },
@@ -1285,11 +1323,11 @@
 
         // ORB CACHE ////////////////////////////////////////////////////////////////////////////////////////
       {
-        "trans": [-922.658, 35.6224, 233.224], // translation
+        "trans": [-922.658, 35.5096, 233.224], // translation
         "etype": "orb-cache-top", // actor type
         "game_task": "(game-task none)", // associated game task (for powercells, etc)
         "quat": [ 0, 0, 0, 1 ], // quaternion
-        "bsphere": [-922.658, 35.6224, 233.224, 10], // bounding sphere
+        "bsphere": [-922.658, 35.5096, 233.224, 10], // bounding sphere
         "lump": {
           "name": "snp-orb-cache-top-1",
           "orb-cache-count": 15

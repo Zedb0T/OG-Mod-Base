@@ -9,8 +9,7 @@
   "village1-part.o"
   "villagep-obs.o"
   "village-obs.o"
-  ;;"swamp-obs.o"
-  ;;"swamp-part.o"
+  "ogre-obs.o"
   "linear-plat.o"
   "tpage-398.go"
   "tpage-400.go"
@@ -25,6 +24,7 @@
   "lurkerworm.o"
   "lurkerworm-ag.go"
   "eichar-pole+0-ag.go"
+  "shortcut-boulder-ag.go"
   "swamp-rock-ag.go"
   "sandpit.go"
   )
