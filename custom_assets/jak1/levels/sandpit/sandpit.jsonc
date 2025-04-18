@@ -61,7 +61,7 @@
   // All art groups you want to use in your custom level. Will add their models and corresponding textures to the FR3 file.
   // Note: You will still have to add them to your level's .gd file.
   // "art_groups": ["plat-ag"],
-  "art_groups": ["babak-ag", "plat-ag", "plat-eco-ag", "shortcut-boulder-ag", "lurkerworm-ag"],
+  "art_groups": ["babak-ag", "plat-ag", "plat-eco-ag", "shortcut-boulder-ag", "lurkerworm-ag", "warp-gate-switch-ag", "warp-gate-ag"],
 
   // If you have any custom models in the "custom_assets/jak1/models/custom_levels" folder that you want to use in your level, add them to this list.
   // Note: Like with art groups, these should also be added to your level's .gd file.
@@ -126,13 +126,399 @@
   // adding ambient sounds, level name hints, etc.
   "ambients": [
     {
-      "trans": [-614.323, 0.19, 274.8, 50.0 ], // translation
-      "bsphere": [-614.323, 0.19, 274.8, 50.0 ], // bounding sphere
+      "trans": [-614.323, 36.2935, 274.8, 20.0 ], // translation
+      "bsphere": [-614.323,36.2935, 274.8, 20.0 ], // bounding sphere
       "lump": {
-        "name": "ambient-chirp-sandpit1",
+        "name": "ambient-bird-1",
         "type": "'sound",
-        "effect-name": "'bird-4",
+        "effect-name": "'bird",
         "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ], // ??, ??, ??, Max Radius
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-671.438, 22.9009, 219.944, 20.0 ], // translation
+      "bsphere": [-671.438, 22.9009, 219.944, 20.0 ], // bounding sphere
+      "lump": {
+        "name": "ambient-bird-2",
+        "type": "'sound",
+        "effect-name": "'bird",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-671.438, 22.9009, 219.944, 20.0 ], // translation
+      "bsphere": [-671.438, 22.9009, 219.944, 20.0 ], // bounding sphere
+      "lump": {
+        "name": "ambient-bird-2",
+        "type": "'sound",
+        "effect-name": "'bird",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-607.424, 33.1599, 272.407, 50.0], // translation
+      "bsphere": [-607.424, 33.1599, 272.407, 50.0], // bounding sphere
+      "lump": {
+        "name": "ambient-wind",
+        "type": "'sound",
+        "effect-name": "'tower-wind2",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-703.092, 26.2097, 286.939, 50.0], // translation
+      "bsphere": [-703.092, 26.2097, 286.939, 50.0], // bounding sphere
+      "lump": {
+        "name": "ambient-wind-2",
+        "type": "'sound",
+        "effect-name": "'tower-wind2",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-810.463, 36.5522, 256.391, 80.0], // translation
+      "bsphere": [-810.463, 36.5522, 256.391, 80.0], // bounding sphere
+      "lump": {
+        "name": "ambient-wind-3",
+        "type": "'sound",
+        "effect-name": "'tower-wind2",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-884.028, 59.9696, 313.78, 10.0], // translation
+      "bsphere": [-884.028, 59.9696, 313.78, 10.0], // bounding sphere
+      "lump": {
+        "name": "ambient-wind-4",
+        "type": "'sound",
+        "effect-name": "'tower-winds",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-930.407, 37.1731, 295.782, 20.0], // translation
+      "bsphere": [-930.407, 37.1731, 295.782, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-wind-5",
+        "type": "'sound",
+        "effect-name": "'tower-winds",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-916.459, 29.0461, 242.484, 30.0], // translation
+      "bsphere": [-916.459, 29.0461, 242.484, 30.0], // bounding sphere
+      "lump": {
+        "name": "ambient-wind-6",
+        "type": "'sound",
+        "effect-name": "'tower-wind2",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-652.399, 20.6014, 313.927, 30.0], // translation
+      "bsphere": [-652.399, 20.6014, 313.927, 30.0], // bounding sphere
+      "lump": {
+        "name": "ambient-wind-7",
+        "type": "'sound",
+        "effect-name": "'tower-wind3",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-712.817, 30.3837, 202.442, 20.0], // translation
+      "bsphere": [-712.817, 30.3837, 202.442, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-wind-8",
+        "type": "'sound",
+        "effect-name": "'tower-wind3",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-736.153, 56.5055, 349.013, 30.0], // translation
+      "bsphere": [-736.153, 56.5055, 349.013, 30.0], // bounding sphere
+      "lump": {
+        "name": "ambient-wind-9",
+        "type": "'sound",
+        "effect-name": "'tower-wind3",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    // CAVE WIND /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    {
+      "trans": [-844.215, 56.0026, 346.238, 15.0], // translation
+      "bsphere": [-844.215, 56.0026, 346.238, 15.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavewind",
+        "type": "'sound",
+        "effect-name": "'cavewind",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-879.866, 57.156, 345.28, 20.0], // translation
+      "bsphere": [-879.866, 57.156, 3345.28, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavewind-2",
+        "type": "'sound",
+        "effect-name": "'cavewind",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-752.164, 31.1607, 158.614, 20.0], // translation
+      "bsphere": [-752.164, 31.1607, 158.614, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavewind-3",
+        "type": "'sound",
+        "effect-name": "'cavewind",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-798.867, 37.23, 158.257, 20.0], // translation
+      "bsphere": [-798.867, 37.23, 158.257, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavewind-4",
+        "type": "'sound",
+        "effect-name": "'cavewind",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-834.524, 35.0771, 166.371, 30.0], // translation
+      "bsphere": [-834.524, 35.0771, 166.371, 30.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavewind-5",
+        "type": "'sound",
+        "effect-name": "'cavewind",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-874.013, 35.0771, 193.002, 30.0], // translation
+      "bsphere": [-874.013, 35.0771, 193.002, 30.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavewind-6",
+        "type": "'sound",
+        "effect-name": "'cavewind",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-818.044, 34.2807, 115.99, 20.0], // translation
+      "bsphere": [-818.044, 34.2807, 115.99, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavewind-7",
+        "type": "'sound",
+        "effect-name": "'cavewind",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-828.391, 31.8108, 79.9723, 20.0], // translation
+      "bsphere": [-828.391, 31.8108, 79.9723, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavewind-8",
+        "type": "'sound",
+        "effect-name": "'cavewind",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-836.005, 35.1699, 49.2979, 20.0], // translation
+      "bsphere": [-836.005, 35.1699, 49.2979, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavewind-9",
+        "type": "'sound",
+        "effect-name": "'cavewind",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-882.402, 35.5231, 116.556, 20.0], // translation
+      "bsphere": [-882.402, 35.5231, 116.556, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavewind-10",
+        "type": "'sound",
+        "effect-name": "'cavewind",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+
+    {
+      "trans": [-929.016, 35.5231, 116.556, 20.0], // translation
+      "bsphere": [-929.016, 35.5231, 116.556, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavewind-11",
+        "type": "'sound",
+        "effect-name": "'cavewind",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", -1.0, 0.0 ]
+      }
+    },
+      //CAVE DRIP //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    {
+      "trans": [-747.833, 30.6603, 156.812, 20.0], // translation
+      "bsphere": [-747.833, 30.6603, 156.812, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavedrip-1",
+        "type": "'sound",
+        "effect-name": "'drip",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", 0.0, 2.0 ]
+      }
+    },
+
+    {
+      "trans": [-800.018, 34.2321, 158.749, 20.0], // translation
+      "bsphere": [-800.018, 34.2321, 158.749, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavedrip-2",
+        "type": "'sound",
+        "effect-name": "'drip",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", 0.0, 2.0 ]
+      }
+    },
+
+    {
+      "trans": [-841.036, 31.0055, 165.255, 20.0], // translation
+      "bsphere": [-841.036, 31.0055, 165.255, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavedrip-3",
+        "type": "'sound",
+        "effect-name": "'drip",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", 0.0, 2.0 ]
+      }
+    },
+
+    {
+      "trans": [-879.294, 33.4072, 198.386, 20.0], // translation
+      "bsphere": [-879.294, 33.4072, 198.386, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavedrip-4",
+        "type": "'sound",
+        "effect-name": "'drip",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", 0.0, 2.0 ]
+      }
+    },
+
+    {
+      "trans": [-816.425, 33.4072, 120.766 , 20.0], // translation
+      "bsphere": [-816.425, 33.4072, 120.766, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavedrip-5",
+        "type": "'sound",
+        "effect-name": "'drip",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", 0.0, 2.0 ]
+      }
+    },
+
+    {
+      "trans": [-828.926, 33.4072, 80.8514, 20.0], // translation
+      "bsphere": [-828.926, 33.4072, 80.8514, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavedrip-6",
+        "type": "'sound",
+        "effect-name": "'drip",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", 0.0, 2.0 ]
+      }
+    },
+
+    {
+      "trans": [-836.521, 33.4072, 53.2041, 20.0], // translation
+      "bsphere": [-836.521, 33.4072, 53.2041, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavedrip-7",
+        "type": "'sound",
+        "effect-name": "'drip",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", 0.0, 2.0 ]
+      }
+    },
+
+    {
+      "trans": [-882.203, 36.3484, 118.215, 20.0], // translation
+      "bsphere": [-882.203, 36.3484, 118.215, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavedrip-8",
+        "type": "'sound",
+        "effect-name": "'drip",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", 0.0, 2.0 ]
+      }
+    },
+
+    {
+      "trans": [-930.569, 36.3484, 118.768, 20.0], // translation
+      "bsphere": [-930.569, 36.3484, 118.768, 20.0], // bounding sphere
+      "lump": {
+        "name": "ambient-cavedrip-9",
+        "type": "'sound",
+        "effect-name": "'drip",
+        "effect-param": [ "float", 12.0, 30.0, 12.0, 50.0 ],
+        "cycle-speed": [ "float", 0.0, 2.0 ]
+      }
+    },
+//////////////////END OF CAVE DRIPS /////////////////////////////////////////////////////////////////
+
+    {
+      "trans": [-861.434, 52.0373, 343.229, 10.0], // translation
+      "bsphere": [-861.434, 52.0373, 343.229, 10.0], // bounding sphere
+      "lump": {
+        "name": "ambient-fire-crackle",
+        "type": "'sound",
+        "effect-name": "'fire-crackle",
+        "effect-param": [ "float", 11.0, 30.0, 12.0, 50.0 ],
         "cycle-speed": [ "float", -1.0, 0.0 ]
       }
     }
@@ -165,6 +551,18 @@
     },
 
     {
+      "trans": [-700.332, 35.7398, 313.156], // translation
+      "etype": "beach-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, -0.425, 0, 0.905], // quaternion
+      "bsphere": [-700.332, 35.7398, 313.156, 10], // bounding sphere
+      "lump": {
+        "name": "snp-butterflies-3",
+        "art-name": "group-beach-butterflies"
+      }
+    },
+
+    {
       "trans": [-681.57, 31.385, 271.649], // translation
       "etype": "villagea-part", // actor type
       "game_task": "(game-task none)", // associated game task (for powercells, etc)
@@ -176,6 +574,43 @@
       }
     },
 
+    {
+      "trans": [-708.575, 41.5554, 300.564], // translation
+      "etype": "villagea-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, -0.425, 0, 0.905], // quaternion
+      "bsphere": [-708.575, 41.5554, 300.564, 10], // bounding sphere
+      "lump": {
+        "name": "snp-butterflies-sitting2",
+        "art-name": "group-village1-butterfly-sitting"
+      }
+    },
+
+    {
+      "trans": [-611.268, 27.9546, 245.047], // translation
+      "etype": "villagea-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 10], // quaternion
+      "bsphere": [-611.268, 27.9546, 245.047, 10], // bounding sphere
+      "lump": {
+        "name": "snp-hummingbird-1",
+        "art-name": "group-village1-hummingbird"
+      }
+    },
+
+    {
+      "trans": [-680.294, 31.262, 282.25], // translation
+      "etype": "villagea-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 10], // quaternion
+      "bsphere": [-680.294, 31.262, 282.25, 10], // bounding sphere
+      "lump": {
+        "name": "snp-hummingbird-2",
+        "art-name": "group-village1-hummingbird"
+      }
+    },
+
+    //  CAVE DRIPS
     {
       "trans": [-748.52, 45.5064, 156.014], // translation
       "etype": "beach-part", // actor type
@@ -189,11 +624,11 @@
     },
 
     {
-      "trans": [-826.5, 62.2963, 88.0051], // translation
+      "trans": [-826.5, 60.5457, 88.0051], // translation
       "etype": "beach-part", // actor type
       "game_task": "(game-task none)", // associated game task (for powercells, etc)
       "quat": [0, -0.425, 0, 0.905], // quaternion
-      "bsphere": [-826.5, 62.2963, 88.0051, 10], // bounding sphere
+      "bsphere": [-826.5, 60.5457, 88.0051, 10], // bounding sphere
       "lump": {
         "name": "snp-drips-2",
         "art-name": "group-beach-grotto-2"
@@ -227,9 +662,7 @@
       "effect-param": ["float", 3.0, 90.0, 12.0, 40.0]
       }
     },
-    
 
-    //SANDPIT MOD ACTORS/ENTITIES START HERE
        //SWINGPOLES - EXT//
        {
         "trans": [-705.615, 49.0861, 241.35], // translation
@@ -348,6 +781,86 @@
         }
       },
 
+      //////////// WOOD CRATES - GREEN ECO/////////////////////////////////////////
+
+      {
+        "trans": [-719.523, 23.2197, 215.203], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-719.523, 23.2197, 215.203, 10], // bounding sphere
+        "lump": {
+          "name": "snp-crate-wood-1",
+          "crate-type": "'wood",
+          "eco-info": ["int32", 7, 2]
+        }
+      },
+
+      {
+        "trans": [-719.523, 23.2197, 211.508], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, -0.09108, 0, 0.995844], // quaternion
+        "bsphere": [-719.523, 23.2197, 215.203, 10], // bounding sphere
+        "lump": {
+          "name": "snp-crate-wood-2",
+          "crate-type": "'wood",
+          "eco-info": ["int32", 7, 3]
+        }
+      },
+
+      {
+        "trans": [-744.237, 55.0468, 358.505], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0.002583, 0.057108, 0.040791, 0.997531], // quaternion
+        "bsphere": [-744.237, 55.0468, 358.505, 10], // bounding sphere
+        "lump": {
+          "name": "snp-crate-wood-3",
+          "crate-type": "'wood",
+          "eco-info": ["int32", 7, 3]
+        }
+      },
+
+      {
+        "trans": [-747.499, 54.7671, 358.505], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0.002583, 0.057108, 0.040791, 0.997531], // quaternion
+        "bsphere": [-747.499, 54.7671, 358.505, 10], // bounding sphere
+        "lump": {
+          "name": "snp-crate-wood-4",
+          "crate-type": "'wood",
+          "eco-info": ["int32", 7, 3]
+        }
+      },
+
+      {
+        "trans": [-923.921, 29.8199, 270.106], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0.0, -0.210331, 0.0, 0.97763], // quaternion
+        "bsphere": [-923.921, 29.8199, 270.106, 10], // bounding sphere
+        "lump": {
+          "name": "snp-crate-wood-5",
+          "crate-type": "'wood",
+          "eco-info": ["int32", 7, 3]
+        }
+      },
+
+      {
+        "trans": [-926.838, 29.8199, 268.79], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0.0, -0.210331, 0.0, 0.97763], // quaternion
+        "bsphere": [-926.838, 29.8199, 268.79, 10], // bounding sphere
+        "lump": {
+          "name": "snp-crate-wood-6",
+          "crate-type": "'wood",
+          "eco-info": ["int32", 7, 3]
+        }
+      },
+
       //SANDCAVE BLUE ECO
       {
         "trans": [-957.869, 7.87049, 112.379], // translation
@@ -385,7 +898,7 @@
           "name": "snp-fly2",
           "crate-type": "'iron",
           "eco-info": ["buzzer-info", "(game-task sandpit-buzzer)", 1],
-          "movie-pos": ["movie-pos", [-563.324, 10.4187, 269.673, -10.0]]
+          "movie-pos": ["movie-pos", [-563.324, 9.5, 269.673, -10.0]]
         }
       },
 
@@ -399,7 +912,7 @@
           "name": "snp-fly3",
           "crate-type": "'iron",
           "eco-info": ["buzzer-info", "(game-task sandpit-buzzer)", 2],
-          "movie-pos": ["movie-pos", [-650.644, 15.4242, 266.411, -10.0]]
+          "movie-pos": ["movie-pos", [-650.644, 14.456, 268.485, -10.0]]
         }
       },
       {
@@ -412,7 +925,7 @@
           "name": "snp-fly4",
           "crate-type": "'iron",
           "eco-info": ["buzzer-info", "(game-task sandpit-buzzer)", 3],
-          "movie-pos": ["movie-pos", [-698.214, 17.3002, 305.096, -10.0]]
+          "movie-pos": ["movie-pos", [-698.214, 16.3376, 305.096, -10.0]]
         }
       },
       {
@@ -425,7 +938,7 @@
           "name": "snp-fly5",
           "crate-type": "'iron",
           "eco-info": ["buzzer-info", "(game-task sandpit-buzzer)", 4],
-          "movie-pos": ["movie-pos", [-722.231, 65.945, 359.993, -10.0]]
+          "movie-pos": ["movie-pos", [-716.929, 66.0019, 353.939, -8.0]]
         }
       },
 
@@ -472,11 +985,11 @@
       },
 
       {
-        "trans": [-926.352, 35.138, 119.652], // translation
+        "trans": [-928.17, 35.138, 119.652], // translation
         "etype": "fuel-cell", // actor type
         "game_task": "(game-task sandpit-idolcell)", // associated game task (for powercells, etc)
         "quat": [0, 0, 0, 1], // quaternion
-        "bsphere": [-926.352, 35.138, 119.652, 10], // bounding sphere
+        "bsphere": [-928.17, 35.138, 119.652, 10], // bounding sphere
         "lump": {
           "name": "snp-fuel-cell-02",
           "eco-info": [ "int32", 6, 118 ]
@@ -1345,6 +1858,8 @@
         }
       },
 
+      //////////////////////////////////////////////////ENEMIES/////////////////////////////////////////////////////////////////
+
         //First babak
       {
       "aid": 51400,
@@ -1387,10 +1902,15 @@
           [-672.06, 7.36, 274.7],
           [-670.15, 7.36, 279.49]],
         "nav-mesh-sphere": ["vector4m",
-          [-648.2, 8.42, 265.55, 7.34]]
+          [-648.2, 8.42, 265.55, 7.34],
+          [-656.589, 9.67411, 240.242, 15.778], //NavSphere.009
+          [-684.152, 8.85282, 237.488, 15.778], //NavSphere.010
+          [-633.059, 10.7503, 226.768, 11.9587],  //NavSphere.011
+          [-599.126, 7.1956, 278.765, 18.7432] //NavSphere.012
+        ]
       }
     },
-      //actually babak2
+      //actually babak2 a.k.a spike trap lurker
     {
       "aid": 51600,
       "trans": [-707.02, 23.63, 192.61],
@@ -1437,10 +1957,18 @@
           [-703.21, 23.63, 202.94],
           [-699.28, 23.63, 199.07],
           [-699.28, 23.63, 192.04],
-          [-707.02, 23.63, 192.61]]
+          [-707.02, 23.63, 192.61]],
+        "nav-mesh-sphere": ["vector4m",
+          [-695.414, 23.2295, 215.026, 4.71744], //NavSphere.013
+          [-695.414, 23.2295, 224.232, 4.71744], //NavSphere.014
+          [-694.949, 24.9781, 230.648, 12.4668],  //NavSphere.015
+          [-693.998, 24.8736, 205.467, 9.28607],  //NavSphere.016
+          [-676.86, 25.0501, 199.318, 9.28607],  //NavSphere.017
+          [-724.27, 23.342, 227.749, 8.75032]   //NavSphere.018
+      ]
       }
     },
-      // 3rd babak
+      // 3rd babak a.k.a highpoint lurker
     {
       "aid": 50100,
       "trans": [-718.2, 57.79, 350.53],
@@ -1472,7 +2000,7 @@
           [-731.26, 56.53, 354.09],
           [-718.2, 57.79, 350.53]],
           "nav-mesh-sphere": ["vector4m",
-          [-706.83, 56.99, 342.32, 8.07]]
+          [-706.83, 56.99, 344.011, 9.09208]]
       }
     },
         //Narrow path babak
@@ -1645,18 +2173,6 @@
 
       {
         "aid": 45002,
-        "trans": [-816.413, 10.038, 237.443], // translation
-        "etype": "lurkerworm", // actor type
-        "game_task": "(game-task none)", // associated game task (for powercells, etc)
-        "quat": [ 0, 0, 0, 1 ], // quaternion
-        "bsphere": [-816.413, 10.038, 237.443, 10 ], // bounding sphere
-        "lump": {
-          "name": "snp-lurkerworm-3"
-        }
-      },
-
-      {
-        "aid": 45003,
         "trans": [-816.413, 10.038, 237.443], // translation
         "etype": "lurkerworm", // actor type
         "game_task": "(game-task none)", // associated game task (for powercells, etc)

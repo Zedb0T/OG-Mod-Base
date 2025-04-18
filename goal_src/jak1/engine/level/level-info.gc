@@ -2537,7 +2537,7 @@
        :packages
        '(beach)
        :sound-banks
-       '(beach)
+       '(beach maincave)
        :music-bank 'beach
        :ambient-sounds
        '()
@@ -2554,20 +2554,41 @@
              :trans
              (new 'static 'vector :x (meters -604.693) :y (meters 33.0277) :z (meters 265.268) :w 1.0)
              :quat
-             (new 'static 'quaternion :w 1.0)
+             (new 'static 'quaternion :x 0.0 :z -0.643 :w 0.766)
              :camera-trans
              (new 'static 'vector :x 0.0 :y 4096.0 :z 0.0 :w 1.0)
              :camera-rot
-             (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+             (new 'static 'array float 9 -0.0134 -0.0000 0.9999 -0.1257 0.9920 -0.0016 -0.9919 -0.1257 -0.0133)
              :load-commands
              '()
-             :vis-nick 'none
+             :vis-nick 'snp
              :lev0 'sandpit
              :disp0 'display
              :lev1 #f
-             :disp1 #f))
+             :disp1 #f)
+          (new 'static
+             'continue-point
+             :name "sandpit-warp"
+             :level 'sandpit
+             :flags (continue-flags warp)
+             :trans
+             (new 'static 'vector :x (meters -590.392) :y (meters 35.0652) :z (meters 291.476) :w 1.0)
+             :quat
+             (new 'static 'quaternion :x 0.0 :y 0.056459 :z 0.0 :w 0.998405)
+             :camera-trans
+             (new 'static 'vector :x (meters -585.979) :y (meters 39.9995) :z (meters 281.942) :w 1.0)
+             :camera-rot
+             (new 'static 'array float 9 0.0 -0.3953 -0.456928 -0.889504 -0.2369 0.9661 -0.1020 -0.8874 -0.2580 -0.3819) ;; what the heck is this?
+             :load-commands
+             '()
+             :vis-nick 'snp
+             :lev0 'sandpit
+             :disp0 'display
+             :lev1 '#f
+             :disp1 '#f
+             ))
        :tasks
-       '()
+       '(116 117 118 119)
        :priority 100
        :load-commands
        '()

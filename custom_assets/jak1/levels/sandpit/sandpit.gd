@@ -7,8 +7,10 @@
   "beach-obs.o"
   "beach-part.o"
   "village1-part.o"
+  "village1-part2.o" ;; Warp Gate particle effect
   "villagep-obs.o"
   "village-obs.o"
+  ;;"sandpit-part.o"
   "ogre-obs.o"
   "linear-plat.o"
   "tpage-398.go"
@@ -18,6 +20,8 @@
   "tpage-1470.go"
   "plat-ag.go"
   "plat-eco-ag.go"
+  "warpgate-ag.go"
+  "warp-gate-switch-ag.go"
   "orb-cache-top-ag.go"
   "ecovalve-ag.go"
   "babak-ag.go"
@@ -25,7 +29,6 @@
   "lurkerworm-ag.go"
   "eichar-pole+0-ag.go"
   "shortcut-boulder-ag.go"
-  "swamp-rock-ag.go"
   "sandpit.go"
   )
  )
