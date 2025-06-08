@@ -65,7 +65,7 @@
 
   // If you have any custom models in the "custom_assets/jak1/models/custom_levels" folder that you want to use in your level, add them to this list.
   // Note: Like with art groups, these should also be added to your level's .gd file.
-  "custom_models": ["test-actor"],
+  "custom_models": [],
 
   // Any textures you want to include in your custom level. This is mainly useful for things such as the zoomer HUD,
   // sky textures and cases where you want to use objects drawn with the generic renderer,
@@ -2237,12 +2237,12 @@
 
         "trans": [-586.78, 34.9727, 288.566], // translation
         "etype": "warp-gate-switch",
-        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "game_task": 117, // associated game task (for powercells, etc)
         "quat": [ 0, 0, 0, 1 ], // quaternion
         "bsphere": [-586.78, 34.9727, 288.566, 10 ], // bounding sphere
         "lump": {
           "name": "snp-warp-gate-switch",
-          "alt-actor": "snp-training-part-1"
+          "alt-actor": "snp-warp-gate-switch-part"
         }
       },
 
@@ -2250,12 +2250,12 @@
 
         "trans": [-590.392, 38.0469, 291.476], // translation
         "etype": "training-part", // actor type
-        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "game_task": 117, // associated game task (for powercells, etc)
         "quat": [ 0, 0, 0, 1 ], // quaternion
         "bsphere": [-590.392, 38.0469, 291.476, 10 ], // bounding sphere
         "lump": {
-          "name": "snp-warp-gate-switch",
-          "alt-actor": "snp-training-part-1",
+          "name": "snp-warp-gate-switch-part",
+          "alt-actor": "snp-warpgate",
           "effect-name": "'warpgate-loop",
           "art-name": "group-training-warpgate",
           "effect-param": [ "float", 3.0000, 80.0000, 12.0000, 40.0000 ],

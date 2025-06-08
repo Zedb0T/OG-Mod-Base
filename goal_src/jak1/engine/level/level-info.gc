@@ -2564,8 +2564,8 @@
              :vis-nick 'snp
              :lev0 'sandpit
              :disp0 'display
-             :lev1 'swamp
-             :disp1 'display)
+             :lev1 #f
+             :disp1 #f)
           (new 'static
              'continue-point
              :name "sandpit-warp"

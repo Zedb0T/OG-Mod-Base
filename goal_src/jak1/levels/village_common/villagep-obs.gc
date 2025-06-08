@@ -11,7 +11,6 @@
 
 (deftype warpgate (process-hidden) ())
 
-
 (defstate target-warp-in (target)
   :event target-generic-event-handler
   :enter
@@ -73,20 +72,25 @@
       (remove-setting! 'allow-progress)
       (set-time! (-> self state-time))
       (loop
-        (when (and (and *target* (>= 20480.0 (vector-vector-distance (-> self root trans) (-> *target* control trans))))
-                   (and (>= (-> self level-slot) 0)
+        (when 
+              ;; below is the check that normally runs during the vanilla game, I have commented it out and forced it to always be true so it works in sandpit you will need to modify the commented out code to prevent the use of warpgates anywhere
+
+        (and (and *target* (>= 20480.0 (vector-vector-distance (-> self root trans) (-> *target* control trans))))
+                   (and ;;(>= (-> self level-slot) 0)
                         (not (movie?))
-                        (not (level-hint-displayed?))
+                       ;; (not (level-hint-displayed?))
                         (not (logtest? (-> *target* control root-prim prim-core action)
                                        (collide-action edgegrab-cam swingpole-active racer snowball tube flut)))
-                        (let* ((v1-16 (-> self root))
-                               (a1-2 (-> *target* control trans))
-                               (f0-1 (vector-y-angle (vector-! (new 'stack-no-clear 'vector) a1-2 (-> v1-16 trans)))))
-                          (or (!= (-> self level-slot) 3) (and (< f0-1 -9102.223) (< -32768.0 f0-1))))))
+                        ;; (let* ((v1-16 (-> self root))
+                        ;;        (a1-2 (-> *target* control trans))
+                        ;;        (f0-1 (vector-y-angle (vector-! (new 'stack-no-clear 'vector) a1-2 (-> v1-16 trans)))))
+                        ;;   (or (!= (-> self level-slot) 3) (and (< f0-1 -9102.223) (< -32768.0 f0-1))))
+                          ))
           (hide-hud)
           (level-hint-surpress!)
           (kill-current-level-hint '() '(sidekick voicebox) 'exit)
-          (when (and (hud-hidden?)
+          (when 
+          (and (hud-hidden?)
                      (can-grab-display? self)
                      (cond
                        ((or (= (-> *target* next-state name) 'target-warp-in) (= (-> *target* next-state name) 'target-warp-out))
@@ -130,6 +134,24 @@
   (set! (-> arg1 color) (font-color default))
   arg1)
 
+(defun overwrite-level-name ((arg0 string))
+  (cond
+    ((string= (symbol->string (-> (get-continue-by-name *game-info* arg0) level)) "sandpit")
+     (return "JOURNEY TO SANDPIT!"))
+    (else (symbol->string (-> (get-continue-by-name *game-info* arg0) level)))))
+
+(defun print-level-name-warpgate ((arg0 string) (arg1 font-context) (arg2 int) (arg3 int))
+  (let ((s5-0 (if arg3 arg2 (- arg2))))
+    (+! (-> arg1 origin x) (the float s5-0))
+    (let ((f30-0 (- 1.0 (* 0.0033333334 (the float arg2)))))
+      (print-game-text-scaled (string-upcase (the-as string (overwrite-level-name (the-as string arg0))) *temp-string*)
+                              f30-0
+                              arg1
+                              (the int (* 128.0 f30-0))))
+    (set! (-> arg1 origin x) (- (-> arg1 origin x) (the float s5-0))))
+  (set! (-> arg1 color) (font-color default))
+  arg1)
+
 (defstate active (warp-gate)
   :virtual #t
   :enter
@@ -153,7 +175,7 @@
           (if (!= f0-0 0.0)
             (send-event *target* 'rotate-y-angle (fmax (fmin f0-0 (* 65536.0 (seconds-per-frame))) (* -65536.0 (seconds-per-frame))))))))
   :code
-    (behavior ()  
+    (behavior ()
       (local-vars (sv-112 int) (sv-128 int) (sv-144 int))
       (let ((gp-0 (get-next-slot-up self (+ (-> self level-slot) -1))))
         0
@@ -204,33 +226,33 @@
                 (cond
                   (s4-0
                    (let ((a2-6 (- 300 (+ s2-0 150)))
-                         (t9-20 print-level-name)
+                         (t9-20 print-level-name-warpgate)
                          (a1-16 s1-3)
                          (a3-4 #f))
-                     (t9-20 sv-112 a1-16 a2-6 (the-as int a3-4)))
+                     (t9-20 (-> *warp-info* sv-112) a1-16 a2-6 (the-as int a3-4)))
                    (let ((a2-7 (+ s2-0 150)))
                      (cond
-                       ((< a2-7 225) (print-level-name s0-3 s1-3 a2-7 (the-as int #t)))
+                       ((< a2-7 225) (print-level-name-warpgate (-> *warp-info* s0-3) s1-3 a2-7 (the-as int #t)))
                        (else
                         (let ((a2-8 (- 300 s2-0))
-                              (t9-22 print-level-name)
+                              (t9-22 print-level-name-warpgate)
                               (a1-18 s1-3)
                               (a3-6 #f))
-                          (t9-22 sv-128 a1-18 a2-8 (the-as int a3-6)))))))
+                          (t9-22 (-> *warp-info* sv-128) a1-18 a2-8 (the-as int a3-6)))))))
                   (else
                    (let ((a2-9 (+ s2-0 150)))
                      (cond
-                       ((< a2-9 225) (print-level-name sv-112 s1-3 a2-9 (the-as int #f)))
+                       ((< a2-9 225) (print-level-name-warpgate (-> *warp-info* sv-112) s1-3 a2-9 (the-as int #f)))
                        (else
                         (let ((a2-10 (- 300 s2-0))
-                              (t9-24 print-level-name)
+                              (t9-24 print-level-name-warpgate)
                               (a1-20 s1-3)
                               (a3-8 #t))
-                          (t9-24 sv-144 a1-20 a2-10 (the-as int a3-8))))))
-                   (let ((a2-11 (- 300 (+ s2-0 150)))) (print-level-name s0-3 s1-3 a2-11 (the-as int #t))))))
+                          (t9-24 (-> *warp-info* sv-144) a1-20 a2-10 (the-as int a3-8))))))
+                   (let ((a2-11 (- 300 (+ s2-0 150)))) (print-level-name-warpgate (-> *warp-info* s0-3) s1-3 a2-11 (the-as int #t))))))
               (when (not s5-0)
                 (let ((a0-47 s1-3)) (set! (-> a0-47 color) (font-color progress-yellow))))
-              (print-level-name gp-0 s1-3 s2-0 (the-as int s4-0))
+              (print-level-name-warpgate (-> *warp-info* gp-0) s1-3 s2-0 (the-as int s4-0))
               (+! (-> s1-3 origin y) 20.0)
               (print-game-text (lookup-text! *common-text* (text-id press-to-warp) #f) s1-3 #f 128 22)
               (+! (-> s1-3 origin y) 15.0)
@@ -256,13 +278,10 @@
             ((= v1-11 'village2) 2)
             ((= v1-11 'village3) 3)
             ((or (= v1-11 'citadel) (= v1-11 'lavatube)) 4)
-            ((= v1-11 'test-zone) ;; added for warpgate functionality in sandpit level
-                                  5
-                                  )
-            (else -1)))
-            (format 0 "SELF LEVEL-SLOT: ~D~%" (-> self level-slot)))
+            (else -1))))
   (set! (-> self max-slot)
         (cond
+         ((task-closed? (the-as game-task 117) (task-status need-hint)) 5)
           ((task-closed? (game-task village4-button) (task-status need-hint)) 4)
           ((task-closed? (game-task village3-button) (task-status need-hint)) 3)
           ((task-closed? (game-task village2-levitator) (task-status need-hint)) 2)
@@ -274,7 +293,6 @@
   ((warp handle))
   (:methods
    (pressable? (_type_) symbol)))
-
 
 (defskelgroup *warp-gate-switch-sg*
   warp-gate-switch
@@ -489,7 +507,6 @@
    (state-time    time-frame))
   (:state-methods
    idle))
-
 
 (defmethod relocate ((this village-cam) (offset int))
   (if (nonzero? (-> this root-override)) (&+! (-> this root-override) offset))
