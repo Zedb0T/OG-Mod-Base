@@ -2220,7 +2220,6 @@
       },
 
 
-      // Currently crashes game when loading into level, made changes to "basebutton.gc"
       {
 
         "trans": [-590.392, 38.0469, 291.476], // translation

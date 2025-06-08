@@ -309,7 +309,10 @@
        (level-task-data-index citadel) ;; finalboss?
        (level-task-data-index misty) ;; demo?
        (level-task-data-index misty) ;; intro?
-       (level-task-data-index sandpit)
+       (level-task-data-index village1) ;;title 24
+       (level-task-data-index training) ;;halfpipe 25
+       (level-task-data-index training) ;; default level 26
+       (level-task-data-index sandpit) ;;sandpit 27
        ))
 
 ;; maps goal language ID to its name string ID
