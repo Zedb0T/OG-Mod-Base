@@ -12,7 +12,8 @@
   "tpage-1470.go"
   "plat-ag.go"
   "plat-eco-ag.go"
-  "test-actor-ag.go"
+  "warp-gate-switch-ag.go"
+  "warpgate-ag.go"
   "babak-ag.go"
   "test-zone.go"
   )

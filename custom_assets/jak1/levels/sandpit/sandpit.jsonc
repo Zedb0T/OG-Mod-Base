@@ -2217,6 +2217,50 @@
         "lump": {
           "name": "snp-lurkerworm-6"
         }
+      },
+
+
+      // Currently crashes game when loading into level, made changes to "basebutton.gc"
+      {
+
+        "trans": [-590.392, 38.0469, 291.476], // translation
+        "etype": "warpgate", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-590.392, 38.0469, 291.476, 10 ], // bounding sphere
+        "lump": {
+          "name": "snp-warpgate"
+        }
+      },
+
+      {
+
+        "trans": [-586.78, 34.9727, 288.566], // translation
+        "etype": "warp-gate-switch",
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-586.78, 34.9727, 288.566, 10 ], // bounding sphere
+        "lump": {
+          "name": "snp-warp-gate-switch",
+          "alt-actor": "snp-training-part-1"
+        }
+      },
+
+      {
+
+        "trans": [-590.392, 38.0469, 291.476], // translation
+        "etype": "training-part", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-590.392, 38.0469, 291.476, 10 ], // bounding sphere
+        "lump": {
+          "name": "snp-warp-gate-switch",
+          "alt-actor": "snp-training-part-1",
+          "effect-name": "'warpgate-loop",
+          "art-name": "group-training-warpgate",
+          "effect-param": [ "float", 3.0000, 80.0000, 12.0000, 40.0000 ],
+          "cycle-speed": [ "float", -1.0000, 0.0000 ]
+        }
       }
 
     ]

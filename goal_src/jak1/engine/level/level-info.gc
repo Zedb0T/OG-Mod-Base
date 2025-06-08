@@ -2564,8 +2564,8 @@
              :vis-nick 'snp
              :lev0 'sandpit
              :disp0 'display
-             :lev1 #f
-             :disp1 #f)
+             :lev1 'swamp
+             :disp1 'display)
           (new 'static
              'continue-point
              :name "sandpit-warp"
@@ -2578,14 +2578,14 @@
              :camera-trans
              (new 'static 'vector :x (meters -585.979) :y (meters 39.9995) :z (meters 281.942) :w 1.0)
              :camera-rot
-             (new 'static 'array float 9 0.0 -0.3953 -0.456928 -0.889504 -0.2369 0.9661 -0.1020 -0.8874 -0.2580 -0.3819) ;; what the heck is this?
+             (new 'static 'array float 9 0.0 -0.3953 -0.456928 -0.889504 -0.2369 0.9661 -0.1020 -0.8874 -0.2580 -0.3819) ;; ???
              :load-commands
              '()
              :vis-nick 'snp
              :lev0 'sandpit
              :disp0 'display
-             :lev1 '#f
-             :disp1 '#f
+             :lev1 #f
+             :disp1 #f
              ))
        :tasks
        '(116 117 118 119)

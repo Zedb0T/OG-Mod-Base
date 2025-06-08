@@ -153,7 +153,7 @@
           (if (!= f0-0 0.0)
             (send-event *target* 'rotate-y-angle (fmax (fmin f0-0 (* 65536.0 (seconds-per-frame))) (* -65536.0 (seconds-per-frame))))))))
   :code
-    (behavior ()
+    (behavior ()  
       (local-vars (sv-112 int) (sv-128 int) (sv-144 int))
       (let ((gp-0 (get-next-slot-up self (+ (-> self level-slot) -1))))
         0
@@ -256,7 +256,11 @@
             ((= v1-11 'village2) 2)
             ((= v1-11 'village3) 3)
             ((or (= v1-11 'citadel) (= v1-11 'lavatube)) 4)
-            (else -1))))
+            ((= v1-11 'test-zone) ;; added for warpgate functionality in sandpit level
+                                  5
+                                  )
+            (else -1)))
+            (format 0 "SELF LEVEL-SLOT: ~D~%" (-> self level-slot)))
   (set! (-> self max-slot)
         (cond
           ((task-closed? (game-task village4-button) (task-status need-hint)) 4)

@@ -61,7 +61,7 @@
   // All art groups you want to use in your custom level. Will add their models and corresponding textures to the FR3 file.
   // Note: You will still have to add them to your level's .gd file.
   // "art_groups": ["plat-ag"],
-  "art_groups": ["babak-ag", "plat-ag", "plat-eco-ag"],
+  "art_groups": ["babak-ag", "plat-ag", "plat-eco-ag","warp-gate-switch-ag", "warp-gate-ag"],
 
   // If you have any custom models in the "custom_assets/jak1/models/custom_levels" folder that you want to use in your level, add them to this list.
   // Note: Like with art groups, these should also be added to your level's .gd file.
@@ -207,6 +207,30 @@
         "name": "test-actor"
       }
     },
+
+    {
+
+        "trans": [-7.2966, 3.64382, 29.6324], // translation
+        "etype": "warpgate", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-7.2966, 3.64382, 29.6324, 10 ], // bounding sphere
+        "lump": {
+          "name": "tsz-warpgate"
+        }
+      },
+
+      {
+
+        "trans": [-4.66237, 1.10337, 27.4622], // translation
+        "etype": "warp-gate-switch",
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-4.66237, 1.10337, 27.4622, 10 ], // bounding sphere
+        "lump": {
+          "name": "test-warp-gate-switch"
+        }
+      },
 
     {
       "trans": [0.0, 50.0, 10.0],
