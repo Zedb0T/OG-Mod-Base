@@ -147,6 +147,8 @@
     The cause can be 'dead if you die, or 'game to reset everything.
     If save-to-load is not #f will load data from that.
     If continue-point-override is not #f, will use that."
+    (set! (-> *game-counts* data 16 money-count) (the-as int 100)) ;; In progress-static level-task-data-index for sandpit is 16.
+    (set! (-> *game-counts* data 16 buzzer-count) (the-as int 7))   ;; sandpit buzzer count.
   (local-vars (v0-0 int) (sv-96 symbol))
   (case cause
     (('dead)
@@ -182,7 +184,7 @@
                     (cond
                       (continue-point-override (empty) continue-point-override)
                       ((!= *kernel-boot-message* 'play) "demo-start")
-                      (*debug-segment* "sandpit-start")
+                      (*debug-segment* "village1-hut")
                       (else "title-start")))
      (set! (-> this auto-save-count) 0)
      (set! (-> *setting-control* default auto-save) #f)
