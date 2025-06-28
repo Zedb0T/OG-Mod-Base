@@ -142,6 +142,8 @@
   "Get the permanent storage for a game-task"
   (-> this task-perm-list data arg0))
 
+  (define *game-counts* (the-as game-count-info #f))
+
 (defmethod initialize! ((this game-info) (cause symbol) (save-to-load game-save) (continue-point-override string))
   "Initialize the game-info.
     The cause can be 'dead if you die, or 'game to reset everything.
