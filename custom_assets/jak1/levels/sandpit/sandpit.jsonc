@@ -757,11 +757,11 @@
       },
           //ECOVENT
       {
-        "trans": [-869.054, 35.0391, 218.646], // translation
+        "trans": [-869.23, 35.0391, 218.078], // translation
         "etype": "ecovent", // actor type
         "game_task": "(game-task none)", // associated game task (for powercells, etc)
         "quat": [0, 0, 0, 1], // quaternion
-        "bsphere": [-869.054, 35.0391, 218.646, 10], // bounding sphere
+        "bsphere": [-869.23, 35.0391, 218.078, 10], // bounding sphere
         "lump": {
           "name": "snp-ecovent-yellow",
           "eco-info": ["int32", 1, 1]
@@ -769,11 +769,11 @@
       },
         //WOOD CRATE YELLOW ECO
       {
-        "trans": [-674.195, 32.1707, 325.05], // translation
+        "trans": [-674.195, 31.8737, 325.05], // translation
         "etype": "crate", // actor type
         "game_task": "(game-task none)", // associated game task (for powercells, etc)
-        "quat": [0, 0, 0, 1], // quaternion
-        "bsphere": [-674.195, 32.1707, 325.05, 10], // bounding sphere
+        "quat": [0, 0, -0.051835, 0.998656], // quaternion
+        "bsphere": [-674.195, 31.8737, 325.05, 10], // bounding sphere
         "lump": {
           "name": "snp-crate-wood",
           "crate-type": "'wood",
@@ -906,7 +906,7 @@
         "trans": [-650.644, 14.456, 268.485], // translation
         "etype": "crate", // actor type
         "game_task": "(game-task sandpit-buzzer)", // associated game task (for powercells, etc)
-        "quat": [0, 0, 0, 1], // quaternion
+        "quat": [-0.04505, 0.001686, -0.037365, 0.998284], // quaternion
         "bsphere": [-650.644, 14.456, 268.485, 10], // bounding sphere
         "lump": {
           "name": "snp-fly3",

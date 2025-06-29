@@ -2572,13 +2572,13 @@
              :level 'sandpit
              :flags (continue-flags warp)
              :trans
-             (new 'static 'vector :x (meters -590.392) :y (meters 35.0652) :z (meters 291.476) :w 1.0)
+             (new 'static 'vector :x (meters -590.7935) :y (meters 34.9726) :z (meters 288.8436) :w 1.0)
              :quat
              (new 'static 'quaternion :x 0.0 :y 0.056459 :z 0.0 :w 0.998405)
              :camera-trans
-             (new 'static 'vector :x (meters -585.979) :y (meters 39.9995) :z (meters 281.942) :w 1.0)
+             (new 'static 'vector :x (meters -590.1582) :y (meters 39.9995) :z (meters 289.9669) :w 1.0)
              :camera-rot
-             (new 'static 'array float 9 0.0 -0.3953 -0.456928 -0.889504 -0.2369 0.9661 -0.1020 -0.8874 -0.2580 -0.3819) ;; ???
+             (new 'static 'array float 9 0.7916 0.0000 0.6109 -0.0864 0.9899 0.1119 -0.6048 -0.1414 0.7836) ;; ???
              :load-commands
              '()
              :vis-nick 'snp
