@@ -2785,7 +2785,7 @@
                 ;; Start a new game differently if speedrunning mode is active
                 (speedrun-start-full-game-run)
                 ;; start the game normally
-                (initialize! *game-info* 'game (the-as game-save #f) "intro-start"))
+                (initialize! *game-info* 'game (the-as game-save #f) "sandpit-warp"))
               (set-master-mode 'game))
              (else (sound-play "cursor-options") (set! (-> obj next-display-state) (progress-screen invalid)))))
           (((progress-screen memcard-insert))
@@ -2814,7 +2814,7 @@
               (cond
                 ((-> *pc-settings* speedrunner-mode?) (speedrun-start-full-game-run))
                 ;; start the game normally
-                (else (initialize! *game-info* 'game (the-as game-save #f) "intro-start")))
+                (else (initialize! *game-info* 'game (the-as game-save #f) "sandpit-warp")))
               (set-master-mode 'game))))
           (((progress-screen memcard-no-space) (progress-screen memcard-not-inserted) (progress-screen memcard-not-formatted))
            (cond
@@ -2826,7 +2826,7 @@
               (cond
                 ((-> *pc-settings* speedrunner-mode?) (speedrun-start-full-game-run))
                 ;; start the game normally
-                (else (initialize! *game-info* 'game (the-as game-save #f) "intro-start")))
+                (else (initialize! *game-info* 'game (the-as game-save #f) "sandpit-warp")))
               (set-master-mode 'game))
              ((nonzero? (-> obj display-state-stack 0)) (sound-play "start-options") (set-master-mode 'game))
              (else (sound-play "cursor-options") (set! (-> obj next-display-state) (progress-screen invalid)))))
@@ -2885,7 +2885,7 @@
               (cond
                 ((-> *pc-settings* speedrunner-mode?) (speedrun-start-full-game-run))
                 ;; start the game normally
-                (else (initialize! *game-info* 'game (the-as game-save #f) "intro-start")))
+                (else (initialize! *game-info* 'game (the-as game-save #f) "sandpit-warp")))
               (set-master-mode 'game))
              (else (sound-play "cursor-options") (set! (-> obj next-display-state) (progress-screen invalid)))))
           (((progress-screen quit-title))
