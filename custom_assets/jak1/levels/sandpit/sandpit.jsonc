@@ -138,17 +138,6 @@
     },
 
     {
-      "trans": [-599.719, 33.3509, 262.405, 10.0],
-      "bsphere": [-599.719, 33.3509, 262.405, 10],
-      "lump": {
-        "name": "sandpit-namepop",
-        "type": "'hint",
-        "text-id": ["int32", 5656], // the compiler knows it refers to string ID 0x1618 (which is 5656 in decimal).
-        "play-mode": "'notice"
-      }
-    },
-
-    {
       "trans": [-671.438, 22.9009, 219.944, 20.0 ], // translation
       "bsphere": [-671.438, 22.9009, 219.944, 20.0 ], // bounding sphere
       "lump": {
