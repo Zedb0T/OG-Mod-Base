@@ -563,6 +563,42 @@
     },
 
     {
+      "trans": [-770.194, 44.8475, 287.92], // translation
+      "etype": "beach-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, -0.425, 0, 0.905], // quaternion
+      "bsphere": [-770.194, 44.8475, 287.92, 10], // bounding sphere
+      "lump": {
+        "name": "snp-butterflies-4",
+        "art-name": "group-beach-butterflies"
+      }
+    },
+
+    {
+      "trans": [-755.085, 54.1233, 353.163], // translation
+      "etype": "beach-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, -0.425, 0, 0.905], // quaternion
+      "bsphere": [-755.085, 54.1233, 353.163, 10], // bounding sphere
+      "lump": {
+        "name": "snp-butterflies-5",
+        "art-name": "group-beach-butterflies"
+      }
+    },
+
+    {
+      "trans": [-918.365, 35.8461, 222.338], // translation
+      "etype": "beach-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, -0.425, 0, 0.905], // quaternion
+      "bsphere": [-918.365, 35.8461, 222.338, 10], // bounding sphere
+      "lump": {
+        "name": "snp-butterflies-6",
+        "art-name": "group-beach-butterflies"
+      }
+    },
+
+    {
       "trans": [-681.57, 31.385, 271.649], // translation
       "etype": "villagea-part", // actor type
       "game_task": "(game-task none)", // associated game task (for powercells, etc)
@@ -606,6 +642,18 @@
       "bsphere": [-680.294, 31.262, 282.25, 10], // bounding sphere
       "lump": {
         "name": "snp-hummingbird-2",
+        "art-name": "group-village1-hummingbird"
+      }
+    },
+
+    {
+      "trans": [-946.428, 57.5476, 278.185], // translation
+      "etype": "villagea-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 10], // quaternion
+      "bsphere": [-946.428, 57.5476, 278.185, 10], // bounding sphere
+      "lump": {
+        "name": "snp-hummingbird-3",
         "art-name": "group-village1-hummingbird"
       }
     },
