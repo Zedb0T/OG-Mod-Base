@@ -74,7 +74,7 @@
       (loop
         (when 
               ;; below is the check that normally runs during the vanilla game, I have commented it out and forced it to always be true so it works in sandpit you will need to modify the commented out code to prevent the use of warpgates anywhere
-
+              ;; edit. reverted to normal
         (and (and *target* (>= 20480.0 (vector-vector-distance (-> self root trans) (-> *target* control trans))))
                    (and (>= (-> self level-slot) 0)
                         (not (movie?))
@@ -125,12 +125,13 @@
 (defun print-level-name ((arg0 int) (arg1 font-context) (arg2 int) (arg3 int))
   (let ((s5-0 (if arg3 arg2 (- arg2)))
   (level-text-id (if (= arg0 5)
-                  #x1618
+                  #x1618          ;;Sandpit text-id
+                  (+ arg0 286)
                   )
               ))
     (+! (-> arg1 origin x) (the float s5-0))
     (let ((f30-0 (- 1.0 (* 0.0033333334 (the float arg2)))))
-      (print-game-text-scaled (lookup-text! *common-text* (the-as text-id (+ arg0 286)) #f)
+      (print-game-text-scaled (lookup-text! *common-text* (the-as text-id level-text-id) #f) ;; we use the lvl-text-id here, displays lvl name in warp gate level select
                               f30-0
                               arg1
                               (the int (* 128.0 f30-0))))
