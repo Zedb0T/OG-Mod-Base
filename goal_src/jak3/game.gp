@@ -105,10 +105,10 @@
 (cgo-file "wasseem.gd" common-dep)
 (cgo-file "wca.gd" common-dep)
 (cgo-file "wcb.gd" common-dep)
-(cgo-file "wasleapr.gd" common-dep)
 (cgo-file "wcaseem.gd" common-dep)
 (cgo-file "wascast.gd" common-dep)
 (cgo-file "cwi.gd" common-dep) ;; ctywide
+(cgo-file "wasleapr.gd" common-dep)
 (cgo-file "wasall.gd" common-dep)
 (cgo-file "desresc.gd" common-dep)
 (cgo-file "wsd.gd" common-dep) ;; wasdoors (garage)
@@ -403,7 +403,13 @@
 ;; it should point to the .jsonc file that specifies the level.
 (build-custom-level "test-zone")
 ;; the DGO file
+(goal-src "levels/test-zone/test-zone-obs.gc" "process-focusable")
 (custom-level-cgo "TSZ.DGO" "test-zone/testzone.gd")
+
+;; generate the art group for a custom actor.
+;; requires a .glb model file in custom_assets/jak3/models/custom_levels
+;; to also generate a collide-mesh, add :gen-mesh #t
+(build-actor "test-actor" :gen-mesh #t)
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; ANIMATIONS
