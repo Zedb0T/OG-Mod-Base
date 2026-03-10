@@ -155,9 +155,9 @@ def main():
   .        ---        .  Last shared commit: {commit_short}
   -       :===:       -  Author: {author}
   --.   .--: :--.   .--  Message: {subject}
-  .=======.    =======.  Link: {github_link}
-   .-=====-. .-=====-    Source File Search Dirs: []
-     .-===========-.     (repl-help) or (repl-keybinds) for basic help and usage
+  .=======.    =======.  Link:
+   .-=====-. .-=====-    {github_link}
+     .-===========-.     Source File Search Dirs: []
          .-===-.         (lt) to connect to the game
             .            (mi) to recompile the active project.
                         
