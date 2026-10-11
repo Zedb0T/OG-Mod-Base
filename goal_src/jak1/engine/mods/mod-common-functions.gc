@@ -4149,14 +4149,14 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                   (else (mod-rule-draw-last-outcome global-buf (+ end-row (mod-scale-px 8))))))))
            (else (mod-rule-draw-rolling-slot global-buf) (mod-rule-draw-last-outcome global-buf 51)))
          (when (> (-> *MOD-rule-context-bank* last-reverted-cell-until) (current-time))
-           (draw-string-xy-scaled (string-format "REVERTED: ~A"
-                                                 (mod-rule-revert-cell-name (the game-task (-> *MOD-rule-context-bank* last-reverted-cell-task))))
-                                  global-buf
-                                  10
-                                  reverted-y
-                                  (font-color red)
-                                  (font-flags shadow kerning)
-                                  1.0)))))
+           (mod-draw-string-xy-scaled (string-format "REVERTED: ~A"
+                                                     (mod-rule-revert-cell-name (the game-task (-> *MOD-rule-context-bank* last-reverted-cell-task))))
+                                      global-buf
+                                      10
+                                      reverted-y
+                                      (font-color red)
+                                      (font-flags shadow kerning large)
+                                      0.35)))))
     (else (none)))
   (none))
 
