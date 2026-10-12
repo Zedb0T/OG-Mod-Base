@@ -126,6 +126,7 @@
    (bus-driver-activate-time time-frame)
    (bus-driver-grace-period  time-frame)
    (shifty-next-time         time-frame)
+   (palate-change-grace-until time-frame)
    (fisher-missed      int32)
    (fisher-caught     int32)))
 
@@ -148,6 +149,7 @@
        :bus-driver-activate-time 0
        :bus-driver-grace-period (seconds 2)
        :shifty-next-time 0
+       :palate-change-grace-until 0
        :fisher-missed 0
        :fisher-caught 0))
 

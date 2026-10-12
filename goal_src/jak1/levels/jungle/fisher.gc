@@ -13,6 +13,8 @@
 
 (define-extern global-countdown-add-seconds (function float none))
 
+(define-extern mod-rule-palate-change-grace-active? (function symbol))
+
 (define *torrent-vel-mult* 1.65)
 
 (define *torrent-period-mult* 1.3)
@@ -842,9 +844,10 @@
                               (-> self mode))))
         (case effective-mode
           (('deadly 'bad)
-           (sound-play "caught-eel")
-           (ambient-hint-spawn "sksp0a42" (-> self root trans) *entity-pool* 'ambient)
-           (send-event (ppointer->process (-> self parent)) 'deadly))
+           (unless (mod-rule-palate-change-grace-active?)
+             (sound-play "caught-eel")
+             (ambient-hint-spawn "sksp0a42" (-> self root trans) *entity-pool* 'ambient)
+             (send-event (ppointer->process (-> self parent)) 'deadly)))
           (('powerup)
            (if (fish-assist-enabled?) (global-countdown-add-seconds 5.0))
            (process-spawn part-tracker
@@ -1220,10 +1223,11 @@
       (case message
         (('fisher-fish-die)
          (sound-play "fish-miss")
-         (set! v0-2 (+ (-> self missed) (-> block param 0)))
-         (set! (-> self missed) (the-as int v0-2))
-         (set! (-> *MOD-rule-context-bank* fisher-missed) (-> self missed))
-         v0-2)
+         (unless (and (mod-rule-palate-change-grace-active?) (= (-> block param 0) 5))
+           (set! v0-2 (+ (-> self missed) (-> block param 0)))
+           (set! (-> self missed) (the-as int v0-2))
+           (set! (-> *MOD-rule-context-bank* fisher-missed) (-> self missed)))
+         (-> self missed))
         (('fisher-fish-caught)
          (send-event *target* 'bounce)
          (set! v0-2 (+ (-> self caught) (-> block param 0)))

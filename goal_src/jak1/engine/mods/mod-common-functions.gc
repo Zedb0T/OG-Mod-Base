@@ -2087,9 +2087,19 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
         (let ((p (the-as eco-collectable (handle->process (-> *mod-rgyb-handles* i))))) (when p (mod-rgyb-refresh-one p))))))
   (none))
 
+(defun mod-rule-start-palate-change-grace! ()
+  (when (and *target* (= (send-event *target* 'query 'mode) 'target-fishing))
+    (set! (-> *MOD-rule-context-bank* palate-change-grace-until)
+          (+ (current-time) (seconds 1))))
+  (none))
+
+(defun mod-rule-palate-change-grace-active? ()
+  (> (-> *MOD-rule-context-bank* palate-change-grace-until) (current-time)))
+
 (defun mod-rule-on-activate ((id symbol))
   (cond
     ((eq? id 'rule-qte) (set! (-> *MOD-rule-context-bank* qte-target-button) (mod-rand-int-range 0 4)))
+    ((eq? id 'complication-palate-change) (mod-rule-start-palate-change-grace!))
     ((eq? id 'complication-twisted)
      (set! (-> *MOD-rule-context-bank* twist-pending-count) (+ (-> *MOD-stats-bank* rules-rolled) (mod-rand-int-range 2 4))))
     ((eq? id 'rule-hitlist) (dotimes (slot 3) (set! (-> *mod-rule-unique-enemy-killed-types* slot) #f)))
@@ -2137,6 +2147,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (set! (-> *MOD-rule-context-bank* twist-marked-slot) -1))
     (let ((id (-> (-> *MOD-rule-slot-bank* active-slots) slot)))
       (when id
+        (when (eq? id 'complication-palate-change)
+          (mod-rule-start-palate-change-grace!))
         (cond
           ((and *target* (or (eq? id 'complication-ohko) (eq? id 'rule-survivor)))
            (set! (-> (the-as fact-info-target (-> *target* fact)) health) 3.0))
@@ -2244,6 +2256,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (set! (-> *MOD-rule-context-bank* last-kill-time) 0)
   (set! (-> *MOD-rule-context-bank* twist-pending-count) -1)
   (set! (-> *MOD-rule-context-bank* twist-marked-slot) -1)
+  (set! (-> *MOD-rule-context-bank* palate-change-grace-until) 0)
   (set! (-> *MOD-rule-context-bank* last-outcome) 'none)
   (set! (-> *MOD-rule-context-bank* qte-target-button) 0)
   (set! (-> *MOD-rule-context-bank* hang-time-air-start) 0)
@@ -4236,6 +4249,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (set! (-> (-> *MOD-rule-punishment-bank* timed-saved-ids) i) #f)
       (set! (-> (-> *MOD-rule-punishment-bank* timed-saved-tenths) i) -1)
       (+! i 1)))
+  (set! (-> *MOD-rule-context-bank* palate-change-grace-until) 0)
   (none))
 
 (defun mod-rule-index-from-id ((id symbol))
