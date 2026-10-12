@@ -6,6 +6,8 @@
 
 ;; DECOMP BEGINS
 
+(define-extern mod-rule-record-player-hit (function process symbol none))
+
 (deftype plant-boss (process-drawable)
   ((root             collide-shape :override)
    (neck             joint-mod)
@@ -1077,6 +1079,7 @@
         event)
   :code
     (behavior ((arg0 symbol))
+    (mod-rule-record-player-hit self arg0)
       (let ((s5-0 (-> self child)))
         (while s5-0
           (send-event (ppointer->process s5-0) 'hit arg0)

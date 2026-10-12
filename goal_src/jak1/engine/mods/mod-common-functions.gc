@@ -1286,12 +1286,12 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-mirror) (seconds 60)) ;; 60
     ((eq? id 'complication-no-double-jump) (seconds 60)) ;; 60
     ((eq? id 'rule-hang-time) (apply-time-limit-multiplier (seconds 75))) ;; 75
-    ((eq? id 'complication-unbreakable) (seconds 60)) ;; 60
+    ((eq? id 'complication-unbreakable) (seconds 45)) ;; 45
     ((eq? id 'complication-get-a-grip) (seconds 45)) ;; 45
     ((eq? id 'complication-fast-reel) (seconds 15)) ;; 15
     ((eq? id 'complication-palate-change) (seconds 30)) ;; 30
     ((eq? id 'complication-jak-be-nimble) (seconds 45)) ;; 45
-    ((eq? id 'rule-no-harm) (seconds 40)) ;; 40
+    ((eq? id 'rule-no-harm) (seconds 30)) ;; 30
     ((eq? id 'complication-soul-bond) (seconds 40)) ;; 40
     ((eq? id 'complication-shifty) (seconds 45)) ;; 45
     ((eq? id 'complication-interference) (seconds 45)) ;; 45
@@ -2529,7 +2529,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (if (string= checkpoint-name "snow-fort") 6 (if (or is-minigame (sparse-blue-eco-level? level-name)) 0 6)))
           ((eq? id 'complication-critical) (if (or (< fuel-left 1) (eq? level-name 'finalboss)) 0 5))
           ((eq? id 'rule-buzzer-pressure)
-           (if (or (< buzzer-left 3) is-minigame is-klaww (eq? level-name 'jungleb) (eq? level-name 'finalboss) (eq? level-name 'sunkenb))
+           (if (or (< buzzer-left 3) is-minigame is-klaww (eq? level-name 'jungleb) (eq? level-name 'robocave) (eq? level-name 'finalboss) (eq? level-name 'sunkenb))
              0
              8))
           ((eq? id 'rule-fuel-pressure)
@@ -2545,7 +2545,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
              ((or (eq? level-name 'village1) (eq? level-name 'village2) (eq? level-name 'village3)) 3)
              (else 8)))
           ((eq? id 'rule-money-pressure)
-           (if (or (<= money-left 40) is-minigame is-klaww (eq? level-name 'finalboss) (eq? level-name 'jungleb) deep-lavatube) 0 6))
+           (if (or (<= money-left 50) is-minigame is-klaww (eq? level-name 'finalboss) (eq? level-name 'jungleb) deep-lavatube) 0 6))
           ((eq? id 'complication-hidden-treasure)
            (if (or is-klaww (eq? level-name 'finalboss) (string= checkpoint-name "firecanyon-start") deep-lavatube) 0 6))
           ((eq? id 'rule-loyal-customer)
@@ -2706,7 +2706,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                    (eq? level-name 'lavatube))
              0
              4))
-          ((or (eq? id 'complication-fast-reel) (eq? id 'complication-palate-change)) (if (target-fishing?) 50 0))
+          ((or (eq? id 'complication-fast-reel) (eq? id 'complication-palate-change)) (if (and (target-fishing?) (< (-> *MOD-rule-context-bank* fisher-missed) 10)) 40 0))
           ((eq? id 'rule-sagging-sails)
           (if (and (target-fishing?)
                     (< (-> *MOD-rule-context-bank* fisher-missed) 5)
@@ -2978,17 +2978,19 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   #f)
 
 (defun mod-rule-enemy-killed-by-flop? ((enemy process-drawable))
-  (when *target*
-    (let ((player-state (-> *target* state name)))
-      (if (or (= player-state 'target-flop)
-              (= player-state 'target-flop-hit-ground)
-              ;; could not find a reliable way to detect flop so just excluding the situations where flut kills with dash, stomp, or eco
-              (and (target-on-flut?)
-                   (not (or (= player-state 'target-flut-running-attack)
-                            (= player-state 'target-flut-double-jump)
-                            (= player-state 'target-flut-falling)))))
-        #t
-        #f))))
+  (let ((hit-mode (mod-rule-last-player-hit-mode enemy)))
+    (if (or (= hit-mode 'flop) (= hit-mode 'flop-down))
+      #t
+      (when *target*
+        (let ((player-state (-> *target* state name)))
+          (if (or (= player-state 'target-flop)
+                  (= player-state 'target-flop-hit-ground)
+                  (and (target-on-flut?)
+                       (not (or (= player-state 'target-flut-running-attack)
+                                (= player-state 'target-flut-double-jump)
+                                (= player-state 'target-flut-falling)))))
+            #t
+            #f))))))
 
 (defun mod-rule-enemy-killed-by-red-eco? ((enemy process-drawable))
   (eq? (mod-rule-last-player-hit-mode enemy) 'eco-red))
