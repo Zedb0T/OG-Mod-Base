@@ -1219,7 +1219,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-rule-duration ((id symbol))
   (cond
-    ((eq? id 'rule-grounded) (seconds 15)) ;; 15
+    ((eq? id 'rule-grounded) (seconds 10)) ;; 10
     ((eq? id 'rule-management) (seconds 90)) ;; 90
     ((eq? id 'rule-die) (apply-time-limit-multiplier (seconds 20))) ;; 20
     ((eq? id 'rule-lurker-pressure) (apply-time-limit-multiplier (seconds 45))) ;; 45
@@ -1255,7 +1255,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-one-frame) (apply-time-limit-multiplier (seconds 45))) ;; 45
     ((eq? id 'rule-distancing) (seconds 60)) ;; 60
     ((eq? id 'rule-red-light) (seconds 5)) ;; 5
-    ((eq? id 'complication-rgyb) (seconds 40)) ;; 40
+    ((eq? id 'complication-rgyb) (seconds 30)) ;; 30
     ((eq? id 'complication-butter-fingers) (seconds 60)) ;; 60
     ((eq? id 'rule-for-billy) (apply-time-limit-multiplier (seconds 130))) ;; 130
     ((eq? id 'rule-cold-feet) (seconds 60)) ;; 60
@@ -1263,7 +1263,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-speed) (apply-time-limit-multiplier (seconds 60))) ;; 60
     ((eq? id 'rule-math-quiz) (apply-time-limit-multiplier (seconds 20))) ;; 20
     ((eq? id 'rule-trivia) (apply-time-limit-multiplier (seconds 15))) ;; 15
-    ((eq? id 'complication-bad-ping) (seconds 50)) ;; 50
+    ((eq? id 'complication-bad-ping) (seconds 45)) ;; 45
     ((eq? id 'rule-green-pilled) (apply-time-limit-multiplier (seconds 90))) ;; 90
     ((eq? id 'rule-button-pusher) (apply-time-limit-multiplier (seconds 45))) ;; 45
     ((eq? id 'rule-loyal-customer) (apply-time-limit-multiplier (seconds 60))) ;; 60
@@ -2689,7 +2689,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                    (string= checkpoint-name "swamp-cave1")
                    (string= checkpoint-name "citadel-elevator")
                    is-minigame
-                   is-klaww
+                   (eq? level-name 'ogre)
                    (eq? level-name 'finalboss)
                    (eq? level-name 'lavatube)
                    (mod-rule-timed-punishment-active? 'punishment-edge)
@@ -3030,7 +3030,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-fall-damage) "MORE FALL DAMAGE FOR 2 MINUTES")
     ((eq? punishment 'punishment-trip) "TRIP RANDOMLY FOR 2 MINUTES")
     ((eq? punishment 'punishment-edge) "NO LEDGE GRABS FOR 4 MINUTES")
-    ((eq? punishment 'punishment-delay) "200-MS INPUT DELAY FOR 1 MINUTE")
+    ((eq? punishment 'punishment-delay) "185-MS INPUT DELAY FOR 1 MINUTE")
     ((eq? punishment 'punishment-crash) "CRASH THE GAME")
     ((eq? punishment 'punishment-iframes) "NO I-FRAMES FOR 3 MINUTES")
     ((eq? punishment 'punishment-camera) "INVERTED CAMERA FOR 2 MINUTES")
@@ -3109,7 +3109,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
        (lambda ()
          (let ((start-time (current-time))) (until (>= (- (current-time) start-time) (seconds 1)) (suspend)))
          (mod-rule-reset-run-and-restart))))
-    ((eq? punishment 'punishment-delay) (input-delay-enable! #t 0.2) (mod-rule-start-timed-punishment punishment))
+    ((eq? punishment 'punishment-delay) (input-delay-enable! #t 0.185) (mod-rule-start-timed-punishment punishment))
     ((eq? punishment 'punishment-iframes)
      (set! (-> *TARGET-bank* hit-invulnerable-timeout) (seconds 0))
      (mod-rule-start-timed-punishment punishment))

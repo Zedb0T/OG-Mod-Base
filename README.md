@@ -45,8 +45,8 @@
 
 | Preset | Start Time | Time Limit Multiplier | Cell | Orb | Fly | Toggles Off
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Simple** | 30s | 1.5x | 40.0 | 2.0 | 15.0 | One Frame, Rotten Eggs, Heating Balloons, Hang Time, Quick Time Event, Get a Grip, Fast Reel, Quicksand, Crash Punishment |
-| **Complicated** | 30s | 1.2x | 30.0 | 1.0 | 10.0 | One Frame, Hang Time
+| **Simple** | 30s | 1.5x | 40.0 | 2.0 | 15.0 | Spin to Win, Rotten Eggs, Heating Balloons, Hang Time, Quick Time Event, Get a Grip, Fast Reel, Quicksand, Crash Punishment |
+| **Complicated** | 30s | 1.2x | 30.0 | 1.0 | 10.0 | Spin to Win, Hang Time
 | **Esoteric** | 30s | 1.0x | 20.0 | 1.0 | 8.0 | None
 | **Unfathomable** | 10s | 0.8x | 20.0 | 1.0 | 5.0 | None
 
