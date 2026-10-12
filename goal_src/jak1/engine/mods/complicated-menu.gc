@@ -531,7 +531,7 @@
     (set! (-> *complicated-settings* fly-increment) 15.0)
     (set! (-> *complicated-settings* countdown-start-seconds) 30.0)
     (set! (-> *complicated-settings* time-limit-multiplier) 1.5)
-    (set! (-> *complicated-settings* pass-credits-required) 10.0)
+    (set! (-> *complicated-settings* pass-credits-required) 8.0)
     (set! (-> *complicated-settings* rule-one-frame?) #f)
     (set! (-> *complicated-settings* rule-sniper?) #f)
     (set! (-> *complicated-settings* complication-rotten-eggs?) #f)
@@ -594,7 +594,7 @@
     (set! (-> *complicated-settings* fly-increment) 5.0)
     (set! (-> *complicated-settings* countdown-start-seconds) 10.0)
     (set! (-> *complicated-settings* time-limit-multiplier) 0.8)
-    (set! (-> *complicated-settings* pass-credits-required) 15.0)
+    (set! (-> *complicated-settings* pass-credits-required) 12.0)
     (set! (-> *complicated-settings* rule-one-frame?) #t)
     (set! (-> *complicated-settings* rule-sniper?) #t)
     (set! (-> *complicated-settings* complication-rotten-eggs?) #t)
@@ -750,24 +750,7 @@
             (lambda ()
               (commit-to-file *complicated-settings*)
               (none)))
-       ;; [6] CREDITS PER PASS
-       (new 'static
-            'game-option
-            :option-type (game-option-type slider)
-            :name (text-id complicated-opts-credits-per-pass)
-            :scale #t
-            :param1 5.0
-            :param2 40.0
-            :slider-step-size 1.0
-            :on-change
-            (lambda ((val object))
-              (pass-credits-required-changed! (the-as float val))
-              (none))
-            :on-confirm
-            (lambda ()
-              (commit-to-file *complicated-settings*)
-              (none)))
-       ;; [7] BACK
+       ;; [6] BACK
        (new 'static
             'game-option
             :option-type (game-option-type button)
@@ -1975,7 +1958,24 @@
             (lambda ()
               (commit-to-file *complicated-settings*)
               (none)))
-       ;; [8] RESTORE DEFAULTS
+       ;; [8] CREDITS PER PASS
+       (new 'static
+            'game-option
+            :option-type (game-option-type slider)
+            :name (text-id complicated-opts-credits-per-pass)
+            :scale #t
+            :param1 5.0
+            :param2 100.0
+            :slider-step-size 1.0
+            :on-change
+            (lambda ((val object))
+              (pass-credits-required-changed! (the-as float val))
+              (none))
+            :on-confirm
+            (lambda ()
+              (commit-to-file *complicated-settings*)
+              (none)))
+       ;; [9] RESTORE DEFAULTS
        (new 'static
             'game-option
             :option-type (game-option-type confirmation)
@@ -1986,7 +1986,7 @@
               (reset *complicated-settings*)
               (commit-to-file *complicated-settings*)
               (none)))
-       ;; [9] BACK
+       ;; [10] BACK
        (new 'static
             'game-option
             :option-type (game-option-type button)
@@ -2070,6 +2070,7 @@
   (set! (-> *complicated-options* 5 value-to-modify) (&-> *complicated-settings* fish-assist?))
   (set! (-> *complicated-options* 6 value-to-modify) (&-> *complicated-settings* klaww-assist?))
   (set! (-> *complicated-options* 7 value-to-modify) (&-> *complicated-settings* text-scale))
+  (set! (-> *complicated-options* 8 value-to-modify) (&-> *complicated-settings* pass-credits-required))
   ;; Punishment toggle mappings
   (set! (-> *punishment-toggle-options* 0 value-to-modify) (&-> *complicated-settings* punishment-toggle-fall-damage?))
   (set! (-> *punishment-toggle-options* 1 value-to-modify) (&-> *complicated-settings* punishment-toggle-trip?))
@@ -2175,7 +2176,6 @@
   (set! (-> *comp-timer-options* 3 value-to-modify) (&-> *complicated-settings* orb-increment))
   (set! (-> *comp-timer-options* 4 value-to-modify) (&-> *complicated-settings* fly-increment))
   (set! (-> *comp-timer-options* 5 value-to-modify) (&-> *complicated-settings* compliance-increment))
-  (set! (-> *comp-timer-options* 6 value-to-modify) (&-> *complicated-settings* pass-credits-required))
   (none))
 
 ;; add new options here (getter)

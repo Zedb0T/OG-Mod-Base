@@ -11,7 +11,7 @@
   (the-as hud ((method-of-type process relocate) this arg0)))
 
 (defmethod deactivate ((this hud))
-  (dotimes (v1-0 9)
+  (dotimes (v1-0 HUD_PART_COUNT)
     (if (and (-> *hud-parts* parts v1-0) (= (ppointer->process (-> *hud-parts* parts v1-0)) this))
       (set! (-> *hud-parts* parts v1-0) (the-as (pointer hud) #f))))
   (dotimes (s5-0 (-> this nb-of-particles))

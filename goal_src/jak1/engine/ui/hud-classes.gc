@@ -7,7 +7,11 @@
 
 ;; DECOMP BEGINS
 
+(define-extern pass-credits-required-value (function int))
+
 (define-extern mod-rule-trivia-hiding-money-total? (function symbol))
+
+(define-extern mod-rule-string-width (function string font-flags float float))
 
 (defpartgroup group-part-hud-pickup
   :id 75
@@ -1411,6 +1415,81 @@
   0
   (none))
 
+(deftype hud-passes (hud) ())
+
+(defmethod draw-hud ((this hud-passes))
+  (when (and (-> *MOD-countdown-bank* active?)
+             (= (ppointer->process (-> *hud-parts* passes)) this))
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id debug))
+      (let* ((passes-flags (font-flags shadow kerning large))
+             (passes-scale 1.0)
+             (label-scale 0.5)
+             (credits-scale 0.45)
+             (label-str (if (= (-> *MOD-pass-bank* passes) 1) "PASS" "PASSES"))
+             (gap 4)
+             (credits-row -2)
+             (label-nudge 6)
+             (passes-width (the int
+                                (mod-rule-string-width (string-format "~D" (-> *MOD-pass-bank* passes))
+                                                       passes-flags
+                                                       passes-scale)))
+             (label-width (the int (mod-rule-string-width label-str passes-flags label-scale)))
+             (credits-width (the int
+                                 (mod-rule-string-width (string-format "(~D/~D)"
+                                                                       (-> *MOD-pass-bank* credits)
+                                                                       (pass-credits-required-value))
+                                                        passes-flags
+                                                        credits-scale)))
+             (center-x (+ (-> this text-x) (* (-> this x-sgn) (-> this offset))))
+             (line-x (- center-x (/ (+ passes-width gap label-width) 2)))
+             (credits-x (+ center-x 20 (- (/ credits-width 2))))
+             (string-y (/ (* (+ (-> this text-y) (* (-> this y-sgn) (-> this offset)) (-> this y-offset))
+                             (the int (-> *video-parms* relative-y-scale)))
+                          2)))
+        ;; credits
+        (draw-string-xy-scaled (string-format "~D/~D"
+                                              (-> *MOD-pass-bank* credits)
+                                              (pass-credits-required-value))
+                               buf
+                               credits-x
+                               (+ string-y credits-row)
+                               (font-color white)
+                               passes-flags
+                               credits-scale)
+        ;; passes
+        (draw-string-xy-scaled (string-format "~D" (-> *MOD-pass-bank* passes))
+                               buf
+                               line-x
+                               string-y
+                               (font-color lavender)
+                               passes-flags
+                               passes-scale)
+        ;; "PASSES" label
+        (draw-string-xy-scaled label-str
+                               buf
+                               (+ line-x passes-width gap)
+                               (+ string-y label-nudge)
+                               (font-color white)
+                               passes-flags
+                               label-scale))))
+  0
+  (none))
+
+(defmethod hud-update ((this hud-passes))
+  (when (and (-> *MOD-countdown-bank* active?)
+             (= (ppointer->process (-> *hud-parts* passes)) this))
+    (tally-value this (-> *MOD-pass-bank* passes) (-> *MOD-pass-bank* credits)))
+  0
+  (none))
+
+(defmethod init-particles! ((this hud-passes) (arg0 int))
+  (set! (-> this text-x) 443)
+  (set! (-> this text-y) 287)
+  (set! (-> this x-sgn) 1)
+  (set! (-> this y-sgn) 0)
+  0
+  (none))
+
 (defun activate-hud ((arg0 process))
   (set! (-> *hud-parts* pickups) (process-spawn hud-pickups :init hud-init-by-other 0 :to arg0))
   (set! (-> *hud-parts* money) (process-spawn hud-money :init hud-init-by-other 0 :to arg0))
@@ -1418,6 +1497,7 @@
   (set! (-> *hud-parts* health) (process-spawn hud-health :init hud-init-by-other 0 :to arg0))
   (set! (-> *hud-parts* buzzers) (process-spawn hud-buzzers :init hud-init-by-other 0 :to arg0))
   (set! (-> *hud-parts* power) (process-spawn hud-power :init hud-init-by-other 0 :to arg0))
+  (set! (-> *hud-parts* passes) (process-spawn hud-passes :init hud-init-by-other 0 :to arg0))
   (set! (-> *hud-parts* bike-speed) (the-as (pointer hud-bike-speed) #f))
   (set! (-> *hud-parts* bike-heat) (the-as (pointer hud-bike-heat) #f))
   (set! (-> *hud-parts* money-all) (the-as (pointer hud-money-all) #f))
@@ -1426,7 +1506,7 @@
 
 (defun hide-hud ()
   (when *target*
-    (dotimes (gp-0 9)
+    (dotimes (gp-0 HUD_PART_COUNT)
       (if (-> *hud-parts* parts gp-0) (send-event (ppointer->process (-> *hud-parts* parts gp-0)) 'hide))))
   0
   (none))
@@ -1440,7 +1520,7 @@
 
 (defun disable-hud ((arg0 int))
   (when *target*
-    (dotimes (s5-0 9)
+    (dotimes (s5-0 HUD_PART_COUNT)
       (when (-> *hud-parts* parts s5-0)
         (if (or (!= (-> *hud-parts* parts s5-0) arg0) (zero? (-> (the-as (pointer hud) (-> *hud-parts* parts s5-0)) 0 value)))
           (send-event (ppointer->process (-> *hud-parts* parts s5-0)) 'hide))
@@ -1450,21 +1530,21 @@
 
 (defun enable-hud ()
   (when *target*
-    (dotimes (gp-0 9)
+    (dotimes (gp-0 HUD_PART_COUNT)
       (if (-> *hud-parts* parts gp-0) (send-event (ppointer->process (-> *hud-parts* parts gp-0)) 'enable))))
   0
   (none))
 
 (defun hide-hud-quick ()
   (when *target*
-    (dotimes (gp-0 9)
+    (dotimes (gp-0 HUD_PART_COUNT)
       (if (-> *hud-parts* parts gp-0) (send-event (ppointer->process (-> *hud-parts* parts gp-0)) 'hide-quick))))
   0
   (none))
 
 (defun show-hud ()
   (when (and *target* (or (not *progress-process*) (hidden? (-> *progress-process* 0))))
-    (dotimes (gp-0 9)
+    (dotimes (gp-0 HUD_PART_COUNT)
       (if (-> *hud-parts* parts gp-0) (send-event (ppointer->process (-> *hud-parts* parts gp-0)) 'show))))
   0
   (none))
@@ -1473,7 +1553,7 @@
   (let ((gp-0 (= arg0 'aspect16x9))
         (s5-0 (= arg1 'pal)))
     (when *target*
-      (dotimes (s4-0 9)
+      (dotimes (s4-0 HUD_PART_COUNT)
         (if (-> *hud-parts* parts s4-0) (set-pos-and-scale (-> (the-as (pointer hud) (-> *hud-parts* parts s4-0)) 0) gp-0 s5-0)))))
   0
   (none))
@@ -1483,7 +1563,7 @@
   (cond
     (*target*
      (set! gp-0 #t)
-     (dotimes (s5-0 9)
+     (dotimes (s5-0 HUD_PART_COUNT)
        (when (-> *hud-parts* parts s5-0)
          (if (not (hidden? (-> (the-as (pointer hud) (-> *hud-parts* parts s5-0)) 0))) (set! gp-0 #f)))))
     (else (set! gp-0 #t)))

@@ -40,6 +40,10 @@
 
 (declare-type hud-money-all hud)
 
+(declare-type hud-passes hud)
+
+(defconstant HUD_PART_COUNT 10)
+
 ;; DECOMP BEGINS
 
 (deftype hud-icon (basic)
@@ -113,7 +117,8 @@
    (bike-speed (pointer hud-bike-speed))
    (bike-heat  (pointer hud-bike-heat))
    (money-all  (pointer hud-money-all))
-   (parts      (pointer hud) 9 :overlay-at pickups)))
+   (passes     (pointer hud-passes))
+   (parts      (pointer hud) HUD_PART_COUNT :overlay-at pickups)))
 
 (define *hud-parts*
   (new 'static
@@ -126,7 +131,8 @@
        :power #f
        :bike-speed #f
        :bike-heat #f
-       :money-all #f))
+       :money-all #f
+       :passes #f))
 
 ;; added for pc port
 (defenum hud-collectable-view

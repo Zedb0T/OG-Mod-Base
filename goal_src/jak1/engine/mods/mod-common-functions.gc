@@ -3055,7 +3055,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-fall-damage) "MORE FALL DAMAGE FOR 2 MINUTES")
     ((eq? punishment 'punishment-trip) "TRIP RANDOMLY FOR 2 MINUTES")
     ((eq? punishment 'punishment-edge) "NO LEDGE GRABS FOR 4 MINUTES")
-    ((eq? punishment 'punishment-delay) "185-MS INPUT DELAY FOR 1 MINUTE")
+    ((eq? punishment 'punishment-delay) "200-MS INPUT DELAY FOR 1 MINUTE")
     ((eq? punishment 'punishment-crash) "CRASH THE GAME")
     ((eq? punishment 'punishment-iframes) "NO I-FRAMES FOR 3 MINUTES")
     ((eq? punishment 'punishment-camera) "INVERTED CAMERA FOR 2 MINUTES")
@@ -3134,7 +3134,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
        (lambda ()
          (let ((start-time (current-time))) (until (>= (- (current-time) start-time) (seconds 1)) (suspend)))
          (mod-rule-reset-run-and-restart))))
-    ((eq? punishment 'punishment-delay) (input-delay-enable! #t 0.185) (mod-rule-start-timed-punishment punishment))
+    ((eq? punishment 'punishment-delay) (input-delay-enable! #t 0.2) (mod-rule-start-timed-punishment punishment))
     ((eq? punishment 'punishment-iframes)
      (set! (-> *TARGET-bank* hit-invulnerable-timeout) (seconds 0))
      (mod-rule-start-timed-punishment punishment))
@@ -3192,14 +3192,18 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (defun mod-rule-use-pass! ()
-  (let ((id (mod-rule-current-active-id)))
-    (when (and id (> (-> *MOD-pass-bank* passes) 0))
+  (when (and (mod-rule-current-active-id) (> (-> *MOD-pass-bank* passes) 0))
+    (let ((slot 0))
       (-! (-> *MOD-pass-bank* passes) 1)
-      (mod-rule-skip-slot! (mod-rule-find-active-slot id))))
+      (while (< slot *mod-rule-slot-count*)
+        (when (-> (-> *MOD-rule-slot-bank* active-slots) slot)
+          (mod-rule-skip-slot! slot))
+        (+! slot 1))))
   (none))
 
 (defun mod-rule-handle-pass-input ()
-  (when (cpad-pressed? 0 l3)
+  (when (or (and (cpad-hold? 0 l2) (cpad-pressed? 0 r2))
+            (and (cpad-hold? 0 r2) (cpad-pressed? 0 l2)))
     (mod-rule-use-pass!))
   (none))
 
@@ -3282,7 +3286,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (when (cpad-pressed? 0 left)
         (-! (-> *MOD-quiz-bank* math-current-guess) 5)
         (sound-play "cursor-up-down")))
-    (when (or (and (cpad-hold? 0 l2) (cpad-pressed? 0 r2)) (and (cpad-hold? 0 r2) (cpad-pressed? 0 l2)))
+    (when (cpad-pressed? 0 l3)
       (let ((slot (mod-rule-find-active-slot 'rule-math-quiz)))
         (when (>= slot 0)
           (mod-rule-resolve! slot
@@ -3582,7 +3586,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           (else (-! (-> *MOD-quiz-bank* trivia-current-guess) 1)))
         (sound-play "cursor-up-down")))
     (when (and (>= (-> *MOD-quiz-bank* trivia-current-guess) 0)
-               (or (and (cpad-hold? 0 l2) (cpad-pressed? 0 r2)) (and (cpad-hold? 0 r2) (cpad-pressed? 0 l2))))
+               (cpad-pressed? 0 l3))
       (let ((slot (mod-rule-find-active-slot 'rule-trivia)))
         (when (>= slot 0)
           (mod-rule-resolve! slot
@@ -4037,7 +4041,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? (-> *MOD-rule-context-bank* last-outcome) 'twisted-failed)
      (mod-draw-string-xy-scaled "TWISTED RULE!" buf 10 y (font-color red) (font-flags shadow kerning large) 0.4))
     ((eq? (-> *MOD-rule-context-bank* last-outcome) 'skipped)
-     (mod-draw-string-xy-scaled "PASS!" buf 10 y (font-color yellow) (font-flags shadow kerning large) 0.4)))
+     (mod-draw-string-xy-scaled "PASS!" buf 10 y (font-color lavender) (font-flags shadow kerning large) 0.4)))
   (none))
 
 (defun mod-rule-draw-rolling-slot ((buf dma-buffer))
@@ -4072,21 +4076,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                               (font-color flat-yellow)
                               (font-flags shadow kerning large)
                               0.4)
-       ;; Draw passes/credits 
-       (let* ((pass-str (if (>= (-> *MOD-pass-bank* passes) (-> *MOD-tuning-bank* pass-max-carry))
-                          (string-format "PASSES: ~D (MAX)" (-> *MOD-pass-bank* passes))
-                          (string-format "PASSES: ~D (~D/~D)"
-                                         (-> *MOD-pass-bank* passes)
-                                         (-> *MOD-pass-bank* credits)
-                                         (pass-credits-required-value))))
-              (pass-flags (font-flags shadow kerning large)))
-         (draw-string-xy-scaled pass-str
-                                global-buf
-                                (- 480 (the int (mod-rule-string-width pass-str pass-flags 0.4)))
-                                212
-                                (font-color yellow)
-                                pass-flags
-                                0.5))
        ;; Draw main countdown timer
        (mod-draw-string-xy-scaled (mod-format-time-frame (-> *MOD-countdown-bank* remaining-time) 2 'auto)
                                   global-buf
