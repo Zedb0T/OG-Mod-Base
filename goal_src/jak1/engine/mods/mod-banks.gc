@@ -8,14 +8,16 @@
 (deftype mod-tuning-bank (structure)
   ((roll-buffer-time                        time-frame)
    (countdown-punishment-baseline-inc-total float)
-   (countdown-punishment-baseline-seconds   float)))
+   (countdown-punishment-baseline-seconds   float)
+   (pass-max-carry                          int32)))
 
 (define *MOD-tuning-bank*
   (new 'static
        'mod-tuning-bank
        :roll-buffer-time (seconds 5)
        :countdown-punishment-baseline-inc-total 4916.0
-       :countdown-punishment-baseline-seconds 30.0))
+       :countdown-punishment-baseline-seconds 30.0
+       :pass-max-carry 99))
 
 (deftype mod-rule-punishment-bank (structure)
   ((timed-punishments  (array symbol))
@@ -205,6 +207,12 @@
        :final-remaining-time 0
        :final-time 0
        :final-score 0))
+
+(deftype mod-pass-bank (structure)
+  ((passes  int32)
+   (credits int32)))
+
+(define *MOD-pass-bank* (new 'static 'mod-pass-bank :passes 0 :credits 0))
 
 (deftype mod-orb-weight-bank (structure)
   ((base-walk-speed              float)

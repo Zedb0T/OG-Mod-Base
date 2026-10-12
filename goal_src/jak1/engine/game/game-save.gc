@@ -168,6 +168,10 @@
 
 (define-extern mod-rule-qte-state-resume-from-save (function int none))
 
+(define-extern mod-pass-state-save-value (function int))
+
+(define-extern mod-pass-state-resume-from-save (function int none))
+
 (define-extern mod-rule-finalize-resume-from-save (function none))
 
 ;; version identifier
@@ -278,7 +282,8 @@
   (mod-rule-math-quiz-state 540)
   (mod-rule-math-quiz-guess 541)
   (mod-rule-trivia-state 542)
-  (mod-rule-qte-state 543))
+  (mod-rule-qte-state 543)
+  (mod-pass-state 544))
 
 ;; DECOMP BEGINS
 
@@ -904,7 +909,11 @@
                                                                                                             (set! (-> a0-122 elt-type) (game-save-elt mod-rule-qte-state))
                                                                                                             (set! (-> a0-122 elt-count) 0)
                                                                                                             (set! (-> a0-122 user-uint64) (the-as uint (mod-rule-qte-state-save-value))))
-                                                                                                          (set! (-> arg0 length) (&- (&+ v1-113 544) (the-as uint (the-as pointer (-> arg0 tag)))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+                                                                                                          (let ((a0-123 (the-as game-save-tag (&+ v1-113 544))))
+                                                                                                            (set! (-> a0-123 elt-type) (game-save-elt mod-pass-state))
+                                                                                                            (set! (-> a0-123 elt-count) 0)
+                                                                                                            (set! (-> a0-123 user-uint64) (the-as uint (mod-pass-state-save-value))))
+                                                                                                          (set! (-> arg0 length) (&- (&+ v1-113 560) (the-as uint (the-as pointer (-> arg0 tag)))))))))))))))))))))))))))))))))))))))))))))))))))))))))
   (if (< (-> arg0 allocated-length) (-> arg0 length))
     (format 0 "ERROR: SAVEGAME: fatal error, save is using ~D of ~D bytes." (-> arg0 length) (-> arg0 allocated-length)))
   (none))
@@ -979,6 +988,8 @@
            (mod-rule-trivia-state-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-rule-qte-state))
            (mod-rule-qte-state-resume-from-save (the-as int (-> save-data user-uint64))))
+          ((= a0-1 (game-save-elt mod-pass-state))
+           (mod-pass-state-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-rule-twist-pending-count))
            (mod-rule-twist-pending-count-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-rule-recent-rolls))

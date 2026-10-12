@@ -123,7 +123,8 @@
    (countdown-start-seconds float)
    (time-limit-multiplier float)
    (text-scale float)
-   (compliance-increment float))
+   (compliance-increment float)
+   (pass-credits-required float))
   (:methods
    (reset (_type_) _type_)
    (commit-to-file (_type_) none)
@@ -239,6 +240,7 @@
   (set! (-> obj time-limit-multiplier) 1.2)
   (set! (-> obj text-scale) 0.9)
   (set! (-> obj compliance-increment) 0.0)
+  (set! (-> obj pass-credits-required) 10.0)
   obj)
 
 (defmethod read-from-file ((obj complicated-settings) (filename string))
@@ -361,7 +363,8 @@
                                           (("countdown-start-seconds") (set! (-> obj countdown-start-seconds) (file-stream-read-float file)))
                                           (("time-limit-multiplier") (set! (-> obj time-limit-multiplier) (file-stream-read-float file)))
                                           (("text-scale") (set! (-> obj text-scale) (file-stream-read-float file)))
-                                          (("compliance-increment") (set! (-> obj compliance-increment) (file-stream-read-float file))))))))
+                                          (("compliance-increment") (set! (-> obj compliance-increment) (file-stream-read-float file)))
+                                          (("pass-credits-required") (set! (-> obj pass-credits-required) (file-stream-read-float file))))))))
     (file-stream-close file))
   #t)
 
@@ -491,6 +494,7 @@
     (format file "  (time-limit-multiplier ~f)~%" (snap-to-step (-> obj time-limit-multiplier) 0.1))
     (format file "  (text-scale ~f)~%" (snap-to-step (-> obj text-scale) 0.1))
     (format file "  (compliance-increment ~f)~%" (the float (the int (-> obj compliance-increment))))
+    (format file "  (pass-credits-required ~f)~%" (the float (the int (+ (-> obj pass-credits-required) 0.5))))
     (format file "  )~%")
     (file-stream-close file))
   #t)
@@ -527,6 +531,7 @@
     (set! (-> *complicated-settings* fly-increment) 15.0)
     (set! (-> *complicated-settings* countdown-start-seconds) 30.0)
     (set! (-> *complicated-settings* time-limit-multiplier) 1.5)
+    (set! (-> *complicated-settings* pass-credits-required) 10.0)
     (set! (-> *complicated-settings* rule-one-frame?) #f)
     (set! (-> *complicated-settings* rule-sniper?) #f)
     (set! (-> *complicated-settings* complication-rotten-eggs?) #f)
@@ -547,6 +552,7 @@
     (set! (-> *complicated-settings* fly-increment) 10.0)
     (set! (-> *complicated-settings* countdown-start-seconds) 30.0)
     (set! (-> *complicated-settings* time-limit-multiplier) 1.2)
+    (set! (-> *complicated-settings* pass-credits-required) 10.0)
     (set! (-> *complicated-settings* rule-one-frame?) #f)
     (set! (-> *complicated-settings* rule-sniper?) #t)
     (set! (-> *complicated-settings* complication-rotten-eggs?) #t)
@@ -567,6 +573,7 @@
     (set! (-> *complicated-settings* fly-increment) 8.0)
     (set! (-> *complicated-settings* countdown-start-seconds) 30.0)
     (set! (-> *complicated-settings* time-limit-multiplier) 1.0)
+    (set! (-> *complicated-settings* pass-credits-required) 10.0)
     (set! (-> *complicated-settings* rule-one-frame?) #t)
     (set! (-> *complicated-settings* rule-sniper?) #t)
     (set! (-> *complicated-settings* complication-rotten-eggs?) #t)
@@ -587,6 +594,7 @@
     (set! (-> *complicated-settings* fly-increment) 5.0)
     (set! (-> *complicated-settings* countdown-start-seconds) 10.0)
     (set! (-> *complicated-settings* time-limit-multiplier) 0.8)
+    (set! (-> *complicated-settings* pass-credits-required) 15.0)
     (set! (-> *complicated-settings* rule-one-frame?) #t)
     (set! (-> *complicated-settings* rule-sniper?) #t)
     (set! (-> *complicated-settings* complication-rotten-eggs?) #t)
@@ -626,6 +634,10 @@
 
 (defun compliance-increment-changed! ((new-val float))
   (set! (-> *complicated-settings* compliance-increment) new-val)
+  (none))
+
+(defun pass-credits-required-changed! ((new-val float))
+  (set! (-> *complicated-settings* pass-credits-required) new-val)
   (none))
 
 ;; ---- Increment Options Submenu ---------------------------------------------
@@ -738,7 +750,24 @@
             (lambda ()
               (commit-to-file *complicated-settings*)
               (none)))
-       ;; [6] BACK
+       ;; [6] CREDITS PER PASS
+       (new 'static
+            'game-option
+            :option-type (game-option-type slider)
+            :name (text-id complicated-opts-credits-per-pass)
+            :scale #t
+            :param1 5.0
+            :param2 40.0
+            :slider-step-size 1.0
+            :on-change
+            (lambda ((val object))
+              (pass-credits-required-changed! (the-as float val))
+              (none))
+            :on-confirm
+            (lambda ()
+              (commit-to-file *complicated-settings*)
+              (none)))
+       ;; [7] BACK
        (new 'static
             'game-option
             :option-type (game-option-type button)
@@ -2146,6 +2175,7 @@
   (set! (-> *comp-timer-options* 3 value-to-modify) (&-> *complicated-settings* orb-increment))
   (set! (-> *comp-timer-options* 4 value-to-modify) (&-> *complicated-settings* fly-increment))
   (set! (-> *comp-timer-options* 5 value-to-modify) (&-> *complicated-settings* compliance-increment))
+  (set! (-> *comp-timer-options* 6 value-to-modify) (&-> *complicated-settings* pass-credits-required))
   (none))
 
 ;; add new options here (getter)
@@ -2199,6 +2229,9 @@
 
 (defun compliance-increment-value ()
   (if *complicated-settings* (the float (the int (-> *complicated-settings* compliance-increment))) 0.0))
+
+(defun pass-credits-required-value ()
+  (if *complicated-settings* (max 5 (min 40 (the int (+ (-> *complicated-settings* pass-credits-required) 0.5)))) 10))
 
 (defun mod-rule-condition-enabled? ((id symbol))
   (the symbol

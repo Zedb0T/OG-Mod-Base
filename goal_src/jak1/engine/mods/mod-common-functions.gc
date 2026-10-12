@@ -67,6 +67,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (define-extern compliance-increment-value (function float))
 
+(define-extern pass-credits-required-value (function int))
+
 (define-extern time-limit-multiplier (function float))
 
 (define-extern text-scale-multiplier (function float))
@@ -968,6 +970,28 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (set! (-> *MOD-stats-bank* final-score) value)
   (none))
 
+(defun mod-pass-reset! ()
+  (set! (-> *MOD-pass-bank* passes) 0)
+  (set! (-> *MOD-pass-bank* credits) 0)
+  (none))
+
+(defun mod-pass-add-credit! ()
+  (when (< (-> *MOD-pass-bank* passes) (-> *MOD-tuning-bank* pass-max-carry))
+    (+! (-> *MOD-pass-bank* credits) 1)
+    (when (>= (-> *MOD-pass-bank* credits) (pass-credits-required-value))
+      (+! (-> *MOD-pass-bank* passes) 1)
+      (-! (-> *MOD-pass-bank* credits) (pass-credits-required-value))))
+  (none))
+
+(defun mod-pass-state-save-value ()
+  (the int (logior (the uint (-> *MOD-pass-bank* passes)) (shl (the uint (-> *MOD-pass-bank* credits)) 8))))
+
+(defun mod-pass-state-resume-from-save ((val int))
+  (let ((bits (the uint val)))
+    (set! (-> *MOD-pass-bank* passes) (min (-> *MOD-tuning-bank* pass-max-carry) (the int (logand bits (the uint #xff)))))
+    (set! (-> *MOD-pass-bank* credits) (the int (logand (shr bits 8) (the uint #xff)))))
+  (none))
+
 (defun mod-stats-reset! ()
   (set! (-> *MOD-stats-bank* rules-rolled) 0)
   (set! (-> *MOD-stats-bank* rules-broken) 0)
@@ -977,6 +1001,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (set! (-> *MOD-stats-bank* final-remaining-time) 0)
   (set! (-> *MOD-stats-bank* final-score) 0)
   (set! (-> *MOD-rule-context-bank* game-beaten?) #f)
+  (mod-pass-reset!)
   (none))
 
 (defun mod-stats-rules-rolled-save-value ()
@@ -3135,6 +3160,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          (set! (-> *MOD-rule-context-bank* last-outcome) (if twisted? 'twisted-success 'success))
          (when (eq? (mod-rule-type (-> (-> *MOD-rule-slot-bank* active-slots) slot)) 'rule)
            (+! (-> *MOD-stats-bank* rules-followed) 1)
+           (mod-pass-add-credit!)
            (global-countdown-add-seconds (compliance-increment-value)))
          (auto-save-command 'auto-save 0 0 *default-pool*)
          (mod-rule-finish-slot slot #t))
@@ -3152,6 +3178,29 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
              (begin
                (mod-rule-apply-punishment punishment)
                (mod-rule-finish-slot slot #t))))))))
+  (none))
+
+(defun mod-rule-skip-slot! ((slot int))
+  (when (and (>= slot 0) (< slot *mod-rule-slot-count*) (-> (-> *MOD-rule-slot-bank* active-slots) slot))
+    ;; a skipped twist must not mark a later rule
+    (when (eq? (-> (-> *MOD-rule-slot-bank* active-slots) slot) 'complication-twisted)
+      (set! (-> *MOD-rule-context-bank* twist-pending-count) -1))
+    (sound-play "cursor-options")
+    (set! (-> *MOD-rule-context-bank* last-outcome) 'skipped)
+    (auto-save-command 'auto-save 0 0 *default-pool*)
+    (mod-rule-finish-slot slot #t))
+  (none))
+
+(defun mod-rule-use-pass! ()
+  (let ((id (mod-rule-current-active-id)))
+    (when (and id (> (-> *MOD-pass-bank* passes) 0))
+      (-! (-> *MOD-pass-bank* passes) 1)
+      (mod-rule-skip-slot! (mod-rule-find-active-slot id))))
+  (none))
+
+(defun mod-rule-handle-pass-input ()
+  (when (cpad-pressed? 0 l3)
+    (mod-rule-use-pass!))
   (none))
 
 (defun mod-rule-clear-other-active-rules! ((exclude-slot int))
@@ -3584,7 +3633,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (when (> elapsed 0)
              (mod-rule-shift-all-timers! elapsed))
            (mod-rule-math-quiz-handle-input)
-           (mod-rule-trivia-handle-input))
+           (mod-rule-trivia-handle-input)
+           (mod-rule-handle-pass-input))
           (else
            ;; (+! (-> *MOD-countdown-bank* countup-timer) elapsed)
            (when (and (> (-> *MOD-rule-context-bank* mean-look-clear-time) 0)
@@ -3596,6 +3646,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (mod-rule-update-trivia)
            (mod-rule-update-hang-time)
            (mod-rule-trigger-red-light)
+           (mod-rule-handle-pass-input)
            (mod-rule-trigger-shifty)
            (when (mod-rule-active? 'complication-get-a-grip)
              (when (>= (- (current-time) (-> *MOD-rule-context-bank* get-a-grip-last-grab)) (apply-time-limit-multiplier (seconds 12)))
@@ -3978,7 +4029,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? (-> *MOD-rule-context-bank* last-outcome) 'twisted-success)
      (mod-draw-string-xy-scaled "TWISTED RULE!" buf 10 y (font-color green) (font-flags shadow kerning large) 0.4))
     ((eq? (-> *MOD-rule-context-bank* last-outcome) 'twisted-failed)
-     (mod-draw-string-xy-scaled "TWISTED RULE!" buf 10 y (font-color red) (font-flags shadow kerning large) 0.4)))
+     (mod-draw-string-xy-scaled "TWISTED RULE!" buf 10 y (font-color red) (font-flags shadow kerning large) 0.4))
+    ((eq? (-> *MOD-rule-context-bank* last-outcome) 'skipped)
+     (mod-draw-string-xy-scaled "PASS!" buf 10 y (font-color yellow) (font-flags shadow kerning large) 0.4)))
   (none))
 
 (defun mod-rule-draw-rolling-slot ((buf dma-buffer))
@@ -4013,6 +4066,21 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                               (font-color flat-yellow)
                               (font-flags shadow kerning large)
                               0.4)
+       ;; Draw passes/credits 
+       (let* ((pass-str (if (>= (-> *MOD-pass-bank* passes) (-> *MOD-tuning-bank* pass-max-carry))
+                          (string-format "PASSES: ~D (MAX)" (-> *MOD-pass-bank* passes))
+                          (string-format "PASSES: ~D (~D/~D)"
+                                         (-> *MOD-pass-bank* passes)
+                                         (-> *MOD-pass-bank* credits)
+                                         (pass-credits-required-value))))
+              (pass-flags (font-flags shadow kerning large)))
+         (draw-string-xy-scaled pass-str
+                                global-buf
+                                (- 480 (the int (mod-rule-string-width pass-str pass-flags 0.4)))
+                                212
+                                (font-color yellow)
+                                pass-flags
+                                0.5))
        ;; Draw main countdown timer
        (mod-draw-string-xy-scaled (mod-format-time-frame (-> *MOD-countdown-bank* remaining-time) 2 'auto)
                                   global-buf
