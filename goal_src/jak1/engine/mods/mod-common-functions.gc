@@ -2097,8 +2097,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-rule-start-palate-change-grace! ()
   (when (and *target* (= (send-event *target* 'query 'mode) 'target-fishing))
-    (set! (-> *MOD-rule-context-bank* palate-change-grace-until)
-          (+ (current-time) (seconds 1))))
+    (set! (-> *MOD-rule-context-bank* palate-change-grace-until) (+ (current-time) (seconds 1))))
   (none))
 
 (defun mod-rule-palate-change-grace-active? ()
@@ -2573,7 +2572,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (if (string= checkpoint-name "snow-fort") 6 (if (or is-minigame (sparse-blue-eco-level? level-name)) 0 6)))
           ((eq? id 'complication-critical) (if (or (< fuel-left 1) (eq? level-name 'finalboss)) 0 5))
           ((eq? id 'rule-buzzer-pressure)
-           (if (or (< buzzer-left 3) is-minigame is-klaww (eq? level-name 'jungleb) (eq? level-name 'robocave) (eq? level-name 'finalboss) (eq? level-name 'sunkenb))
+           (if (or (< buzzer-left 3)
+                   is-minigame
+                   is-klaww
+                   (eq? level-name 'jungleb)
+                   (eq? level-name 'robocave)
+                   (eq? level-name 'finalboss)
+                   (eq? level-name 'sunkenb))
              0
              8))
           ((eq? id 'rule-fuel-pressure)
@@ -2726,8 +2731,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           ((eq? id 'complication-mirror) (if is-klaww 0 4))
           ((eq? id 'complication-income-tax) (if (eq? level-name 'finalboss) 0 3))
           ((eq? id 'complication-half-price) (if (half-price-level? level-name) 3 0))
-          ((eq? id 'rule-button-pusher) (if (or (not (button-level? level-name)) is-minigame) 0 (if (or (eq? level-name 'jungle) (eq? level-name 'village2)) 4 10)))
-          ((eq? id 'rule-cooked) (if (or on-racer racer-lavatube (not (burn-level? level-name))) 0 (if (eq? level-name 'village1) 4 9)))
+          ((eq? id 'rule-button-pusher)
+           (if (or (not (button-level? level-name)) is-minigame) 0 (if (or (eq? level-name 'jungle) (eq? level-name 'village2)) 4 10)))
+          ((eq? id 'rule-cooked)
+           (if (or on-racer racer-lavatube (not (burn-level? level-name))) 0 (if (eq? level-name 'village1) 4 9)))
           ((eq? id 'complication-get-a-grip)
            (if (or (sole-zoomer-level? level-name)
                    (string= checkpoint-name "swamp-cave1")
@@ -2750,13 +2757,14 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                    (eq? level-name 'lavatube))
              0
              4))
-          ((or (eq? id 'complication-fast-reel) (eq? id 'complication-palate-change)) (if (and (target-fishing?) (< (-> *MOD-rule-context-bank* fisher-missed) 10)) 40 0))
+          ((or (eq? id 'complication-fast-reel) (eq? id 'complication-palate-change))
+           (if (and (target-fishing?) (< (-> *MOD-rule-context-bank* fisher-missed) 10)) 40 0))
           ((eq? id 'rule-sagging-sails)
-          (if (and (target-fishing?)
+           (if (and (target-fishing?)
                     (< (-> *MOD-rule-context-bank* fisher-missed) 5)
                     (<= (-> *MOD-rule-context-bank* fisher-caught) 160))
-            50
-            0))
+             50
+             0))
           ((eq? id 'rule-cold-feet) (if (eq? level-name 'snow) 20 0))
           ((eq? id 'rule-touch-grass)
            (if (or (and (eq? level-name 'jungleb) (task-closed? (game-task jungle-plant) (task-status need-resolution)))
@@ -3222,8 +3230,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (defun mod-rule-handle-pass-input ()
-  (when (or (and (cpad-hold? 0 l2) (cpad-pressed? 0 r2))
-            (and (cpad-hold? 0 r2) (cpad-pressed? 0 l2)))
+  (when (or (and (cpad-hold? 0 l2) (cpad-pressed? 0 r2)) (and (cpad-hold? 0 r2) (cpad-pressed? 0 l2)))
     (mod-rule-use-pass!))
   (none))
 
@@ -3607,8 +3614,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           ((<= (-> *MOD-quiz-bank* trivia-current-guess) 0) (set! (-> *MOD-quiz-bank* trivia-current-guess) 3))
           (else (-! (-> *MOD-quiz-bank* trivia-current-guess) 1)))
         (sound-play "cursor-up-down")))
-    (when (and (>= (-> *MOD-quiz-bank* trivia-current-guess) 0)
-               (cpad-pressed? 0 l3))
+    (when (and (>= (-> *MOD-quiz-bank* trivia-current-guess) 0) (cpad-pressed? 0 l3))
       (let ((slot (mod-rule-find-active-slot 'rule-trivia)))
         (when (>= slot 0)
           (mod-rule-resolve! slot
@@ -3907,21 +3913,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (+! row (mod-scale-px 7)))
     (let* ((timer-text (mod-format-time-frame time-left 1 'auto))
            (timer-flags (font-flags shadow kerning large)))
-      (mod-draw-string-xy-scaled timer-text
-                                 buf
-                                 10
-                                 row
-                                 (font-color white)
-                                 timer-flags
-                                 0.5)
+      (mod-draw-string-xy-scaled timer-text buf 10 row (font-color white) timer-flags 0.5)
       (when (> (-> *MOD-pass-bank* passes) 0)
-        (mod-draw-string-xy-scaled "L2+R2 TO PASS"
-                                   buf
-                                   (mod-scale-px 80)
-                                   row
-                                   (font-color gray)
-                                   timer-flags
-                                   0.3)))
+        (mod-draw-string-xy-scaled "L2+R2 TO PASS" buf (mod-scale-px 80) row (font-color gray) timer-flags 0.3)))
     (+! row (mod-scale-px 12))
     (when (eq? id 'rule-distancing)
       (mod-draw-string-xy-scaled "DISTANCE: " buf 10 row (font-color progress-percent) (font-flags shadow kerning large) 0.3)

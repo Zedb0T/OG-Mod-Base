@@ -164,7 +164,7 @@
         (set! *last-kill-dist* distance)
         (mod-rule-trigger-sniper (>= distance (meters 70)))))
     (format #t "enemy type: ~a~%" enemy-type)
-      (format #t "enemy state: ~A, last recorded hit: ~A~%" (-> enemy state name) (mod-rule-last-player-hit-mode enemy))
+    (format #t "enemy state: ~A, last recorded hit: ~A~%" (-> enemy state name) (mod-rule-last-player-hit-mode enemy))
     (mod-rule-counter-add-progress 'rule-lurker-pressure 1)
     (mod-rule-trigger-disassociate)
     (mod-rule-trigger-double-kill)

@@ -980,13 +980,13 @@
                  'char-color
                  :color
                  (new 'static
-                     'array
+                      'array
                       rgba
-                     4
-                   (static-rgba #xAA #x46 #xFF #x80)
-                     (static-rgba #xAA #x46 #xFF #x80)
-                     (static-rgba #x35 #x17 #x50 #x80)
-                     (static-rgba #x35 #x17 #x50 #x80)))
+                      4
+                      (static-rgba #xAA #x46 #xFF #x80)
+                      (static-rgba #xAA #x46 #xFF #x80)
+                      (static-rgba #x35 #x17 #x50 #x80)
+                      (static-rgba #x35 #x17 #x50 #x80)))
             ;; 50 - gray
             (new 'static
                  'char-color

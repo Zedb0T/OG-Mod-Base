@@ -1418,8 +1418,7 @@
 (deftype hud-passes (hud) ())
 
 (defmethod draw-hud ((this hud-passes))
-  (when (and (-> *MOD-countdown-bank* active?)
-             (= (ppointer->process (-> *hud-parts* passes)) this))
+  (when (and (-> *MOD-countdown-bank* active?) (= (ppointer->process (-> *hud-parts* passes)) this))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id debug))
       (let* ((passes-flags (font-flags shadow kerning large))
              (passes-scale 1.0)
@@ -1429,15 +1428,10 @@
              (gap 4)
              (credits-row -2)
              (label-nudge 6)
-             (passes-width (the int
-                                (mod-rule-string-width (string-format "~D" (-> *MOD-pass-bank* passes))
-                                                       passes-flags
-                                                       passes-scale)))
+             (passes-width (the int (mod-rule-string-width (string-format "~D" (-> *MOD-pass-bank* passes)) passes-flags passes-scale)))
              (label-width (the int (mod-rule-string-width label-str passes-flags label-scale)))
              (credits-width (the int
-                                 (mod-rule-string-width (string-format "(~D/~D)"
-                                                                       (-> *MOD-pass-bank* credits)
-                                                                       (pass-credits-required-value))
+                                 (mod-rule-string-width (string-format "(~D/~D)" (-> *MOD-pass-bank* credits) (pass-credits-required-value))
                                                         passes-flags
                                                         credits-scale)))
              (center-x (+ (-> this text-x) (* (-> this x-sgn) (-> this offset))))
@@ -1447,9 +1441,7 @@
                              (the int (-> *video-parms* relative-y-scale)))
                           2)))
         ;; credits
-        (draw-string-xy-scaled (string-format "~D/~D"
-                                              (-> *MOD-pass-bank* credits)
-                                              (pass-credits-required-value))
+        (draw-string-xy-scaled (string-format "~D/~D" (-> *MOD-pass-bank* credits) (pass-credits-required-value))
                                buf
                                credits-x
                                (+ string-y credits-row)
@@ -1476,8 +1468,7 @@
   (none))
 
 (defmethod hud-update ((this hud-passes))
-  (when (and (-> *MOD-countdown-bank* active?)
-             (= (ppointer->process (-> *hud-parts* passes)) this))
+  (when (and (-> *MOD-countdown-bank* active?) (= (ppointer->process (-> *hud-parts* passes)) this))
     (tally-value this (-> *MOD-pass-bank* passes) (-> *MOD-pass-bank* credits)))
   0
   (none))
