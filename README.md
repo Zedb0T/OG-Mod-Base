@@ -37,7 +37,8 @@
 | **Speedrun Timer** | Shows an in-game timer above the global countdown timer, to track your current run's duration. |
 | **Klaww Assist** | Adds 30 seconds to the countdown timer after each Klaww phase. |
 | **Fish Assist** | Adds 5 seconds to the countdown timer for each five-pound fish. |
-| **Text Scale** | The size of the mod text. This includes condition names, descriptions, punishments, and timers.
+| **Text Scale** | The size of the mod text. This includes condition names, descriptions, punishments, and timers. |
+| **Pass Cost** | How many credits are required to gain a pass. A credit is rewarded on each rule followed. |
 
 ⚠️ **SPOILER WARNING: Below has names of conditions!**
 
@@ -79,8 +80,8 @@
 | **FOR BILLY** | PROTECT FARTHY'S SNACKS. DO NOT LEAVE BOGGY SWAMP. | You must complete the rats minigame, and also not leave Boggy Swamp.
 | **COLD FEET** | KEEP OFF THE ICE. |
 | **SPEED RACER** | REACH A SPEED OF 40 METERS PER SECOND. |
-| **QUICK MATHS** | ANSWER A MATH QUESTION CORRECTLY. | Use the D-Pad to input your answer. Up/Down step with 1, Left/Right step with 5. You can use L2+R2 to submit an answer early.
-| **DON'T KNOW JAK** | ANSWER A TRIVIA QUESTION CORRECTLY. | Use the D-Pad to navigate choices. You can use L2+R2 to submit an answer early.
+| **QUICK MATHS** | ANSWER A MATH QUESTION CORRECTLY. | Use the D-Pad to input your answer. Up/Down step with 1, Left/Right step with 5. You can use L3 to submit an answer early.
+| **DON'T KNOW JAK** | ANSWER A TRIVIA QUESTION CORRECTLY. | Use the D-Pad to navigate choices. You can use L3 to submit an answer early.
 | **GREEN-PILLED** | COLLECT 50 SMALL GREEN ECO PILLS. | Only the small ones count.
 | **BUTTON PUSHER** | PUSH A BUTTON. | Not to be confused with Quick Time Event; Jak must press a button somewhere in the world.
 | **LOYAL CUSTOMER** | BUY AN ORACLE CELL. |
@@ -129,7 +130,7 @@
 | **INFESTATION** | DOUBLE THE APHIDS. | The amount of bugs the Plant Boss spawns (aphids) is doubled.
 | **THIS ONE SUCKS** | CONTROLS ARE INVERTED. |
 | **LOOSE POCKETS** | BONKING OR TAKING DAMAGE LOSES 20 ORBS. |
-| **TWISTED** | A LATER RULE MUST BE BROKEN. | A twisted rule is chosen at random. You must *break* this rule. Rules are colored orange.
+| **TWISTED** | A LATER RULE MUST BE BROKEN. | A twisted rule is chosen at random. You must *break* this rule. Rules are colored orange. Using a pass on this will *not* mark the future rule as twisted.
 | **VIBE CHECK** | I LIKE YA CUT, G. | Jak gets smacked into the air and takes damage.
 | **INCOME TAX** | TIMER INCREMENTS ARE HALVED. | The additional time granted from cells, orbs, and flies is cut in half.
 | **MIRRORED** | THE WORLD IS MIRRORED. |
@@ -147,6 +148,12 @@
 | **LIMITED TIME OFFER** | POWER CELLS ARE 50% OFF! | Purchasing power cells from villagers and oracles costs half as much.
 
 </details>
+
+## Passes
+- A pass lets you completely resolve any active condition. Any rule this is used on will not be considered broken or followed.
+- Each pass will require an amount of credits. A credit is rewarded on each rule followed, and the amount needed can be changed in the options menu.
+- Using a pass on TWISTED will *not* mark the future rule as twisted.
+- To use a pass, press L2+R2.
 
 ## Seeds
 - This mod supports seeds, which means each run has a sequence of numbers that determines all of its RNG. The seed is displayed on the bottom-left of the screen, and you can use that seed to roll the exact same RNG for another run! This is also nice for races.

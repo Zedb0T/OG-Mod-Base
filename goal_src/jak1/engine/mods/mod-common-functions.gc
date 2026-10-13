@@ -3905,13 +3905,23 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                                    (font-flags shadow kerning large)
                                    0.5))
       (+! row (mod-scale-px 7)))
-    (mod-draw-string-xy-scaled (mod-format-time-frame time-left 1 'auto)
-                               buf
-                               10
-                               row
-                               (font-color white)
-                               (font-flags shadow kerning large)
-                               0.5)
+    (let* ((timer-text (mod-format-time-frame time-left 1 'auto))
+           (timer-flags (font-flags shadow kerning large)))
+      (mod-draw-string-xy-scaled timer-text
+                                 buf
+                                 10
+                                 row
+                                 (font-color white)
+                                 timer-flags
+                                 0.5)
+      (when (> (-> *MOD-pass-bank* passes) 0)
+        (mod-draw-string-xy-scaled "L2+R2 TO PASS"
+                                   buf
+                                   (mod-scale-px 80)
+                                   row
+                                   (font-color gray)
+                                   timer-flags
+                                   0.3)))
     (+! row (mod-scale-px 12))
     (when (eq? id 'rule-distancing)
       (mod-draw-string-xy-scaled "DISTANCE: " buf 10 row (font-color progress-percent) (font-flags shadow kerning large) 0.3)
