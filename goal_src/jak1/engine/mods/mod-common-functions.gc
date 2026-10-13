@@ -4025,7 +4025,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (let ((punishment (-> (-> *MOD-rule-punishment-bank* timed-punishments) slot)))
         (when punishment
           (let ((time-left (max 0 (- (-> (-> *MOD-rule-punishment-bank* timed-end-times) slot) (current-time))))
-                (row-y (+ 68 (* row-count (mod-scale-px 10)))))
+                (row-y (+ 72 (* row-count (mod-scale-px 10)))))
             (mod-draw-string-xy-scaled (mod-rule-timed-punishment-name punishment)
                                        buf
                                        395
@@ -4054,7 +4054,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? (-> *MOD-rule-context-bank* last-outcome) 'twisted-failed)
      (mod-draw-string-xy-scaled "TWISTED RULE!" buf 10 y (font-color red) (font-flags shadow kerning large) 0.4))
     ((eq? (-> *MOD-rule-context-bank* last-outcome) 'skipped)
-     (mod-draw-string-xy-scaled "PASS!" buf 10 y (font-color lavender) (font-flags shadow kerning large) 0.4)))
+     (mod-draw-string-xy-scaled "PASS!" buf 10 y (font-color violet) (font-flags shadow kerning large) 0.4)))
   (none))
 
 (defun mod-rule-draw-rolling-slot ((buf dma-buffer))
@@ -4093,7 +4093,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
        (mod-draw-string-xy-scaled (mod-format-time-frame (-> *MOD-countdown-bank* remaining-time) 2 'auto)
                                   global-buf
                                   380
-                                  50
+                                  54
                                   (font-color red)
                                   (font-flags shadow kerning large)
                                   0.8)
@@ -4103,7 +4103,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (mod-draw-string-xy-scaled (mod-format-time-frame (-> *MOD-countdown-bank* countup-timer) 2 'auto)
                                       global-buf
                                       (if show-hours? 390 410)
-                                      40
+                                      44
                                       (font-color white)
                                       (font-flags shadow kerning large)
                                       0.5)))

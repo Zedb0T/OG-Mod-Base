@@ -62,7 +62,8 @@
   (dark-purple 45)
   (lavender 46)
   (amber-orange 47)
-  (sunset-orange 48))
+  (sunset-orange 48)
+  (violet 49))
 
 (defenum font-flags
   :type uint32
@@ -973,6 +974,18 @@
                       (static-rgba #x80 #x48 #x10 #x80)
                       (static-rgba #x46 #x1C #x00 #x80)
                       (static-rgba #x46 #x1C #x00 #x80)))
+            ;; 49 - violet
+            (new 'static
+                 'char-color
+                 :color
+                 (new 'static
+                     'array
+                      rgba
+                     4
+                   (static-rgba #xAA #x46 #xFF #x80)
+                     (static-rgba #xAA #x46 #xFF #x80)
+                     (static-rgba #x35 #x17 #x50 #x80)
+                     (static-rgba #x35 #x17 #x50 #x80)))
             (new 'static 'char-color)
             (new 'static 'char-color)
             (new 'static 'char-color)

@@ -1461,7 +1461,7 @@
                                buf
                                line-x
                                string-y
-                               (font-color lavender)
+                               (font-color violet)
                                passes-flags
                                passes-scale)
         ;; "PASSES" label
