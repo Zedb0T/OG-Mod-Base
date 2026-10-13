@@ -52,9 +52,9 @@
 
 (define-extern mod-stats-rules-followed-resume-from-save (function int none))
 
-(define-extern mod-stats-complications-rolled-save-value (function int))
+(define-extern mod-stats-complications-endured-save-value (function int))
 
-(define-extern mod-stats-complications-rolled-resume-from-save (function int none))
+(define-extern mod-stats-complications-endured-resume-from-save (function int none))
 
 (define-extern mod-rng-content-state-save-value (function int))
 
@@ -172,6 +172,10 @@
 
 (define-extern mod-pass-state-resume-from-save (function int none))
 
+(define-extern mod-stats-conditions-skipped-save-value (function int))
+
+(define-extern mod-stats-conditions-skipped-resume-from-save (function int none))
+
 (define-extern mod-rule-finalize-resume-from-save (function none))
 
 ;; version identifier
@@ -255,7 +259,7 @@
   (mod-stats-rules-rolled 513)
   (mod-stats-rules-broken 514)
   (mod-stats-rules-followed 515)
-  (mod-stats-complications-rolled 516)
+  (mod-stats-complications-endured 516)
   (mod-rng-content-state 517)
   (mod-rng-punish-state 518)
   (mod-rng-seed-display 519)
@@ -283,7 +287,8 @@
   (mod-rule-math-quiz-guess 541)
   (mod-rule-trivia-state 542)
   (mod-rule-qte-state 543)
-  (mod-pass-state 544))
+  (mod-pass-state 544)
+  (mod-stats-conditions-skipped 545))
 
 ;; DECOMP BEGINS
 
@@ -797,9 +802,9 @@
                                                                                                             (set! (-> a0-94 elt-count) 0)
                                                                                                             (set! (-> a0-94 user-uint64) (the-as uint (mod-stats-rules-followed-save-value))))
                                                                                                           (let ((a0-95 (the-as game-save-tag (&+ v1-113 96))))
-                                                                                                            (set! (-> a0-95 elt-type) (game-save-elt mod-stats-complications-rolled))
+                                                                                                            (set! (-> a0-95 elt-type) (game-save-elt mod-stats-complications-endured))
                                                                                                             (set! (-> a0-95 elt-count) 0)
-                                                                                                            (set! (-> a0-95 user-uint64) (the-as uint (mod-stats-complications-rolled-save-value))))
+                                                                                                            (set! (-> a0-95 user-uint64) (the-as uint (mod-stats-complications-endured-save-value))))
                                                                                                           (let ((a0-96 (the-as game-save-tag (&+ v1-113 112))))
                                                                                                             (set! (-> a0-96 elt-type) (game-save-elt mod-rng-content-state))
                                                                                                             (set! (-> a0-96 elt-count) 0)
@@ -913,7 +918,11 @@
                                                                                                             (set! (-> a0-123 elt-type) (game-save-elt mod-pass-state))
                                                                                                             (set! (-> a0-123 elt-count) 0)
                                                                                                             (set! (-> a0-123 user-uint64) (the-as uint (mod-pass-state-save-value))))
-                                                                                                          (set! (-> arg0 length) (&- (&+ v1-113 560) (the-as uint (the-as pointer (-> arg0 tag)))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+                                                                                                          (let ((a0-124 (the-as game-save-tag (&+ v1-113 560))))
+                                                                                                            (set! (-> a0-124 elt-type) (game-save-elt mod-stats-conditions-skipped))
+                                                                                                            (set! (-> a0-124 elt-count) 0)
+                                                                                                            (set! (-> a0-124 user-uint64) (the-as uint (mod-stats-conditions-skipped-save-value))))
+                                                                                                          (set! (-> arg0 length) (&- (&+ v1-113 576) (the-as uint (the-as pointer (-> arg0 tag)))))))))))))))))))))))))))))))))))))))))))))))))))))))))
   (if (< (-> arg0 allocated-length) (-> arg0 length))
     (format 0 "ERROR: SAVEGAME: fatal error, save is using ~D of ~D bytes." (-> arg0 length) (-> arg0 allocated-length)))
   (none))
@@ -946,8 +955,10 @@
            (mod-stats-rules-broken-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-stats-rules-followed))
            (mod-stats-rules-followed-resume-from-save (the-as int (-> save-data user-uint64))))
-          ((= a0-1 (game-save-elt mod-stats-complications-rolled))
-           (mod-stats-complications-rolled-resume-from-save (the-as int (-> save-data user-uint64))))
+          ((= a0-1 (game-save-elt mod-stats-complications-endured))
+           (mod-stats-complications-endured-resume-from-save (the-as int (-> save-data user-uint64))))
+          ((= a0-1 (game-save-elt mod-stats-conditions-skipped))
+           (mod-stats-conditions-skipped-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-rng-content-state))
            (mod-rng-content-state-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-rng-punish-state))

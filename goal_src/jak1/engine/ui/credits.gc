@@ -64,7 +64,7 @@
 
 (define *tmp-cred-str* (new 'global 'string 256 (the string #f)))
 
-(define *custom-credits-line-count* 25)
+(define *custom-credits-line-count* 28)
 
 (defun get-custom-credits-line ((line-num int))
   (clear *tmp-cred-str*)
@@ -81,11 +81,13 @@
     ((13) (format *tmp-cred-str* "~33LRULES FOLLOWED"))
     ((14) (format *tmp-cred-str* "~D" (-> *MOD-stats-bank* rules-followed)))
     ((16) (format *tmp-cred-str* "~33LCOMPLICATIONS ENDURED"))
-    ((17) (format *tmp-cred-str* "~D" (-> *MOD-stats-bank* complications-rolled)))
-    ((19) (format *tmp-cred-str* "~33LTIME REMAINING"))
-    ((20) (format *tmp-cred-str* "~S" (mod-format-time-frame (-> *MOD-stats-bank* final-remaining-time) 3 'always)))
-    ((22) (format *tmp-cred-str* "JAK AND DAXTER:"))
-    ((23) (format *tmp-cred-str* "THE PRECURSOR LEGACY"))
+    ((17) (format *tmp-cred-str* "~D" (-> *MOD-stats-bank* complications-endured)))
+    ((19) (format *tmp-cred-str* "~33LCONDITIONS SKIPPED"))
+    ((20) (format *tmp-cred-str* "~D" (-> *MOD-stats-bank* conditions-skipped)))
+    ((22) (format *tmp-cred-str* "~33LTIME REMAINING"))
+    ((23) (format *tmp-cred-str* "~S" (mod-format-time-frame (-> *MOD-stats-bank* final-remaining-time) 3 'always)))
+    ((25) (format *tmp-cred-str* "JAK AND DAXTER:"))
+    ((26) (format *tmp-cred-str* "THE PRECURSOR LEGACY"))
     (else (return (the-as string #f))))
   *tmp-cred-str*)
 

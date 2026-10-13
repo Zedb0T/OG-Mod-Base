@@ -996,7 +996,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (set! (-> *MOD-stats-bank* rules-rolled) 0)
   (set! (-> *MOD-stats-bank* rules-broken) 0)
   (set! (-> *MOD-stats-bank* rules-followed) 0)
-  (set! (-> *MOD-stats-bank* complications-rolled) 0)
+  (set! (-> *MOD-stats-bank* complications-endured) 0)
+  (set! (-> *MOD-stats-bank* conditions-skipped) 0)
   (set! (-> *MOD-stats-bank* final-time) 0)
   (set! (-> *MOD-stats-bank* final-remaining-time) 0)
   (set! (-> *MOD-stats-bank* final-score) 0)
@@ -1025,11 +1026,18 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (set! (-> *MOD-stats-bank* rules-followed) value)
   (none))
 
-(defun mod-stats-complications-rolled-save-value ()
-  (-> *MOD-stats-bank* complications-rolled))
+(defun mod-stats-complications-endured-save-value ()
+  (-> *MOD-stats-bank* complications-endured))
 
-(defun mod-stats-complications-rolled-resume-from-save ((value int))
-  (set! (-> *MOD-stats-bank* complications-rolled) value)
+(defun mod-stats-complications-endured-resume-from-save ((value int))
+  (set! (-> *MOD-stats-bank* complications-endured) value)
+  (none))
+
+(defun mod-stats-conditions-skipped-save-value ()
+  (-> *MOD-stats-bank* conditions-skipped))
+
+(defun mod-stats-conditions-skipped-resume-from-save ((value int))
+  (set! (-> *MOD-stats-bank* conditions-skipped) value)
   (none))
 
 (defun mod-rule-countdown-punishment-seconds ()
@@ -2215,9 +2223,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
         (set! (-> (-> *MOD-rule-slot-bank* slot-punishments) slot) (mod-rule-random-available-punishment id))
         (+! (-> *MOD-stats-bank* rules-rolled) 1)
         (mod-rule-twist-check-and-mark! slot id))
-      (begin
-        (set! (-> (-> *MOD-rule-slot-bank* slot-punishments) slot) #f)
-        (+! (-> *MOD-stats-bank* complications-rolled) 1)))
+      (set! (-> (-> *MOD-rule-slot-bank* slot-punishments) slot) #f))
     (set! (-> (-> *MOD-rule-slot-bank* slot-end-times) slot) (+ (current-time) (mod-rule-duration id)))
     (set! (-> (-> *MOD-rule-slot-bank* slot-grace-periods) slot) (+ (current-time) (seconds 1.25)))
     (mod-rule-on-activate id))
@@ -3195,6 +3201,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-rule-skip-slot! ((slot int))
   (when (and (>= slot 0) (< slot *mod-rule-slot-count*) (-> (-> *MOD-rule-slot-bank* active-slots) slot))
+    (+! (-> *MOD-stats-bank* conditions-skipped) 1)
     ;; a skipped twist must not mark a later rule
     (when (eq? (-> (-> *MOD-rule-slot-bank* active-slots) slot) 'complication-twisted)
       (set! (-> *MOD-rule-context-bank* twist-pending-count) -1))
@@ -3266,6 +3273,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
               (mod-rule-resolve! slot 'failed #t)))
           (if (not (movie?)) (sound-play "cursor-options"))
           (when (and (= id (-> (-> *MOD-rule-slot-bank* active-slots) slot)) (or (<= goal 0) (>= progress goal) (not punishment)))
+            (when (eq? (mod-rule-type id) 'complication)
+              (+! (-> *MOD-stats-bank* complications-endured) 1))
             (mod-rule-resolve! slot 'success #t))))))
   (none))
 

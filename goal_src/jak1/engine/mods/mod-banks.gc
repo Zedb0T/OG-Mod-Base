@@ -194,7 +194,8 @@
   ((rules-rolled         int32)
    (rules-broken         int32)
    (rules-followed       int32)
-   (complications-rolled int32)
+   (complications-endured int32)
+   (conditions-skipped   int32)
    (final-remaining-time int32)
    (final-time           int32)
    (final-score          int32)))
@@ -205,7 +206,8 @@
        :rules-rolled 0
        :rules-broken 0
        :rules-followed 0
-       :complications-rolled 0
+       :complications-endured 0
+       :conditions-skipped 0
        :final-remaining-time 0
        :final-time 0
        :final-score 0))
