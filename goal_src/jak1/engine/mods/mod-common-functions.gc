@@ -2770,7 +2770,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (if (or (and (eq? level-name 'jungleb) (task-closed? (game-task jungle-plant) (task-status need-resolution)))
                    (and (not (or (target-fishing?) (= (-> *target* control ground-pat material) (pat-material grass))))
                         (grass-level? level-name)))
-             230
+             180
              0))
           ((eq? id 'rule-math-quiz) (if (eq? level-name 'training) 0 37))
           ((eq? id 'rule-trivia) (if (eq? level-name 'training) 0 37))
