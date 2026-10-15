@@ -22,6 +22,10 @@
 
 (define-extern runs-on-jak-death (function symbol none))
 
+(define *mod-green-pilled-suppress* #f)
+
+(define-extern mod-rule-counter-add-progress (function symbol int none))
+
 ;; DECOMP BEGINS
 
 ;;;;;;;;;;;;;;;;;;
@@ -389,38 +393,48 @@
   "Pickup a thing!"
   (case kind
     (((pickup-type eco-green))
+     ;; (format #t "green: amt ~f hp ~f/~f pills ~f src ~A suppress ~A~%"
+     ;;          amount (-> this health) (-> this health-max) (-> this eco-pill)
+     ;;          (if (handle->process source-handle) (-> (handle->process source-handle) type) 'none)
+     ;;          *mod-green-pilled-suppress*)
      ;; big green eco.  This counts toward the health (up to 3), and if that's full, maxes out the little green ecos to 50.
      (cond
        ((>= amount 0.0)
-        ;; got a positive or 0 amount.
-        (when (< 0.0 amount)
-          ;; when we get a different source, OR we it's been more than 0.5 seconds since we last got eco
-          ;; from this source.
-          (if (or (!= (handle->process source-handle) (handle->process (-> this eco-source)))
-                  (time-elapsed? (-> this eco-source-time) (seconds 0.5)))
-            ;; play the sound!
-            (sound-play "get-green-eco"))
-          ;; remember the source.
-          (when (handle->process source-handle)
-            (set! (-> this eco-source) source-handle)
-            (set-time! (-> this eco-source-time))))
-        ;; if we are at max health (3), and collect additional an additional big green eco,
-        ;; then max out the little green ecos.
-        (if (= (-> this health) (-> this health-max))
-          (pickup-collectable! this
-                               (pickup-type eco-pill)
-                               (-> *FACT-bank* eco-pill-max-default)
-                               (process->handle (-> this process))))
-        ;; remember when
-        (set-time! (-> this health-pickup-time))
-        ;; increase the health!
-        (seek! (-> this health) (-> this health-max) amount))
+        (let ((old-health (-> this health)))
+          ;; got a positive or 0 amount.
+          (when (< 0.0 amount)
+            ;; when we get a different source, OR we it's been more than 0.5 seconds since we last got eco
+            ;; from this source.
+            (if (or (!= (handle->process source-handle) (handle->process (-> this eco-source)))
+                    (time-elapsed? (-> this eco-source-time) (seconds 0.5)))
+              ;; play the sound!
+              (sound-play "get-green-eco"))
+            ;; remember the source.
+            (when (handle->process source-handle)
+              (set! (-> this eco-source) source-handle)
+              (set-time! (-> this eco-source-time))))
+          ;; if we are at max health (3), and collect additional an additional big green eco,
+          ;; then max out the little green ecos.
+          (if (= (-> this health) (-> this health-max))
+            (pickup-collectable! this
+                                 (pickup-type eco-pill)
+                                 (-> *FACT-bank* eco-pill-max-default)
+                                 (process->handle (-> this process))))
+          ;; remember when
+          (set-time! (-> this health-pickup-time))
+          ;; increase the health!
+          (seek! (-> this health) (-> this health-max) amount)
+          (when (and (not *mod-green-pilled-suppress*) (> (-> this health) old-health))
+            (mod-rule-counter-add-progress 'rule-green-pilled 1))))
        (else
         ;; negative health. Subtract.
         (seek! (-> this health) 0.0 (- amount))
         ;; not sure why we do this. But this will set the eco pill collection time.
-        (if (>= amount -10.0) (pickup-collectable! this (pickup-type eco-pill) 0.0 source-handle))
         ;; subtract lives.
+        (when (>= amount -10.0)
+          (set! *mod-green-pilled-suppress* #t)
+          (pickup-collectable! this (pickup-type eco-pill) 0.0 source-handle)
+          (set! *mod-green-pilled-suppress* #f))
         (if (= (-> this health) 0.0)
           (adjust (-> (the-as target (-> this process)) game) 'life (- (-> *GAME-bank* life-single-inc)) source-handle))))
      ;; green eco vents power-up when racing.
@@ -434,7 +448,14 @@
      (when (>= amount 0.0)
        ;; update small eco count
        (set-time! (-> this eco-pill-pickup-time))
-       (seek! (-> this eco-pill) (-> this eco-pill-max) amount)
+       (let ((old-pill (-> this eco-pill)))
+         (seek! (-> this eco-pill) (-> this eco-pill-max) amount)
+         ;; mod: bank just filled while already at max health
+         (when (and (< old-pill (-> *FACT-bank* eco-pill-max-default))
+                    (>= (-> this eco-pill) (-> *FACT-bank* eco-pill-max-default))
+                    (= (-> this health) (-> this health-max)))
+           ;;  (format #t "green-pilled: bank filled at max health~%")
+           (mod-rule-counter-add-progress 'rule-green-pilled 1)))
        ;; increment big health if needed
        (when (and (>= (-> this eco-pill) (-> *FACT-bank* eco-pill-max-default))
                   (< (-> this health) (-> this health-max))

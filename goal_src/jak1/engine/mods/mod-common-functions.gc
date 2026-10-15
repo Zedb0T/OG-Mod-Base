@@ -1213,7 +1213,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-math-quiz) "ANSWER CORRECTLY.       (USE D-PAD)")
     ((eq? id 'rule-trivia) "ANSWER CORRECTLY.")
     ((eq? id 'complication-bad-ping) "YOU HAVE 120-MS INPUT DELAY.")
-    ((eq? id 'rule-green-pilled) "COLLECT 50 SMALL GREEN ECO PILLS.")
+    ((eq? id 'rule-green-pilled) "INCREASE YOUR HEALTH WITH GREEN ECO.")
     ((eq? id 'rule-button-pusher) "PUSH A BUTTON.")
     ((eq? id 'rule-loyal-customer) "BUY AN ORACLE CELL.")
     ((eq? id 'complication-invisible-man) "JAK IS INVISIBLE.")
@@ -1356,7 +1356,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-vendetta) 'event-once)
     ((eq? id 'rule-for-billy) 'event-once)
     ((eq? id 'rule-speed) 'event-once)
-    ((eq? id 'rule-green-pilled) 'counter)
+    ((eq? id 'rule-green-pilled) 'event-once)
     ((eq? id 'rule-button-pusher) 'event-once)
     ((eq? id 'rule-loyal-customer) 'event-once)
     ((eq? id 'rule-cooked) 'event-once)
@@ -1377,7 +1377,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-crate-break) 5)
     ((eq? id 'rule-money-pressure) 20)
     ((eq? id 'rule-buzzer-pressure) 2)
-    ((eq? id 'rule-green-pilled) 50)
     ((eq? id 'rule-sagging-sails) 3)
     ((eq? id 'rule-hang-time) 3)
     ((eq? id 'rule-keep-rolling) 30)
@@ -2187,7 +2186,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
         (when (eq? id 'complication-palate-change)
           (mod-rule-start-palate-change-grace!))
         (cond
-          ((and *target* (> (-> (the-as fact-info-target (-> *target* fact)) health) 0) (or (eq? id 'complication-ohko) (eq? id 'rule-survivor)))
+          ((and *target*
+                (> (-> (the-as fact-info-target (-> *target* fact)) health) 0)
+                (or (eq? id 'complication-ohko) (eq? id 'rule-survivor)))
            (set! (-> (the-as fact-info-target (-> *target* fact)) health) 3.0))
           ((eq? id 'complication-hidden-treasure) (refresh-money-actors #t))
           ((eq? id 'complication-mirror) (set! *mod-mirror-active?* #f))
@@ -2785,7 +2786,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                    (target-on-racer-or-flut?))
              0
              47))
-          ((eq? id 'rule-green-pilled) (if (or (sparse-green-eco-level? level-name) is-minigame) 0 56))
+          ((eq? id 'rule-green-pilled) (if (or (sparse-green-eco-level? level-name) is-minigame) 0 68))
           ((eq? id 'complication-joyride)
            (if (or (target-on-racer-or-flut?)
                    is-minigame
