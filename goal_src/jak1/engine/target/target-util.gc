@@ -6,6 +6,7 @@
 (require "engine/gfx/shadow/shadow-cpu-h.gc")
 (require "engine/common-obs/process-drawable-h.gc")
 (define-extern target-collide-set! (function symbol float int :behavior target))
+(define-extern mod-rule-timed-punishment-active? (function symbol symbol))
 
 ;; DECOMP BEGINS
 
@@ -655,7 +656,8 @@
 (defbehavior can-feet? target ()
   (cond
     ((or (logtest? (-> self state-flags) (state-flags prevent-attack))
-         (logtest? (-> self control current-surface flags) (surface-flags prevent-attacks-during-launch-jump surf09)))
+         (logtest? (-> self control current-surface flags) (surface-flags prevent-attacks-during-launch-jump surf09))
+         (mod-rule-timed-punishment-active? 'punishment-kick))
      #f)
     ((time-elapsed? (-> *TARGET-bank* attack-timeout) (-> self control last-attack-end-time)) #t)
     (else (set-time! (-> self control unknown-dword34)) #f)))

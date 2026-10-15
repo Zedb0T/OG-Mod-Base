@@ -164,7 +164,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
        'punishment-iframes
        'punishment-camera
        'punishment-ohko
-       'punishment-reset))
+       'punishment-reset
+       'punishment-kick))
 
 (define *mod-rule-punishment-id-count* (length *mod-rule-punishment-ids*))
 
@@ -1556,6 +1557,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-iframes) (seconds 180))
     ((eq? punishment 'punishment-camera) (seconds 120))
     ((eq? punishment 'punishment-ohko) (seconds 120))
+    ((eq? punishment 'punishment-kick) (seconds 180))
     (else 0)))
 
 (defun mod-rule-find-timed-punishment-slot ((punishment symbol))
@@ -1939,11 +1941,17 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           (when (< (mod-rand-punish-int-range 0 running-total) w)
             (set! selected 'punishment-iframes)))))
     (when (and (punishment-toggle-enabled? 'punishment-camera) (mod-rule-punishment-rollable? 'punishment-camera))
-      (let ((w 10)) ;; disabled
+      (let ((w 10))
         (when (> w 0)
           (+! running-total w)
           (when (< (mod-rand-punish-int-range 0 running-total) w)
             (set! selected 'punishment-camera)))))
+    (when (and (punishment-toggle-enabled? 'punishment-kick) (mod-rule-punishment-rollable? 'punishment-kick))
+      (let ((w 10))
+        (when (> w 0)
+          (+! running-total w)
+          (when (< (mod-rand-punish-int-range 0 running-total) w)
+            (set! selected 'punishment-kick)))))
     (when (and (punishment-toggle-enabled? 'punishment-ohko) (mod-rule-punishment-rollable? 'punishment-ohko))
       (let ((w 10))
         (when (> w 0)
@@ -2735,7 +2743,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
              ((eq? level-name 'training) 27)
              (else 53)))
           ((or (eq? id 'rule-keep-it-low) (eq? id 'complication-sizeable))
-           (if (or racer-lavatube (target-on-racer-or-flut?) (sole-zoomer-level? level-name)) 0 (if (eq? id 'rule-keep-it-low) 56 62)))
+           (if (or racer-lavatube (target-on-racer-or-flut?) (sole-zoomer-level? level-name))
+             0
+             (if (eq? id 'rule-keep-it-low) (if (mod-rule-timed-punishment-active? 'punishment-kick) 0 56) 62)))
           ((eq? id 'rule-management) (if (or racer-lavatube (target-on-racer-or-flut?) (sole-zoomer-level? level-name)) 0 56))
           ((eq? id 'complication-bad-ping) (if (mod-rule-timed-punishment-active? 'punishment-delay) 0 40))
           ((eq? id 'complication-loose-pockets)
@@ -2769,7 +2779,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           ((eq? id 'rule-side-to-side) (if is-klaww 753 0))
           ((eq? id 'complication-mirror) (if is-klaww 0 41))
           ((eq? id 'complication-income-tax) (if (eq? level-name 'finalboss) 0 32))
-          ((eq? id 'complication-half-price) (if (half-price-level? level-name) 60 0))
+          ((eq? id 'complication-half-price) (if (half-price-level? level-name) 50 0))
           ((eq? id 'rule-button-pusher)
            (if (or (not (button-level? level-name)) is-minigame) 0 (if (or (eq? level-name 'jungle) (eq? level-name 'village2)) 74 184)))
           ((eq? id 'rule-cooked)
@@ -2786,7 +2796,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                    (target-on-racer-or-flut?))
              0
              47))
-          ((eq? id 'rule-green-pilled) (if (or (sparse-green-eco-level? level-name) is-minigame) 0 68))
+          ((eq? id 'rule-green-pilled) (if (or (sparse-green-eco-level? level-name) is-minigame) 0 64))
           ((eq? id 'complication-joyride)
            (if (or (target-on-racer-or-flut?)
                    is-minigame
@@ -2817,7 +2827,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (if (and (eq? level-name 'citadel) (not (string= checkpoint-name "citadel-elevator"))) 430 0))
           ((eq? id 'rule-one-frame)
            (cond
-             (is-minigame 0)
+             ((or (mod-rule-timed-punishment-active? 'punishment-kick) is-minigame) 0)
              ((or (eq? level-name 'robocave) (string= checkpoint-name "sunkenb-helix")) 80)
              ((eq? level-name 'finalboss) 54)
              ((launcher-level? level-name) 107)
@@ -3127,6 +3137,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-camera) "INVERTED CAMERA FOR 2 MINUTES")
     ((eq? punishment 'punishment-ohko) "ANY DAMAGE OR BONK KILLS FOR 2 MINUTES")
     ((eq? punishment 'punishment-reset) "RESET THE RUN")
+    ((eq? punishment 'punishment-kick) "NO SPIN KICK FOR 3 MINUTES")
     (else "NONE")))
 
 (defun mod-rule-timed-punishment-name ((punishment symbol))
@@ -3138,6 +3149,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-iframes) "I-FRAMES")
     ((eq? punishment 'punishment-camera) "CAMERA")
     ((eq? punishment 'punishment-ohko) "OHKO")
+    ((eq? punishment 'punishment-kick) "SPIN KICK")
     (else (mod-rule-punishment-name punishment))))
 
 (defun mod-rule-apply-extra-rule-punishment ((failed-slot int))
@@ -3195,6 +3207,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-edge) (none) (mod-rule-start-timed-punishment punishment))
     ((eq? punishment 'punishment-camera) (none) (mod-rule-start-timed-punishment punishment))
     ((eq? punishment 'punishment-ohko) (none) (mod-rule-start-timed-punishment punishment))
+    ((eq? punishment 'punishment-kick) (none) (mod-rule-start-timed-punishment punishment))
     ((eq? punishment 'punishment-reset)
      (process-spawn-function process
        (lambda ()

@@ -6,7 +6,7 @@
 ;; dgos: ENGINE, GAME
 
 (bundles "ENGINE.CGO" "GAME.CGO")
-(define *complicated-settings-current-version* 1)
+(define *complicated-settings-current-version* 2)
 
 (define *complicated-settings-version* *complicated-settings-current-version*)
 
@@ -39,6 +39,7 @@
    (punishment-toggle-ohko? symbol)
    (punishment-toggle-reset? symbol)
    (punishment-toggle-countdown? symbol)
+   (punishment-toggle-kick? symbol)
    (klaww-assist? symbol)
    (fish-assist? symbol)
    (rule-grounded? symbol)
@@ -153,10 +154,11 @@
   (set! (-> obj punishment-toggle-delay?) #t)
   (set! (-> obj punishment-toggle-blind?) #f)
   (set! (-> obj punishment-toggle-iframes?) #f)
-  (set! (-> obj punishment-toggle-camera?) #f)
+  (set! (-> obj punishment-toggle-camera?) #t)
   (set! (-> obj punishment-toggle-ohko?) #t)
   (set! (-> obj punishment-toggle-reset?) #f)
   (set! (-> obj punishment-toggle-countdown?) #t)
+  (set! (-> obj punishment-toggle-kick?) #t)
   (set! (-> obj klaww-assist?) #f)
   (set! (-> obj fish-assist?) #f)
   (set! (-> obj rule-grounded?) #t)
@@ -331,8 +333,9 @@
       (set! (-> obj complication-no-double-jump?) #t)
       (set! (-> obj complication-soul-bond?) #t))
     ;; ** ADD UPDATES HERE **
-    ;; (when (< loaded-version 2)
-    ;; )
+    (when (< loaded-version 2)
+      (set! (-> obj punishment-toggle-camera?) #t)
+    )
     (when (< loaded-version *complicated-settings-current-version*)
       (set! *complicated-settings-version* *complicated-settings-current-version*)
       (unless (write-to-file obj filename)
@@ -374,6 +377,7 @@
                                           (("punishment-toggle-ohko?") (set! (-> obj punishment-toggle-ohko?) (file-stream-read-symbol file)))
                                           (("punishment-toggle-reset?") (set! (-> obj punishment-toggle-reset?) (file-stream-read-symbol file)))
                                           (("punishment-toggle-countdown?") (set! (-> obj punishment-toggle-countdown?) (file-stream-read-symbol file)))
+                                          (("punishment-toggle-kick?") (set! (-> obj punishment-toggle-kick?) (file-stream-read-symbol file)))
                                           (("klaww-assist?") (set! (-> obj klaww-assist?) (file-stream-read-symbol file)))
                                           (("fish-assist?") (set! (-> obj fish-assist?) (file-stream-read-symbol file)))
                                           (("rule-grounded?") (set! (-> obj rule-grounded?) (file-stream-read-symbol file)))
@@ -507,6 +511,7 @@
     (format file "  (punishment-toggle-ohko? ~A)~%" (-> obj punishment-toggle-ohko?))
     (format file "  (punishment-toggle-reset? ~A)~%" (-> obj punishment-toggle-reset?))
     (format file "  (punishment-toggle-countdown? ~A)~%" (-> obj punishment-toggle-countdown?))
+    (format file "  (punishment-toggle-kick? ~A)~%" (-> obj punishment-toggle-kick?))
     (format file "  (klaww-assist? ~A)~%" (-> obj klaww-assist?))
     (format file "  (fish-assist? ~A)~%" (-> obj fish-assist?))
     (format file "  (rule-grounded? ~A)~%" (-> obj rule-grounded?))
@@ -2130,6 +2135,7 @@
   (set! (-> *punishment-toggle-options* 12 value-to-modify) (&-> *complicated-settings* punishment-toggle-ohko?))
   (set! (-> *punishment-toggle-options* 13 value-to-modify) (&-> *complicated-settings* punishment-toggle-reset?))
   (set! (-> *punishment-toggle-options* 14 value-to-modify) (&-> *complicated-settings* punishment-toggle-countdown?))
+  (set! (-> *punishment-toggle-options* 15 value-to-modify) (&-> *complicated-settings* punishment-toggle-kick?))
   ;; Condition toggle mappings
   (set! (-> *condition-toggle-options* 0 value-to-modify) (&-> *complicated-settings* rule-grounded?))
   (set! (-> *condition-toggle-options* 1 value-to-modify) (&-> *complicated-settings* rule-die?))
@@ -2250,6 +2256,7 @@
          ((eq? punishment 'punishment-ohko) (-> *complicated-settings* punishment-toggle-ohko?))
          ((eq? punishment 'punishment-reset) (-> *complicated-settings* punishment-toggle-reset?))
          ((eq? punishment 'punishment-countdown) (-> *complicated-settings* punishment-toggle-countdown?))
+         ((eq? punishment 'punishment-kick) (-> *complicated-settings* punishment-toggle-kick?))
          (else #t))))
 
 (defun klaww-assist-enabled? ()
