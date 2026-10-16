@@ -231,7 +231,7 @@
   (set! (-> obj complication-no-double-jump?) #t)
   (set! (-> obj rule-hang-time?) #f)
   (set! (-> obj complication-unbreakable?) #t)
-  (set! (-> obj complication-get-a-grip?) #f)
+  (set! (-> obj complication-get-a-grip?) #t)
   (set! (-> obj complication-fast-reel?) #t)
   (set! (-> obj complication-palate-change?) #t)
   (set! (-> obj complication-jak-be-nimble?) #t)
@@ -340,7 +340,7 @@
     )
     (when (< loaded-version 3)
       (if (eq? *complicated-difficulty-preset* 'custom)
-          (complicated-settings-apply-preset! obj 'medium))
+          (set! *complicated-difficulty-preset* 'medium))
     )
     (when (< loaded-version *complicated-settings-current-version*)
       (set! *complicated-settings-version* *complicated-settings-current-version*)
@@ -789,7 +789,7 @@
             (lambda ()
               (commit-to-file *complicated-settings*)
               (none)))
-       ;; [5] COMPLICANCE INCREMENT
+       ;; [5] COMPLIANCE INCREMENT
        (new 'static
             'game-option
             :option-type (game-option-type slider)
@@ -1031,26 +1031,26 @@
             (lambda ()
               (commit-to-file *complicated-settings*)
               (none)))
-         ;; [15] KICK
-          (new 'static
-               'game-option
-               :option-type (game-option-type on-off)
-               :name (text-id complicated-opts-punish-toggle-kick)
-               :scale #t
-               :on-confirm
-               (lambda ()
-                 (commit-to-file *complicated-settings*)
-                 (none)))
-          ;; [16] PAUSE
-         (new 'static
-              'game-option
-              :option-type (game-option-type on-off)
-              :name (text-id complicated-opts-punish-toggle-pause)
-              :scale #t
-              :on-confirm
-              (lambda ()
-                (commit-to-file *complicated-settings*)
-                (none)))
+       ;; [15] KICK
+       (new 'static
+            'game-option
+            :option-type (game-option-type on-off)
+            :name (text-id complicated-opts-punish-toggle-kick)
+            :scale #t
+            :on-confirm
+            (lambda ()
+              (commit-to-file *complicated-settings*)
+              (none)))
+       ;; [16] PAUSE
+       (new 'static
+            'game-option
+            :option-type (game-option-type on-off)
+            :name (text-id complicated-opts-punish-toggle-pause)
+            :scale #t
+            :on-confirm
+            (lambda ()
+              (commit-to-file *complicated-settings*)
+              (none)))
        ;; [--] BACK
        (new 'static
             'game-option
@@ -2120,7 +2120,7 @@
             :name (text-id misc-options)
             :scale #t
             :param3 (game-option-menu misc-options))
-       ;; [10] BACK  (was [9])
+       ;; [10] BACK
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id back) :scale #t)))
 
 ;; ---- init-game-options override --------------------------------------------

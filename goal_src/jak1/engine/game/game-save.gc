@@ -490,7 +490,7 @@
     (let ((a1-1 (-> *level* level s3-0))) (if (= (-> a1-1 status) 'active) (copy-perms-from-level! this a1-1))))
   ;; set common data
   (set! (-> arg0 length) 0)
-  (set! (-> arg0 version) 1)
+  (set! (-> arg0 version) SAVE_VERSION)
   (set! (-> arg0 level-index) (-> (lookup-level-info (-> this current-continue level)) index))
   (set! (-> arg0 fuel-cell-count) (-> this fuel))
   (set! (-> arg0 money-count) (-> this money-total))
@@ -1530,7 +1530,7 @@
       (set! (-> self save) (the-as game-save (&+ (-> self buffer base) 4)))
       (let ((v1-34 (-> self save)))
         (set! (-> v1-34 type) game-save)
-        (if (!= (-> v1-34 version) 1) (go-virtual error (mc-status-code bad-version))))
+        (if (!= (-> v1-34 version) SAVE_VERSION) (go-virtual error (mc-status-code bad-version))))
       (set-setting! 'music-volume 'abs 0.0 0)
       (set-setting! 'sfx-volume 'abs 0.0 0)
       (set! (-> *game-info* mode) 'play)

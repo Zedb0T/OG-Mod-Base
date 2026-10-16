@@ -8,6 +8,8 @@
 
 (declare-type darkvine process-drawable)
 
+(define-extern mod-rule-counter-add-progress (function symbol int none))
+
 ;; DECOMP BEGINS
 
 (deftype darkvine (process-drawable)
@@ -157,6 +159,7 @@
   :code
     (behavior ()
       (set-time! (-> self state-time))
+      (mod-rule-counter-add-progress 'rule-touch-grass 1)
       (set! (-> self dangerous) #f)
       (set! (-> self vulnerable) #f)
       (logclear! (-> self mask) (process-mask actor-pause))

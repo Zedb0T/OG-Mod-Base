@@ -23,25 +23,7 @@
 
 ;; (define-extern *water-enable?* (function (none)))
 
-(defun runs-every-frame ()
-  ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
-  ;; (draw-complicated-mod-title)
-  (let ((slot (mod-rule-find-active-slot 'rule-qte)))
-    (when (>= slot 0)
-      (let ((pressed (cpad-pressed 0)))
-        (when (logtest? pressed (pad-buttons triangle circle x square))
-          (let ((hit? (case (-> *MOD-rule-context-bank* qte-target-button)
-                        ((0) (logtest? pressed (pad-buttons triangle)))
-                        ((1) (logtest? pressed (pad-buttons circle)))
-                        ((2) (logtest? pressed (pad-buttons x)))
-                        (else (logtest? pressed (pad-buttons square))))))
-            (mod-rule-resolve! slot (if hit? 'success 'failed) #f))))))
-  (if *show-input-display* (input-display-on) (input-display-off))
-  (if (!= (current-level-name) 'swamp) (mod-rule-trigger-failure 'rule-for-billy))
-  (if (= (-> *target* control ground-pat material) (pat-material ice)) (mod-rule-trigger-failure 'rule-cold-feet))
-  (if (= (-> *target* control ground-pat material) (pat-material grass)) (mod-rule-counter-add-progress 'rule-touch-grass 1))
-  (when (mod-rule-active? 'complication-drought)
-    (set! *ocean-off* #t))
+(defun mod-debug-controls ()
   (when *debug-segment*
     (when (and (cpad-pressed? 0 circle) (cpad-hold? 0 right))
       (mod-rule-reroll-slot 0 #f))
@@ -60,10 +42,22 @@
     (when (and (cpad-pressed? 0 circle) (cpad-hold? 0 up))
       (global-countdown-add-seconds 20.0))
     (when (and (cpad-pressed? 0 circle) (cpad-hold? 0 down))
-      (global-countdown-add-seconds -20.0)))
-  ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
-  (when *debug-segment*
+      (global-countdown-add-seconds -20.0))
+    ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
     (orb-placer-maintenance))
+  (none))
+
+(defun runs-every-frame ()
+  ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
+  ;; (draw-complicated-mod-title)
+  (mod-rule-update-qte)
+  (if *show-input-display* (input-display-on) (input-display-off))
+  (if (!= (current-level-name) 'swamp) (mod-rule-trigger-failure 'rule-for-billy))
+  (if (= (-> *target* control ground-pat material) (pat-material ice)) (mod-rule-trigger-failure 'rule-cold-feet))
+  (if (= (-> *target* control ground-pat material) (pat-material grass)) (mod-rule-counter-add-progress 'rule-touch-grass 1))
+  (when (mod-rule-active? 'complication-drought)
+    (set! *ocean-off* #t))
+  (mod-debug-controls)
   (mod-rule-trigger-ohko)
   (if (<= *closest-buzzer-dist* (meters 8)) (mod-rule-trigger-failure 'rule-distancing))
   (mod-rule-trigger-speed)
