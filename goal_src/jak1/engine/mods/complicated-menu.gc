@@ -2310,7 +2310,7 @@
 (defun pass-credits-required-value ()
   (if *complicated-settings* (max 5 (min 100 (the int (+ (-> *complicated-settings* pass-credits-required) 0.5)))) 10))
 
-(defun mod-rule-condition-enabled? ((id symbol))
+(defun mod-condition-enabled? ((id symbol))
   (the symbol
        (cond
          ((not *complicated-settings*) #t)

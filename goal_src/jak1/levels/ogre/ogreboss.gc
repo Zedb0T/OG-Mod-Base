@@ -12,7 +12,7 @@
 
 (define-extern klaww-assist-enabled? (function symbol))
 
-(define-extern global-countdown-add-seconds (function float none))
+(define-extern mod-global-countdown-add-seconds (function float none))
 
 ;; DECOMP BEGINS
 
@@ -1305,7 +1305,7 @@
 (defstate ogreboss-stage3-hit (ogreboss)
   :code
     (behavior ()
-      (if (klaww-assist-enabled?) (global-countdown-add-seconds 30.0))
+      (if (klaww-assist-enabled?) (mod-global-countdown-add-seconds 30.0))
       (+! (-> self level) 1.0)
       (if (< 2.0 (-> self level)) (go ogreboss-die))
       (send-event (handle->process (-> self boulder)) 'go-hit)

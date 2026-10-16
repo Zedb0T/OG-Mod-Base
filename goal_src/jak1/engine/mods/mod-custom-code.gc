@@ -37,12 +37,12 @@
     (when (and (cpad-pressed? 0 circle) (cpad-hold? 0 l1) (cpad-hold? 0 r1))
       (global-countdown-start))
     (when (and (cpad-pressed? 0 triangle) (cpad-hold? 0 l1) (cpad-hold? 0 r1))
-      (global-countdown-reset)
+      (mod-global-countdown-reset)
       (kill-by-name 'mod-rule-manager *active-pool*))
     (when (and (cpad-pressed? 0 circle) (cpad-hold? 0 up))
-      (global-countdown-add-seconds 20.0))
+      (mod-global-countdown-add-seconds 20.0))
     (when (and (cpad-pressed? 0 circle) (cpad-hold? 0 down))
-      (global-countdown-add-seconds -20.0))
+      (mod-global-countdown-add-seconds -20.0))
     ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
     (orb-placer-maintenance))
   (none))
@@ -52,23 +52,23 @@
   ;; (draw-complicated-mod-title)
   (mod-rule-update-qte)
   (if *show-input-display* (input-display-on) (input-display-off))
-  (if (!= (current-level-name) 'swamp) (mod-rule-trigger-failure 'rule-for-billy))
-  (if (= (-> *target* control ground-pat material) (pat-material ice)) (mod-rule-trigger-failure 'rule-cold-feet))
+  (if (!= (current-level-name) 'swamp) (mod-rule-fail! 'rule-for-billy))
+  (if (= (-> *target* control ground-pat material) (pat-material ice)) (mod-rule-fail! 'rule-cold-feet))
   (if (= (-> *target* control ground-pat material) (pat-material grass)) (mod-rule-counter-add-progress 'rule-touch-grass 1))
   (when (mod-rule-active? 'complication-drought)
     (set! *ocean-off* #t))
   (mod-debug-controls)
-  (mod-rule-trigger-ohko)
-  (if (<= *closest-buzzer-dist* (meters 8)) (mod-rule-trigger-failure 'rule-distancing))
-  (mod-rule-trigger-speed)
+  (mod-rule-update-ohko)
+  (if (<= *closest-buzzer-dist* (meters 8)) (mod-rule-fail! 'rule-distancing))
+  (mod-rule-update-speed)
   (none))
 
 (defun runs-on-orb-pickup ((parent process-tree))
   (let* ((from-cache? (and parent (type-type? (-> parent type) orb-cache-top))))
     ;; Code here runs on ANY orb pickup
-    (global-countdown-add-seconds (orb-increment-value))
+    (mod-global-countdown-add-seconds (orb-increment-value))
     (mod-rule-trigger-rotten-eggs)
-    (mod-rule-on-orb-pickup 1)
+    (mod-on-orb-pickup 1)
     (when from-cache?
       ;; Code here runs only if the orb was from an orb cache
       )
@@ -79,16 +79,16 @@
 
 (defun runs-on-fly-pickup ()
   ;; Code here runs on any scout fly pickup
-  (mod-rule-on-buzzer-pickup 1)
-  (global-countdown-add-seconds (fly-increment-value))
+  (mod-on-buzzer-pickup 1)
+  (mod-global-countdown-add-seconds (fly-increment-value))
   (none))
 
 (defun runs-on-cell-pickup ((cell-event symbol))
   (case cell-event
     (('pickup)
      ;; Code here runs as soon as you pickup a powercell
-     (global-countdown-add-seconds (cell-increment-value))
-     (mod-rule-on-cell-pickup 1))
+     (mod-global-countdown-add-seconds (cell-increment-value))
+     (mod-on-cell-pickup 1))
     (('cutscene-end)
      ;; Code here runs at the end of any powercell cutscene
      ))
@@ -133,17 +133,17 @@
   (case death-event
     (('dying)
      ;; Code here runs immediately every time jak dies, before any death animation or death cutscene
-     (mod-rule-on-jak-death))
+     (mod-on-jak-death))
     (('blackout)
      ;; Code here runs after jak dies (and any death cutscene finishes), during the blackout before he spawns
      ))
   (none))
 
 (defun runs-on-enemy-death ((enemy process-drawable))
-  (mod-rule-trigger-failure 'rule-no-harm)
+  (mod-rule-fail! 'rule-no-harm)
   (let* ((enemy-type (the-as symbol (-> enemy type)))
-         (was-flop? (mod-rule-enemy-killed-by-flop? enemy))
-         (was-red? (mod-rule-enemy-killed-by-red-eco? enemy)))
+         (was-flop? (mod-enemy-killed-by-flop? enemy))
+         (was-red? (mod-enemy-killed-by-red-eco? enemy)))
     (when (and (-> enemy root) *target*)
       (let ((distance (vector-vector-distance (-> enemy root trans) (target-pos 0))))
         (set! *last-kill-dist* distance)
@@ -154,7 +154,7 @@
                   distance
                   enemy-type
                   (-> enemy state name)
-                  (mod-rule-last-player-hit-mode enemy)))))
+                  (mod-last-player-hit-mode enemy)))))
     (mod-rule-counter-add-progress 'rule-lurker-pressure 1)
     (mod-rule-trigger-disassociate)
     (mod-rule-trigger-double-kill)
@@ -167,7 +167,7 @@
 (defun runs-on-crate-break ((crate process-drawable) (event symbol) (amount int))
   ;; Code here runs when a crate enters its break flow.
   (when (and crate (eq? event 'break))
-    (mod-rule-on-crate-break amount))
+    (mod-on-crate-break amount))
   (none))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

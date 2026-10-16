@@ -11,7 +11,7 @@
 
 ;; DECOMP BEGINS
 
-(define-extern mod-rule-on-jak-death (function none))
+(define-extern mod-on-jak-death (function none))
 
 (defstate target-racing-start (target)
   :event
@@ -254,7 +254,7 @@
   :trans
     (behavior ()
       ;; (when (cpad-hold? (-> self control cpad number) x)
-      ;;   (mod-rule-trigger-failure 'rule-red-light))
+      ;;   (mod-rule-fail! 'rule-red-light))
       ;; og:preserve-this - High FPS Fix
       (if (and (recently-pressed? l1 r1)
                (or (not (time-elapsed? (-> self control unknown-dword11) (seconds 0.1)))
@@ -472,7 +472,7 @@
         event)
   :enter
     (behavior ((arg0 float) (arg1 symbol))
-      (mod-rule-on-damage)
+      (mod-on-damage)
       (sound-play "smack-surface")
       (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.5))
       (set! (-> self racer heavy) arg1)
@@ -543,7 +543,7 @@
   :event target-generic-event-handler
   :enter
     (behavior ((arg0 handle) (arg1 attack-info))
-      (mod-rule-on-damage)
+      (mod-on-damage)
       (let ((v1-0 (-> self attack-info)))
         (set! (-> v1-0 attacker) arg0)
         (set! (-> v1-0 mode) 'generic)
@@ -577,7 +577,7 @@
       (set! (-> self racer boost-output) 0.0)
       (set! (-> self racer boost-time) 0)
       (when (and (= (-> self game mode) 'play) (>= 0.0 (-> self fact health)))
-        (mod-rule-on-jak-death)
+        (mod-on-jak-death)
         (go target-racing-death (-> self attack-info mode)))
       (case (-> self attack-info mode)
         (('endlessfall))
@@ -777,7 +777,7 @@
   :code
     (behavior ((arg0 handle))
       (set! *racer-start-time* (current-time))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       ;; (format #t "get on~%")
       (set! (-> self control transv quad) (the-as uint128 0))
       (set! (-> self alt-cam-pos quad) (-> self control camera-pos quad))

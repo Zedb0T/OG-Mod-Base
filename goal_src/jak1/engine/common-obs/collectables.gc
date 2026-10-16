@@ -22,7 +22,7 @@
 
 (define-extern orb-placer-list-maintenace (function symbol none))
 
-(define-extern target-on-flut? (function symbol))
+(define-extern mod-target-on-flut? (function symbol))
 
 (define-extern mod-rule-active? (function symbol symbol))
 

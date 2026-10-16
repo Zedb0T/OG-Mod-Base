@@ -7,7 +7,7 @@
 
 ;; DECOMP BEGINS
 
-(define-extern mod-rule-trivia-hiding-money-total? (function symbol))
+(define-extern mod-trivia-hiding-money-total? (function symbol))
 
 (defun adjust-pos ((arg0 int) (arg1 int))
   (if (< arg0 arg1) 0 (- arg0 arg1)))
@@ -147,7 +147,7 @@
                               (the int (* 128.0 f30-0)))
       (+! (-> s4-1 origin y) 15.0)
       (let ((s5-2 print-game-text-scaled))
-        (if (mod-rule-trivia-hiding-money-total?)
+        (if (mod-trivia-hiding-money-total?)
           (format (clear *temp-string*) "???/~D" (-> this total-nb-of-orbs))
           (format (clear *temp-string*) "~D/~D" (the int (-> *game-info* money-total)) (-> this total-nb-of-orbs)))
         (s5-2 *temp-string* f30-0 s4-1 (the int (* 128.0 f30-0))))))

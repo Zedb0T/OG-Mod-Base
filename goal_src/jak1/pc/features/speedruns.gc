@@ -9,7 +9,7 @@
 
 (define-extern *mod-version-text* string)
 
-(define-extern global-countdown-reset (function none))
+(define-extern mod-global-countdown-reset (function none))
 
 (define *hub1-cell-list*
   (new 'static
@@ -182,7 +182,7 @@
   ;; reset has-started? flag so we can flip it back to #t when jak touches ground/out of blackout
   (false! (-> *speedrun-info* has-started?))
   ;; start new game with specified category, if any (otherwise we're resetting current category)
-  (global-countdown-reset)
+  (mod-global-countdown-reset)
   (kill-by-name 'mod-rule-manager *active-pool*)
   (if category (set! (-> *speedrun-info* category) category))
   (case (-> *speedrun-info* category)

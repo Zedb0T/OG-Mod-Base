@@ -88,17 +88,17 @@
 
 (define-extern mod-trivia-used-word1-resume-from-save (function int none))
 
-(define-extern final-time-resume-from-save (function int none))
+(define-extern mod-final-time-resume-from-save (function int none))
 
-(define-extern final-time-save-value (function int))
+(define-extern mod-final-time-save-value (function int))
 
-(define-extern final-remaining-time-resume-from-save (function int none))
+(define-extern mod-final-remaining-time-resume-from-save (function int none))
 
-(define-extern final-remaining-time-save-value (function int))
+(define-extern mod-final-remaining-time-save-value (function int))
 
-(define-extern final-score-resume-from-save (function int none))
+(define-extern mod-final-score-resume-from-save (function int none))
 
-(define-extern final-score-save-value (function int))
+(define-extern mod-final-score-save-value (function int))
 
 (define-extern mod-rule-active-slots-save-value (function int))
 
@@ -120,13 +120,13 @@
 
 (define-extern mod-rule-twist-marked-slot-resume-from-save (function int none))
 
-(define-extern mod-rule-slot-punishments-save-value (function int))
+(define-extern mod-slot-punishments-save-value (function int))
 
-(define-extern mod-rule-slot-punishments-resume-from-save (function int none))
+(define-extern mod-slot-punishments-resume-from-save (function int none))
 
-(define-extern mod-rule-timed-punishments-save-value (function int))
+(define-extern mod-timed-punishments-save-value (function int))
 
-(define-extern mod-rule-timed-punishments-resume-from-save (function int none))
+(define-extern mod-timed-punishments-resume-from-save (function int none))
 
 (define-extern mod-rule-timed-punishment-times0-save-value (function int))
 
@@ -152,17 +152,17 @@
 
 (define-extern mod-rule-slot-progress1-resume-from-save (function int none))
 
-(define-extern mod-rule-math-quiz-state-save-value (function int))
+(define-extern mod-math-quiz-state-save-value (function int))
 
-(define-extern mod-rule-math-quiz-state-resume-from-save (function int none))
+(define-extern mod-math-quiz-state-resume-from-save (function int none))
 
-(define-extern mod-rule-math-quiz-guess-save-value (function int))
+(define-extern mod-math-quiz-guess-save-value (function int))
 
-(define-extern mod-rule-math-quiz-guess-resume-from-save (function int none))
+(define-extern mod-math-quiz-guess-resume-from-save (function int none))
 
-(define-extern mod-rule-trivia-state-save-value (function int))
+(define-extern mod-trivia-state-save-value (function int))
 
-(define-extern mod-rule-trivia-state-resume-from-save (function int none))
+(define-extern mod-trivia-state-resume-from-save (function int none))
 
 (define-extern mod-rule-qte-state-save-value (function int))
 
@@ -176,7 +176,7 @@
 
 (define-extern mod-stats-conditions-skipped-resume-from-save (function int none))
 
-(define-extern mod-rule-finalize-resume-from-save (function none))
+(define-extern mod-finalize-resume-from-save (function none))
 
 ;; version identifier
 (defconstant SAVE_VERSION 1)
@@ -283,9 +283,9 @@
   (mod-rule-pending-times 537)
   (mod-rule-slot-progress0 538)
   (mod-rule-slot-progress1 539)
-  (mod-rule-math-quiz-state 540)
-  (mod-rule-math-quiz-guess 541)
-  (mod-rule-trivia-state 542)
+  (mod-math-quiz-state 540)
+  (mod-math-quiz-guess 541)
+  (mod-trivia-state 542)
   (mod-rule-qte-state 543)
   (mod-pass-state 544)
   (mod-stats-conditions-skipped 545))
@@ -837,15 +837,15 @@
                                                                                                           (let ((a0-103 (the-as game-save-tag (&+ v1-113 224))))
                                                                                                             (set! (-> a0-103 elt-type) (game-save-elt final-time))
                                                                                                             (set! (-> a0-103 elt-count) 0)
-                                                                                                            (set! (-> a0-103 user-uint64) (the-as uint (final-time-save-value))))
+                                                                                                            (set! (-> a0-103 user-uint64) (the-as uint (mod-final-time-save-value))))
                                                                                                           (let ((a0-104 (the-as game-save-tag (&+ v1-113 240))))
                                                                                                             (set! (-> a0-104 elt-type) (game-save-elt final-remaining-time))
                                                                                                             (set! (-> a0-104 elt-count) 0)
-                                                                                                            (set! (-> a0-104 user-uint64) (the-as uint (final-remaining-time-save-value))))
+                                                                                                            (set! (-> a0-104 user-uint64) (the-as uint (mod-final-remaining-time-save-value))))
                                                                                                           (let ((a0-105 (the-as game-save-tag (&+ v1-113 256))))
                                                                                                             (set! (-> a0-105 elt-type) (game-save-elt final-score))
                                                                                                             (set! (-> a0-105 elt-count) 0)
-                                                                                                            (set! (-> a0-105 user-uint64) (the-as uint (final-score-save-value))))
+                                                                                                            (set! (-> a0-105 user-uint64) (the-as uint (mod-final-score-save-value))))
                                                                                                           (let ((a0-106 (the-as game-save-tag (&+ v1-113 272))))
                                                                                                             (set! (-> a0-106 elt-type) (game-save-elt mod-rule-active-slots))
                                                                                                             (set! (-> a0-106 elt-count) 0)
@@ -869,11 +869,11 @@
                                                                                                           (let ((a0-111 (the-as game-save-tag (&+ v1-113 352))))
                                                                                                             (set! (-> a0-111 elt-type) (game-save-elt mod-rule-slot-punishments))
                                                                                                             (set! (-> a0-111 elt-count) 0)
-                                                                                                            (set! (-> a0-111 user-uint64) (the-as uint (mod-rule-slot-punishments-save-value))))
+                                                                                                            (set! (-> a0-111 user-uint64) (the-as uint (mod-slot-punishments-save-value))))
                                                                                                           (let ((a0-112 (the-as game-save-tag (&+ v1-113 368))))
                                                                                                             (set! (-> a0-112 elt-type) (game-save-elt mod-rule-timed-punishments))
                                                                                                             (set! (-> a0-112 elt-count) 0)
-                                                                                                            (set! (-> a0-112 user-uint64) (the-as uint (mod-rule-timed-punishments-save-value))))
+                                                                                                            (set! (-> a0-112 user-uint64) (the-as uint (mod-timed-punishments-save-value))))
                                                                                                           (let ((a0-113 (the-as game-save-tag (&+ v1-113 384))))
                                                                                                             (set! (-> a0-113 elt-type) (game-save-elt mod-rule-timed-punishment-times0))
                                                                                                             (set! (-> a0-113 elt-count) 0)
@@ -899,17 +899,17 @@
                                                                                                             (set! (-> a0-118 elt-count) 0)
                                                                                                             (set! (-> a0-118 user-uint64) (the-as uint (mod-rule-slot-progress1-save-value))))
                                                                                                           (let ((a0-119 (the-as game-save-tag (&+ v1-113 480))))
-                                                                                                            (set! (-> a0-119 elt-type) (game-save-elt mod-rule-math-quiz-state))
+                                                                                                            (set! (-> a0-119 elt-type) (game-save-elt mod-math-quiz-state))
                                                                                                             (set! (-> a0-119 elt-count) 0)
-                                                                                                            (set! (-> a0-119 user-uint64) (the-as uint (mod-rule-math-quiz-state-save-value))))
+                                                                                                            (set! (-> a0-119 user-uint64) (the-as uint (mod-math-quiz-state-save-value))))
                                                                                                           (let ((a0-120 (the-as game-save-tag (&+ v1-113 496))))
-                                                                                                            (set! (-> a0-120 elt-type) (game-save-elt mod-rule-math-quiz-guess))
+                                                                                                            (set! (-> a0-120 elt-type) (game-save-elt mod-math-quiz-guess))
                                                                                                             (set! (-> a0-120 elt-count) 0)
-                                                                                                            (set! (-> a0-120 user-uint64) (the-as uint (mod-rule-math-quiz-guess-save-value))))
+                                                                                                            (set! (-> a0-120 user-uint64) (the-as uint (mod-math-quiz-guess-save-value))))
                                                                                                           (let ((a0-121 (the-as game-save-tag (&+ v1-113 512))))
-                                                                                                            (set! (-> a0-121 elt-type) (game-save-elt mod-rule-trivia-state))
+                                                                                                            (set! (-> a0-121 elt-type) (game-save-elt mod-trivia-state))
                                                                                                             (set! (-> a0-121 elt-count) 0)
-                                                                                                            (set! (-> a0-121 user-uint64) (the-as uint (mod-rule-trivia-state-save-value))))
+                                                                                                            (set! (-> a0-121 user-uint64) (the-as uint (mod-trivia-state-save-value))))
                                                                                                           (let ((a0-122 (the-as game-save-tag (&+ v1-113 528))))
                                                                                                             (set! (-> a0-122 elt-type) (game-save-elt mod-rule-qte-state))
                                                                                                             (set! (-> a0-122 elt-count) 0)
@@ -976,9 +976,9 @@
           ((= a0-1 (game-save-elt mod-rule-twist-marked-slot))
            (mod-rule-twist-marked-slot-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-rule-slot-punishments))
-           (mod-rule-slot-punishments-resume-from-save (the-as int (-> save-data user-uint64))))
+           (mod-slot-punishments-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-rule-timed-punishments))
-           (mod-rule-timed-punishments-resume-from-save (the-as int (-> save-data user-uint64))))
+           (mod-timed-punishments-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-rule-timed-punishment-times0))
            (mod-rule-timed-punishment-times0-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-rule-timed-punishment-times1))
@@ -991,12 +991,12 @@
            (mod-rule-slot-progress0-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-rule-slot-progress1))
            (mod-rule-slot-progress1-resume-from-save (the-as int (-> save-data user-uint64))))
-          ((= a0-1 (game-save-elt mod-rule-math-quiz-state))
-           (mod-rule-math-quiz-state-resume-from-save (the-as int (-> save-data user-uint64))))
-          ((= a0-1 (game-save-elt mod-rule-math-quiz-guess))
-           (mod-rule-math-quiz-guess-resume-from-save (the-as int (-> save-data user-uint64))))
-          ((= a0-1 (game-save-elt mod-rule-trivia-state))
-           (mod-rule-trivia-state-resume-from-save (the-as int (-> save-data user-uint64))))
+          ((= a0-1 (game-save-elt mod-math-quiz-state))
+           (mod-math-quiz-state-resume-from-save (the-as int (-> save-data user-uint64))))
+          ((= a0-1 (game-save-elt mod-math-quiz-guess))
+           (mod-math-quiz-guess-resume-from-save (the-as int (-> save-data user-uint64))))
+          ((= a0-1 (game-save-elt mod-trivia-state))
+           (mod-trivia-state-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-rule-qte-state))
            (mod-rule-qte-state-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-pass-state)) (mod-pass-state-resume-from-save (the-as int (-> save-data user-uint64))))
@@ -1008,10 +1008,10 @@
            (mod-trivia-used-word0-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt mod-trivia-used-word1))
            (mod-trivia-used-word1-resume-from-save (the-as int (-> save-data user-uint64))))
-          ((= a0-1 (game-save-elt final-time)) (final-time-resume-from-save (the-as int (-> save-data user-uint64))))
+          ((= a0-1 (game-save-elt final-time)) (mod-final-time-resume-from-save (the-as int (-> save-data user-uint64))))
           ((= a0-1 (game-save-elt final-remaining-time))
-           (final-remaining-time-resume-from-save (the-as int (-> save-data user-uint64))))
-          ((= a0-1 (game-save-elt final-score)) (final-score-resume-from-save (the-as int (-> save-data user-uint64))))
+           (mod-final-remaining-time-resume-from-save (the-as int (-> save-data user-uint64))))
+          ((= a0-1 (game-save-elt final-score)) (mod-final-score-resume-from-save (the-as int (-> save-data user-uint64))))
           (else (format 0 "PC PORT: Skipping setting from game save, its stored in the pc-settings now~%"))))
       (set! save-data
             (the-as game-save-tag
@@ -1129,7 +1129,7 @@
       (set! data
             (the-as game-save-tag
                     (&+ (the-as pointer data) (logand -16 (+ (* (the-as int (-> data elt-size)) (-> data elt-count)) 31)))))))
-  (mod-rule-finalize-resume-from-save)
+  (mod-finalize-resume-from-save)
   (global-countup-finalize-resume-from-save)
   (global-countdown-finalize-resume-from-save)
   ;; update entity stuff in levels that are active

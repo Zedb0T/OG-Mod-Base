@@ -14,7 +14,7 @@
 
 (define-extern *closest-buzzer-dist* (float))
 
-(define-extern target-has-eco-type? (function pickup-type symbol))
+(define-extern mod-target-has-eco-type? (function pickup-type symbol))
 
 (defskelgroup *crate-barrel-sg*
   crate
@@ -458,15 +458,15 @@
            (s5-0 (-> arg3 param 3))
            (attack-type (-> arg3 param 1))) ; Capture the attack/event type
        (case attack-type
-         (('explode) (if (not (= (-> arg0 type symbol) 'bully)) (mod-rule-trigger-failure 'rule-hands-on)))
-         (('eco-yellow 'darkeco 'flut-bonk 'flut-attack 'racer) (mod-rule-trigger-failure 'rule-hands-on)))
+         (('explode) (if (not (= (-> arg0 type symbol) 'bully)) (mod-rule-fail! 'rule-hands-on)))
+         (('eco-yellow 'darkeco 'flut-bonk 'flut-attack 'racer) (mod-rule-fail! 'rule-hands-on)))
        (case (-> self defense)
          (('iron)
           (case (if
              (and (mod-rule-active? 'complication-unbreakable)
                   (!= attack-type 'eco-yellow)
                   (!= attack-type 'darkeco)
-                  (not (and (= (-> arg0 type) target) (target-has-eco-type? (pickup-type eco-red)))))
+                  (not (and (= (-> arg0 type) target) (mod-target-has-eco-type? (pickup-type eco-red)))))
              'none
              attack-type)
             (('flop 'uppercut 'explode 'darkeco 'eco-yellow 'bonk 'racer 'tube 'flut-bonk 'flut-attack)
@@ -616,7 +616,7 @@
                        (f30-0 (vector-vector-distance (-> gp-2 world-sphere) (-> a1-3 world-sphere))))
                   (when (and (< f30-0 (-> *FACT-bank* suck-suck-dist)) (!= (-> self defense) 'steel))
                     (logior! (-> self fact options) (fact-options can-collect))
-                    (mod-rule-trigger-failure 'rule-hands-on)
+                    (mod-rule-fail! 'rule-hands-on)
                     (go-virtual die #f 0))
                   (when (rand-vu-percent? 0.5)
                     (let ((s5-0 (new 'stack-no-clear 'vector)))

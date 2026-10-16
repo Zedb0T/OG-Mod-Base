@@ -10,11 +10,11 @@
 
 (define-extern mod-game-beaten-resume-from-save (function int none))
 
-(define-extern global-countdown-reset (function none))
+(define-extern mod-global-countdown-reset (function none))
 
-(define-extern global-countdown-freeze-for-game-beaten (function none))
+(define-extern mod-global-countdown-freeze-for-game-beaten (function none))
 
-(define-extern mod-rule-finalize-run-stats! (function none))
+(define-extern mod-finalize-run-stats! (function none))
 
 (define-extern mod-game-beaten-set! (function symbol none))
 
@@ -310,9 +310,9 @@
       (case message
         (('white-eco-picked-up)
          (mod-game-beaten-set! #t)
-         (mod-rule-finalize-run-stats!)
+         (mod-finalize-run-stats!)
          ;; mod: game is beaten, stop the countdown/rules for this file right now.
-         (global-countdown-freeze-for-game-beaten)
+         (mod-global-countdown-freeze-for-game-beaten)
          (close-specific-task! (game-task finalboss-movies) (task-status unknown))
          (entity-birth-no-kill (-> self alts 5))
          (let ((a1-2 (new 'stack-no-clear 'event-message-block)))

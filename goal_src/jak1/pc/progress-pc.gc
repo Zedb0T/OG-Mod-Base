@@ -8,8 +8,8 @@
 ;;---------------------------
 ;; pc menu extra stuff
 
-(define-extern global-countdown-reset (function none))
-(define-extern mod-rule-timed-punishment-active? (function symbol symbol))
+(define-extern mod-global-countdown-reset (function none))
+(define-extern mod-timed-punishment-active? (function symbol symbol))
 
 (defconstant PROGRESS_PC_PAGE_HEIGHT 7)
 
@@ -365,7 +365,7 @@
             :scale #t
             :option-disabled-func
             (lambda ()
-              (mod-rule-timed-punishment-active? 'punishment-camera)))
+              (mod-timed-punishment-active? 'punishment-camera)))
        (new 'static
             'game-option
             :option-type (game-option-type normal-inverted)
@@ -373,7 +373,7 @@
             :scale #t
             :option-disabled-func
             (lambda ()
-              (mod-rule-timed-punishment-active? 'punishment-camera)))
+              (mod-timed-punishment-active? 'punishment-camera)))
        (new 'static
             'game-option
             :option-type (game-option-type normal-inverted)
@@ -381,7 +381,7 @@
             :scale #t
             :option-disabled-func
             (lambda ()
-              (mod-rule-timed-punishment-active? 'punishment-camera)))
+              (mod-timed-punishment-active? 'punishment-camera)))
        (new 'static
             'game-option
             :option-type (game-option-type normal-inverted)
@@ -389,7 +389,7 @@
             :scale #t
             :option-disabled-func
             (lambda ()
-              (mod-rule-timed-punishment-active? 'punishment-camera)))
+              (mod-timed-punishment-active? 'punishment-camera)))
        (new 'static
             'game-option
             :option-type (game-option-type confirmation)
@@ -397,7 +397,7 @@
             :scale #t
             :option-disabled-func
             (lambda ()
-              (mod-rule-timed-punishment-active? 'punishment-camera))
+              (mod-timed-punishment-active? 'punishment-camera))
             :on-confirm
             (lambda ()
               (reset-camera *pc-settings* #t)
@@ -2974,7 +2974,7 @@
               (set! *quit-to-title* #t)
               (sound-play "start-options")
               (sound-volume-off)
-              (global-countdown-reset)
+              (mod-global-countdown-reset)
               (set! (-> *game-info* mode) 'play)
               (initialize! *game-info* 'game (the-as game-save #f) "title-start"))
              (else (sound-play "cursor-options") (set! (-> obj next-display-state) (progress-screen invalid)))))

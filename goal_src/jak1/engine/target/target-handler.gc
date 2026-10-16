@@ -4,11 +4,11 @@
 (require "engine/target/logic-target.gc")
 (define-extern target-powerup-effect (function symbol none :behavior target))
 
-(define-extern mod-rule-record-player-hit (function process symbol none))
+(define-extern mod-record-player-hit (function process symbol none))
 
 (define-extern mod-rule-active? (function symbol symbol))
 
-(define-extern mod-rule-timed-punishment-active? (function symbol symbol))
+(define-extern mod-timed-punishment-active? (function symbol symbol))
 
 ;; DECOMP BEGINS
 
@@ -254,7 +254,7 @@
     (set! (-> v1-0 param 3) (the-as uint arg4))
     (let ((gp-0 (send-event-function arg0 v1-0)))
       (when (and gp-0 (!= gp-0 'push))
-        (mod-rule-record-player-hit arg0
+        (mod-record-player-hit arg0
                                     (if (and (= (-> self fact eco-type) (pickup-type eco-red)) (>= (-> self fact eco-level) 1.0)) 'eco-red (the-as symbol arg1)))
         (let ((v1-5 (-> self control danger-mode)))
           (cond
@@ -449,7 +449,7 @@
     (('play-anim) (go target-play-anim (the-as string (-> arg3 param 0)) (the-as handle arg1)))
     (('clone-anim) (go target-clone-anim (process->handle (the-as process (-> arg3 param 0)))))
     (('edge-grab)
-     (if (and (not (mod-rule-timed-punishment-active? 'punishment-edge)) (not (mod-rule-active? 'complication-butter-fingers)))
+     (if (and (not (mod-timed-punishment-active? 'punishment-edge)) (not (mod-rule-active? 'complication-butter-fingers)))
        (go target-edge-grab)))
     (('pole-grab)
      (if (not (logtest? (-> self control root-prim prim-core action) (collide-action swingpole-active)))

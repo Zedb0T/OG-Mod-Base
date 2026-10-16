@@ -29,7 +29,7 @@
 
 (define-extern target-bonk-event-handler (function process int symbol event-message-block object :behavior target))
 
-(define-extern mod-rule-trigger-failure (function symbol none))
+(define-extern mod-rule-fail! (function symbol none))
 
 (define-extern mod-rule-on-jump (function none))
 
@@ -395,7 +395,7 @@
       (target-state-hook-exit))
   :trans
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       ((-> self state-hook))
       (when (= (-> self control ground-pat material) (pat-material ice))
         (target-effect-exit)
@@ -605,7 +605,7 @@
   :event target-standard-event-handler
   :enter
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (vector-turn-to (-> self control transv))
       (set! (-> self control mod-surface) *turn-around-mods*)
       (set! (-> self control bend-target) 1.0))
@@ -747,7 +747,7 @@
   :event target-standard-event-handler
   :enter
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (set! (-> self control bend-target) 1.0)
       (set! (-> self control mod-surface) *duck-mods*)
       (target-collide-set! 'duck (the-as float 1.0)))
@@ -815,7 +815,7 @@
         exit)
   :trans
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       ((-> self state-hook))
       (if (and (or (not (cpad-hold? (-> self control cpad number) l1 r1))
                    (logtest? (-> self state-flags) (state-flags prevent-duck))
@@ -868,7 +868,7 @@
               (a2-5 (-> self control unknown-vector102)))
           (set! (-> a2-5 quad) (-> (the-as vector (-> self control unknown-dword62)) quad))
           ;;           (mod-rule-trigger-brittle-bones)
-          ;; (mod-rule-trigger-failure 'rule-grounded)
+          ;; (mod-rule-fail! 'rule-grounded)
           (go target-launch (the-as float a0-9) (the-as symbol a1-5) a2-5 (-> self control unknown-dword63))))
       (set-time! (-> self state-time))
       (sound-play "jump" :vol 70)
@@ -940,7 +940,7 @@
   :event target-jump-event-handler
   :enter
     (behavior ((arg0 float) (arg1 float))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       ((-> target-jump enter) arg0 arg1 (the-as surface #f))
       (set! (-> self control mod-surface) *forward-jump-mods*))
   :exit target-exit
@@ -1063,7 +1063,7 @@
   :event target-standard-event-handler
   :enter
     (behavior ((arg0 float) (arg1 float) (arg2 symbol))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (set-time! (-> self state-time))
       (logclear! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
       (set! (-> self control mod-surface) *turn-around-mods*))
@@ -1104,7 +1104,7 @@
   :event target-jump-event-handler
   :enter
     (behavior ((arg0 float) (arg1 float) (arg2 symbol))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (set-time! (-> self state-time))
       (sound-play "jump" :vol 80 :pitch -0.4)
       (init-var-jump arg0 arg1 (the-as vector #t) (the-as vector #f) (-> self control transv))
@@ -1232,7 +1232,7 @@
   :event target-dangerous-event-handler
   :enter
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (set-time! (-> self state-time))
       (target-start-attack)
       (target-danger-set! 'spin #f)
@@ -1297,7 +1297,7 @@
         (else (target-dangerous-event-handler proc argc message block))))
   :enter
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (if (or (and (= (-> self fact eco-type) (pickup-type eco-yellow)) (>= (-> self fact eco-level) 1.0))
               (not (time-elapsed? (-> self control unknown-dword82) (seconds 1.5))))
         (go target-yellow-blast))
@@ -1310,7 +1310,7 @@
       (set! (-> *run-attack-mods* turnvv) 655360.0)
       (target-start-attack)
       (target-danger-set! 'punch #f)
-      (mod-rule-trigger-failure 'rule-management)
+      (mod-rule-fail! 'rule-management)
       (if (or (< (fabs (-> self control local-slope-x)) 0.3) (< 0.3 (fabs (-> self control local-slope-z))))
         (set! (-> self control bend-target) 1.0)))
   :exit
@@ -1426,12 +1426,12 @@
           (else (target-dangerous-event-handler proc argc message block)))))
   :enter
     (behavior ((arg0 symbol))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (if (< (- (current-time) *last-launch-time*) (seconds 1.0)) (mod-rule-counter-add-progress 'rule-one-frame 1))
       (set-time! (-> self state-time))
       (logclear! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
       (target-start-attack)
-      (mod-rule-trigger-failure 'rule-keep-it-low)
+      (mod-rule-fail! 'rule-keep-it-low)
       (target-danger-set! 'spin-air #f)
       (set! (-> self control mod-surface) *jump-attack-mods*)
       (let ((f0-1 (vector-dot (-> self control dynam gravity-normal) (-> self control transv))))
@@ -1556,7 +1556,7 @@
   :event target-dangerous-event-handler
   :enter
     (behavior ((arg0 float) (arg1 float))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (if (and (= (-> self control ground-pat material) (pat-material ice)) (< 32768.0 (-> self control ctrl-xz-vel)))
         (set-forward-vel (the-as float 32768.0)))
       (set-time! (-> self state-time))
@@ -1632,7 +1632,7 @@
           (else (target-dangerous-event-handler proc argc message block)))))
   :enter
     (behavior ((arg0 float) (arg1 float) (arg2 float))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (when (and (= (-> self fact eco-type) (pickup-type eco-yellow)) (>= (-> self fact eco-level) 1.0))
         (mod-rule-on-jump)
         (go target-yellow-jump-blast))
@@ -1817,7 +1817,7 @@
       (target-standard-event-handler proc argc message block))
   :enter
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (mod-rule-counter-add-progress 'rule-keep-rolling 1)
       (set-time! (-> self state-time))
       (set! (-> self control mod-surface) *wheel-mods*)

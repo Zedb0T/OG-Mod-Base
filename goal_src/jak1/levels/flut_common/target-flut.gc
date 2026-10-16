@@ -437,7 +437,7 @@
       ((-> target-flut-start exit)))
   :trans
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (if (not (move-legs?)) (go target-flut-stance))
       ;; og:preserve-this - High FPS Fix
       (if (and (recently-pressed? x) (can-jump? #f))
@@ -464,7 +464,7 @@
                  (* 81920.0 (seconds-per-frame))))))
   :code
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (let ((f28-0 0.0)
             (f30-0 0.0))
         (let ((gp-0 22))
@@ -754,7 +754,7 @@
 (defstate target-flut-running-attack (target)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (case message
         (('touched)
          (cond
@@ -910,7 +910,7 @@
 (defstate target-flut-air-attack (target)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (if (and (= message 'touched)
                ((method-of-type touching-shapes-entry prims-touching?)
                 (the-as touching-shapes-entry (-> block param 0))
@@ -1059,7 +1059,7 @@
           (go target-flut-stance))))
   :code
     (behavior ((arg0 symbol) (arg1 attack-info))
-      (mod-rule-on-damage)
+      (mod-on-damage)
       (set-time! (-> self state-time))
       (let ((gp-0 (-> self attack-info)))
         (let ((s5-0 (new 'stack-no-clear 'vector)))
@@ -1104,12 +1104,12 @@
                   (go target-flut-stance))
                  (else
                   (pickup-collectable! (-> self fact) (pickup-type eco-green) (the-as float -1000.0) (the-as handle #f))
-                  (mod-rule-on-jak-death)
+                  (mod-on-jak-death)
                   (go target-flut-death (-> gp-0 mode)))))
               (('water-vol 'sharkey)
                (pickup-collectable! (-> self fact) (pickup-type eco-green) (the-as float -1000.0) (the-as handle #f))
                (when (= (-> self game mode) 'play)
-                 (mod-rule-on-jak-death)
+                 (mod-on-jak-death)
                  (go target-flut-death (-> gp-0 mode))))
               (('death) (pickup-collectable! (-> self fact) (pickup-type eco-green) (the-as float -1000.0) (the-as handle #f)))
               (else
@@ -1131,7 +1131,7 @@
                  (ja :group! eichar-flut-hit-back-ja :num! min))))
             (target-hit-move gp-0 (target-hit-orient gp-0 s5-0) target-flut-falling-anim-trans f30-0)))
         (when (and (= (-> self game mode) 'play) (>= 0.0 (-> self fact health)))
-          (mod-rule-on-jak-death)
+          (mod-on-jak-death)
           (go target-flut-death (-> gp-0 mode))))
       (go target-flut-hit-ground))
   :post target-flut-post)
@@ -1222,7 +1222,7 @@
         exit)
   :code
     (behavior ((arg0 handle))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (set! (-> self control transv quad) (the-as uint128 0))
       (set! (-> self alt-cam-pos quad) (-> self control camera-pos quad))
       (logior! (-> self state-flags) (state-flags use-alt-cam-pos))

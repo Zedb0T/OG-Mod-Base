@@ -31,16 +31,16 @@
        :punishment-input-delay 0.2
        :bad-ping-input-delay 0.12))
 
-(deftype mod-rule-punishment-bank (structure)
+(deftype mod-punishment-bank (structure)
   ((timed-punishments  (array symbol))
    (timed-end-times    (array time-frame))
    (timed-next-ticks   (array time-frame))
    (timed-saved-ids    (array symbol))
    (timed-saved-tenths (array int32))))
 
-(define *MOD-rule-punishment-bank*
+(define *MOD-punishment-bank*
   (new 'static
-       'mod-rule-punishment-bank
+       'mod-punishment-bank
        :timed-punishments
        (new 'static 'boxed-array :type symbol :length 8 :allocated-length 8)
        :timed-end-times
@@ -291,14 +291,14 @@
 
 (define *MOD-lights-out-bank* (new 'static 'mod-lights-out-bank :active? #f))
 
-(deftype mod-rule-hit-bank (structure)
+(deftype mod-hit-bank (structure)
   ((player-hit-handles   (array handle))
    (player-hit-modes     (array symbol))
    (player-hit-write-idx int32)))
 
-(define *MOD-rule-hit-bank*
+(define *MOD-hit-bank*
   (new 'static
-       'mod-rule-hit-bank
+       'mod-hit-bank
        :player-hit-handles
        (new 'static 'boxed-array :type handle :length 64 :allocated-length 64)
        :player-hit-modes

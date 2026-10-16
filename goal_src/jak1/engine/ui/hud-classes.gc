@@ -9,9 +9,9 @@
 
 (define-extern pass-credits-required-value (function int))
 
-(define-extern mod-rule-trivia-hiding-money-total? (function symbol))
+(define-extern mod-trivia-hiding-money-total? (function symbol))
 
-(define-extern mod-rule-string-width (function string font-flags float float))
+(define-extern mod-string-width (function string font-flags float float))
 
 (defpartgroup group-part-hud-pickup
   :id 75
@@ -549,7 +549,7 @@
       (case *hud-collectable-view*
         (((hud-collectable-view game-totals))
          ;; show orbs collected/total across entire game
-         (draw-string-xy-scaled (if (mod-rule-trivia-hiding-money-total?)
+         (draw-string-xy-scaled (if (mod-trivia-hiding-money-total?)
                                   (string-format "???~%/~D" 2000)
                                   (string-format "~D~%/~D"
                                                  (the int (-> *game-info* money-total))
@@ -1428,10 +1428,10 @@
              (gap 4)
              (credits-row -2)
              (label-nudge 6)
-             (passes-width (the int (mod-rule-string-width (string-format "~D" (-> *MOD-pass-bank* passes)) passes-flags passes-scale)))
-             (label-width (the int (mod-rule-string-width label-str passes-flags label-scale)))
+             (passes-width (the int (mod-string-width (string-format "~D" (-> *MOD-pass-bank* passes)) passes-flags passes-scale)))
+             (label-width (the int (mod-string-width label-str passes-flags label-scale)))
              (credits-width (the int
-                                 (mod-rule-string-width (string-format "(~D/~D)" (-> *MOD-pass-bank* credits) (pass-credits-required-value))
+                                 (mod-string-width (string-format "(~D/~D)" (-> *MOD-pass-bank* credits) (pass-credits-required-value))
                                                         passes-flags
                                                         credits-scale)))
              (center-x (+ (-> this text-x) (* (-> this x-sgn) (-> this offset))))

@@ -17,7 +17,7 @@
 
 (define-extern mod-rule-active? (function symbol symbol))
 
-(define-extern mod-rule-timed-punishment-active? (function symbol symbol))
+(define-extern mod-timed-punishment-active? (function symbol symbol))
 
 (#when PC_PORT
   ;;;;;;;;;;;;;;;;;;;;;;
@@ -537,7 +537,7 @@
               (#when PC_PORT
                 (let ((invert-comp? (mod-rule-active? 'complication-invert))
                       (mirror-cheat? (or (pc-cheats? (-> *pc-settings* cheats) mirror) *mod-mirror-active?*))
-                      (camera-punish? (mod-rule-timed-punishment-active? 'punishment-camera)))
+                      (camera-punish? (mod-timed-punishment-active? 'punishment-camera)))
                   ;; base invert/mirror logic for x-axis
                   (when (or (and invert-comp? (not mirror-cheat?)) (and (not invert-comp?) mirror-cheat?))
                     (set! (-> pad leftx) (- 255 (-> pad leftx))))

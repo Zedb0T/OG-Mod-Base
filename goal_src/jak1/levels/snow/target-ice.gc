@@ -13,7 +13,7 @@
   :exit target-state-hook-exit
   :trans
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-cold-feet)
+      ;; (mod-rule-fail! 'rule-cold-feet)
       ((-> self state-hook))
       (if (!= (-> self control ground-pat material) (pat-material ice)) (go target-stance))
       (when (move-legs?)
@@ -103,7 +103,7 @@
   :event target-standard-event-handler
   :enter
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (set-time! (-> self state-time))
       (set! (-> self control mod-surface) *walk-mods*))
   :exit
@@ -112,7 +112,7 @@
       (target-state-hook-exit))
   :trans
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-cold-feet)
+      ;; (mod-rule-fail! 'rule-cold-feet)
       ((-> self state-hook))
       (when (!= (-> self control ground-pat material) (pat-material ice))
         (remove-exit)

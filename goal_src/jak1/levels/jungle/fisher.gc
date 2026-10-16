@@ -11,7 +11,7 @@
 
 (define-extern fish-assist-enabled? (function symbol))
 
-(define-extern global-countdown-add-seconds (function float none))
+(define-extern mod-global-countdown-add-seconds (function float none))
 
 (define-extern mod-rule-palate-change-grace-active? (function symbol))
 
@@ -849,7 +849,7 @@
              (ambient-hint-spawn "sksp0a42" (-> self root trans) *entity-pool* 'ambient)
              (send-event (ppointer->process (-> self parent)) 'deadly)))
           (('powerup)
-           (if (fish-assist-enabled?) (global-countdown-add-seconds 5.0))
+           (if (fish-assist-enabled?) (mod-global-countdown-add-seconds 5.0))
            (process-spawn part-tracker
                           :init
                           part-tracker-init

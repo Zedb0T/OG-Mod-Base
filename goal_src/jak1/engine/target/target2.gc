@@ -9,7 +9,7 @@
 ;; DECOMP BEGINS
 (define *last-launch-time* 0)
 
-(define-extern mod-rule-on-damage (function none))
+(define-extern mod-on-damage (function none))
 
 (define-extern mod-rule-trigger-get-a-grip (function none))
 
@@ -669,17 +669,17 @@
         (ja :num! (seek!)))
       (set-forward-vel arg2)
       ;; (mod-rule-trigger-brittle-bones)
-      ;; (mod-rule-trigger-failure 'rule-grounded)
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-grounded)
+      ;; (mod-rule-fail! 'rule-red-light)
       (go target-pole-flip-up-jump (the-as float arg0) (the-as float arg1)))
   :post target-no-move-post)
 
 (defstate target-pole-flip-up-jump (target)
   :event target-standard-event-handler
   :enter ;; (behavior ()
-  ;;   (mod-rule-trigger-failure 'rule-red-light)
+  ;;   (mod-rule-fail! 'rule-red-light)
   ;;   (mod-rule-trigger-brittle-bones)
-  ;;   (mod-rule-trigger-failure 'rule-grounded)
+  ;;   (mod-rule-fail! 'rule-grounded)
     (-> target-jump-forward
         enter)
   ;; )
@@ -724,9 +724,9 @@
         (suspend)
         (ja :num! (seek! (ja-aframe (the-as float 16.0) 0))))
       (set-forward-vel arg2)
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       ;; (mod-rule-trigger-brittle-bones)
-      ;; (mod-rule-trigger-failure 'rule-grounded)
+      ;; (mod-rule-fail! 'rule-grounded)
       (go target-pole-flip-forward-jump arg0 arg1))
   :post target-no-move-post)
 
@@ -835,8 +835,8 @@
   :code
     (behavior ((arg0 float) (arg1 float))
       ;; (mod-rule-trigger-brittle-bones)
-      ;; (mod-rule-trigger-failure 'rule-grounded)
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-grounded)
+      ;; (mod-rule-fail! 'rule-red-light)
       (ja-channel-set! 1)
       (set-quaternion! (-> self control) (-> self control dir-targ))
       (logclear! (-> self control root-prim prim-core action) (collide-action edgegrab-active edgegrab-cam))
@@ -865,7 +865,7 @@
         exit)
   :code
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (ja-channel-set! 1)
       (set-quaternion! (-> self control) (-> self control dir-targ))
       (send-event *camera* 'damp-up)
@@ -895,7 +895,7 @@
         event)
   :enter
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (set-time! (-> self state-time))
       (set! (-> self control mod-surface) *run-attack-mods*)
       (set! (-> *run-attack-mods* turnv) 655360.0)
@@ -990,9 +990,9 @@
   :event target-standard-event-handler
   :enter
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       ;; (mod-rule-trigger-brittle-bones)
-      ;; (mod-rule-trigger-failure 'rule-grounded)
+      ;; (mod-rule-fail! 'rule-grounded)
       (set! (-> self control mod-surface) *yellow-jump-mods*)
       (let ((gp-0 (new-stack-vector0)))
         (let ((f0-1 (vector-dot (-> self control dynam gravity-normal) (-> self control transv))))
@@ -1106,7 +1106,7 @@
       0)
   :trans
     (behavior ()
-      (mod-rule-trigger-failure 'rule-landlubber)
+      (mod-rule-fail! 'rule-landlubber)
       ((-> self state-hook))
       (when (and (not (logtest? (-> self water flags) (water-flags wt10))) (time-elapsed? (-> self water wade-time) (seconds 0.05)))
         (if (logtest? (-> self water flags) (water-flags wt11)) (go target-swim-stance) (go target-stance)))
@@ -1129,14 +1129,14 @@
   :event target-standard-event-handler
   :enter
     (behavior ()
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (-> target-wade-stance enter))
   :exit
     (-> target-wade-stance
         exit)
   :trans
     (behavior ()
-      (mod-rule-trigger-failure 'rule-landlubber)
+      (mod-rule-fail! 'rule-landlubber)
       ((-> self state-hook))
       (when (and (not (logtest? (-> self water flags) (water-flags wt10))) (time-elapsed? (-> self water wade-time) (seconds 0.1)))
         (if (logtest? (-> self water flags) (water-flags wt11)) (go target-swim-stance) (go target-stance)))
@@ -1152,7 +1152,7 @@
       (if (can-hands? #t) (go target-running-attack)))
   :code
     (behavior ()
-      (mod-rule-trigger-failure 'rule-landlubber)
+      (mod-rule-fail! 'rule-landlubber)
       (let ((gp-0 105)
             (f30-0 0.0))
         (let ((v1-2 (ja-group)))
@@ -1284,7 +1284,7 @@
         (set! (-> self control override-quat-alpha) 0.0)))
   :trans
     (behavior ()
-      (mod-rule-trigger-failure 'rule-landlubber)
+      (mod-rule-fail! 'rule-landlubber)
       ((-> self state-hook))
       (if (and (logtest? (-> self control status) (cshape-moving-flags onsurf))
                (not (logtest? (-> self control status) (cshape-moving-flags on-water))))
@@ -1305,7 +1305,7 @@
       (target-swim-tilt (the-as float 0.0) (the-as float 2.0) (the-as float 0.0) (the-as float 1.0)))
   :code
     (behavior ()
-      (mod-rule-trigger-failure 'rule-landlubber)
+      (mod-rule-fail! 'rule-landlubber)
       (let ((v1-2 (ja-group)))
         (cond
           ((or (= v1-2 eichar-swim-up-ja) (= v1-2 eichar-swim-down-to-up-ja))
@@ -1343,8 +1343,8 @@
         exit)
   :trans
     (behavior ()
-      (mod-rule-trigger-failure 'rule-landlubber)
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      (mod-rule-fail! 'rule-landlubber)
+      ;; (mod-rule-fail! 'rule-red-light)
       ((-> self state-hook))
       (if (and (logtest? (-> self control status) (cshape-moving-flags onsurf))
                (not (logtest? (-> self control status) (cshape-moving-flags on-water))))
@@ -1365,7 +1365,7 @@
       (target-swim-tilt (the-as float 0.0) (the-as float 2.0) (the-as float 0.0) (the-as float 1.0)))
   :code
     (behavior ()
-      (mod-rule-trigger-failure 'rule-landlubber)
+      (mod-rule-fail! 'rule-landlubber)
       (let ((v1-2 (ja-group)))
         (cond
           ((or (= v1-2 eichar-swim-up-ja) (= v1-2 eichar-swim-down-to-up-ja) (= v1-2 eichar-swim-up-to-stance-ja))
@@ -1427,8 +1427,8 @@
         (set! (-> self control override-quat-alpha) 0.0)))
   :trans
     (behavior ()
-      (mod-rule-trigger-failure 'rule-landlubber)
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      (mod-rule-fail! 'rule-landlubber)
+      ;; (mod-rule-fail! 'rule-red-light)
       (if (time-elapsed? (-> self water swim-time) (seconds 0.5)) (go target-stance))
       (cond
         ((time-elapsed? (-> self control last-time-on-surface) (seconds 0.1))
@@ -1441,7 +1441,7 @@
            (target-swim-tilt (the-as float 0.0) (the-as float 2.0) (the-as float -1.0) (the-as float 1.0))))))
   :code
     (behavior ()
-      (mod-rule-trigger-failure 'rule-landlubber)
+      (mod-rule-fail! 'rule-landlubber)
       (let ((gp-0 60)
             (s5-0 3000)
             (f30-0 0.0))
@@ -1515,7 +1515,7 @@
         exit)
   :trans
     (behavior ()
-      (mod-rule-trigger-failure 'rule-landlubber)
+      (mod-rule-fail! 'rule-landlubber)
       (if (and (cpad-pressed? (-> self control cpad number) x)
                (not (logtest? (-> self state-flags) (state-flags prevent-jump)))
                (not (logtest? (-> self water flag) (water-flag head-under-water bouncing))))
@@ -1529,7 +1529,7 @@
       ((-> target-swim-down trans)))
   :code
     (behavior ()
-      (mod-rule-trigger-failure 'rule-landlubber)
+      (mod-rule-fail! 'rule-landlubber)
       (ja-channel-push! 1 (seconds 0.1))
       (let ((f30-0 1.0))
         (let ((gp-0 #t))
@@ -1578,7 +1578,7 @@
     (-> target-jump
         event)
   :enter ;; (behavior ()
-  ;;   (mod-rule-trigger-failure 'rule-red-light)
+  ;;   (mod-rule-fail! 'rule-red-light)
     (-> target-jump
         enter)
   ;; )
@@ -1597,7 +1597,7 @@
 (defstate target-swim-jump (target)
   :event target-standard-event-handler
   :enter ;; (behavior ()
-  ;;     (mod-rule-trigger-failure 'rule-red-light)  
+  ;;     (mod-rule-fail! 'rule-red-light)  
     (-> target-swim-stance
         enter)
   ;; )
@@ -1636,7 +1636,7 @@
   :event target-standard-event-handler
   :enter
     (behavior ((arg0 float))
-      (mod-rule-on-damage)
+      (mod-on-damage)
       (set! (-> self control unknown-dword31) 0)
       (set! (-> self control last-attack-end-time) 0)
       (set-forward-vel (the-as float 0.0))
@@ -1671,7 +1671,7 @@
 (defstate target-launch (target)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (if (and (= message 'query) (= (-> block param 0) 'mode))
         'target-launch
         (target-standard-event-handler proc argc message block)))
@@ -1737,7 +1737,7 @@
 (defstate target-periscope (target)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
-      ;; (mod-rule-trigger-failure 'rule-red-light)
+      ;; (mod-rule-fail! 'rule-red-light)
       (case message
         (('change-mode) #f)
         (('end-mode) (when (-> self control unknown-spoolanim00) (set! (-> self control unknown-uint20) (the-as uint #f)) #t))

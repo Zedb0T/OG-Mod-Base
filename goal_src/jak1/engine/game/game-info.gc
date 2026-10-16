@@ -461,7 +461,7 @@
                   (< (-> this health) (-> this health-max))
                   (not
                     ;; (or 
-                    (mod-rule-timed-punishment-active? 'punishment-ohko)
+                    (mod-timed-punishment-active? 'punishment-ohko)
                     ;;  (mod-rule-active? 'complication-ohko)
                     ;;  (mod-rule-active? 'rule-survivor)
                     ))

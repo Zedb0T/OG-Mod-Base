@@ -11,9 +11,9 @@
 
 (define-extern mod-rule-active? (function symbol symbol))
 
-(define-extern mod-rule-trigger-failure (function symbol none))
+(define-extern mod-rule-fail! (function symbol none))
 
-(define-extern target-on-flut? (function symbol))
+(define-extern mod-target-on-flut? (function symbol))
 
 (defpart 108
   :init-specs
@@ -620,12 +620,12 @@
          ;;                      (logtest? (-> this flag) (water-flag lava))
          ;;                      (logtest? (-> this flag) (water-flag mud))
          ;;                      (logtest? (-> this flag) (water-flag tar)))))
-         ;;    (mod-rule-trigger-failure 'rule-landlubber))
+         ;;    (mod-rule-fail! 'rule-landlubber))
          (when (and (= (-> this process type) target)
                     (logtest? (-> this flag) (water-flag touch-water))
                     (or (logtest? (-> this flag) (water-flag mud)) (logtest? (-> this flag) (water-flag tar)))
-                    (target-on-flut?))
-           (mod-rule-trigger-failure 'rule-landlubber))
+                    (mod-target-on-flut?))
+           (mod-rule-fail! 'rule-landlubber))
          (set! (-> this drip-height) (fmax (- (-> this surface-height) (-> this bottom 0 y)) (-> this drip-height)))
          (set! (-> this drip-speed) 15.0)
          (if (not (logtest? (-> this flag) (water-flag touch-water))) (water-control-method-15 this))
