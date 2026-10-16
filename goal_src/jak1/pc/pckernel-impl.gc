@@ -98,7 +98,16 @@
    (plant-boss?  symbol)
    (racer?       symbol)
    (flutflut?    symbol)
-   (time-of-day  (pointer float))))
+   (time-of-day  (pointer float))
+   ;; A Complicated Mod run info, filled in by mod-discord-info-fill!
+   (difficulty        string) ;; difficulty preset display name
+   (countdown-active? symbol) ;; is the countdown timer running?
+   (countdown-lost?   symbol) ;; did the countdown run out?
+   (game-beaten?      symbol) ;; has the run been finished?
+   (time-remaining    int32) ;; countdown time left in ticks (final time left once beaten)
+   (completion        float) ;; game completion percentage
+   (conditions-won    int32)
+   (conditions-failed int32)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; debug settings

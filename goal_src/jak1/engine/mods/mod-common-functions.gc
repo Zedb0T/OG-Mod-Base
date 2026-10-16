@@ -69,6 +69,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (define-extern pass-credits-required-value (function int))
 
+(define-extern *complicated-difficulty-preset* symbol)
+
 (define-extern time-limit-multiplier (function float))
 
 (define-extern text-scale-multiplier (function float))
@@ -955,6 +957,30 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (set! (-> *MOD-stats-bank* final-remaining-time) (-> *MOD-countdown-bank* remaining-time))
   (set! (-> *MOD-stats-bank* final-time) (-> *MOD-countdown-bank* countup-timer))
   (set! (-> *MOD-stats-bank* final-score) (the int (mod-calc-run-score)))
+  (none))
+
+(defun mod-difficulty-display-name ()
+  (case *complicated-difficulty-preset*
+    (('easy) "Easy")
+    (('medium) "Medium")
+    (('esoteric) "Esoteric")
+    (('unfathomable) "Unfathomable")
+    (else "Custom")))
+
+;; mod: called by pckernel.gc's update-discord-rpc, so it never touches
+;; *MOD-countdown-bank*/*MOD-stats-bank* directly.
+(defun mod-discord-info-fill! ((info discord-info))
+  (set! (-> info difficulty) (mod-difficulty-display-name))
+  (set! (-> info countdown-active?) (-> *MOD-countdown-bank* active?))
+  (set! (-> info countdown-lost?) (-> *MOD-countdown-bank* lost?))
+  (set! (-> info game-beaten?) (-> *MOD-rule-context-bank* game-beaten?))
+  (set! (-> info time-remaining)
+        (if (-> *MOD-rule-context-bank* game-beaten?)
+          (-> *MOD-stats-bank* final-remaining-time)
+          (-> *MOD-countdown-bank* remaining-time)))
+  (set! (-> info completion) (calculate-completion (the-as progress #f)))
+  (set! (-> info conditions-won) (-> *MOD-stats-bank* rules-followed))
+  (set! (-> info conditions-failed) (-> *MOD-stats-bank* rules-broken))
   (none))
 
 (defun final-time-save-value ()

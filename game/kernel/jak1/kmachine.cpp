@@ -422,11 +422,6 @@ void PutDisplayEnv(u32 ptr) {
 void update_discord_rpc(u32 discord_info) {
   if (gDiscordRpcEnabled) {
     DiscordRichPresence rpc;
-    char state[128];
-    char large_image_key[128];
-    char large_image_text[128];
-    char small_image_key[128];
-    char small_image_text[128];
     auto info = discord_info ? Ptr<DiscordInfo>(discord_info).c() : NULL;
     if (info) {
       int cells = (int)*Ptr<float>(info->fuel).c();
@@ -443,73 +438,69 @@ void update_discord_rpc(u32 discord_info) {
       char* level = Ptr<String>(info->level).c()->data();
       const char* full_level_name =
           get_full_level_name(level_names, level_name_remap, Ptr<String>(info->level).c()->data());
+      char* difficulty = Ptr<String>(info->difficulty).c()->data();
+      auto countdown_active = Ptr<Symbol>(info->countdown_active)->value;
+      auto countdown_lost = Ptr<Symbol>(info->countdown_lost)->value;
+      auto game_beaten = Ptr<Symbol>(info->game_beaten)->value;
       memset(&rpc, 0, sizeof(rpc));
-      if (!indoors(indoor_levels, level)) {
-        char level_with_tod[128];
-        strcpy(level_with_tod, level);
-        strcat(level_with_tod, "-");
-        strcat(level_with_tod, time_of_day_str(time));
-        strcpy(large_image_key, level_with_tod);
-      } else {
-        strcpy(large_image_key, level);
-      }
-      strcpy(large_image_text, full_level_name);
-      if (!strcmp(full_level_name, "unknown")) {
-        strcpy(large_image_key, full_level_name);
-        strcpy(large_image_text, level);
-      }
-      rpc.largeImageKey = large_image_key;
-      if (!strcmp(level, "finalboss")) {
-        strcpy(state, "Fighting Final Boss");
-      } else if (plantboss != offset_of_s7()) {
-        strcpy(state, "Fighting Dark Eco Plant");
-        rpc.largeImageKey = "plant-boss";
-        strcpy(large_image_text, "Dark Eco Plant");
-      } else if (ogreboss != offset_of_s7()) {
-        strcpy(state, "Fighting Klaww");
-        rpc.largeImageKey = "ogreboss";
-        strcpy(large_image_text, "Klaww");
-      } else if (!strcmp(level, "title")) {
-        strcpy(state, "On title screen");
-        rpc.largeImageKey = "title";
-        strcpy(large_image_text, "Title screen");
-      } else if (!strcmp(level, "intro")) {
-        strcpy(state, "Intro");
-      } else if (cutscene != offset_of_s7()) {
-        strcpy(state, "Watching a cutscene");
-        strcpy(large_image_text, fmt::format("Cells: {} | Orbs: {} | Flies: {} | Deaths: {}",
-                                             std::to_string(cells), std::to_string(orbs),
-                                             std::to_string(scout_flies), std::to_string(deaths))
-                                     .c_str());
-      } else {
-        strcpy(state, fmt::format("Cells: {} | Orbs: {} | Flies: {}", std::to_string(cells),
-                                  std::to_string(orbs), std::to_string(scout_flies))
-                          .c_str());
 
-        strcat(large_image_text, fmt::format(" | Deaths: {}", std::to_string(deaths)).c_str());
+      // details: playing Complicated, on which difficulty, and how much time is left
+      std::string details = fmt::format("{} ({})", status, difficulty);
+      if (game_beaten != offset_of_s7()) {
+        details +=
+            fmt::format(" | Finished with {} left", time_remaining_str(info->time_remaining));
+      } else if (countdown_lost != offset_of_s7()) {
+        details += " | Out of time";
+      } else if (countdown_active != offset_of_s7()) {
+        details += fmt::format(" | {} left", time_remaining_str(info->time_remaining));
       }
-      rpc.largeImageText = large_image_text;
-      rpc.state = state;
-      if (racer != offset_of_s7()) {
-        strcpy(small_image_key, "target-racer");
-        strcpy(small_image_text, "Driving A-Grav Zoomer");
-      } else if (flutflut != offset_of_s7()) {
-        strcpy(small_image_key, "flutflut");
-        strcpy(small_image_text, "Riding on Flut Flut");
+
+      // state: collection progress and how the run's conditions have gone
+      std::string state;
+      if (!strcmp(level, "title")) {
+        state = "On title screen";
       } else {
-        if (!indoors(indoor_levels, level)) {
-          strcpy(small_image_key, time_of_day_str(time));
-          strcpy(small_image_text, "Time of day: ");
-          strcat(small_image_text, get_time_of_day(time).c_str());
-        } else {
-          strcpy(small_image_key, "");
-          strcpy(small_image_text, "");
-        }
+        state = fmt::format("{}% collected | Conditions: {} won, {} failed", (int)info->completion,
+                            info->conditions_won, info->conditions_failed);
       }
-      rpc.smallImageKey = small_image_key;
-      rpc.smallImageText = small_image_text;
+
+      // large image hover: where we are and the usual counters
+      std::string large_image_text = full_level_name;
+      if (!strcmp(full_level_name, "unknown")) {
+        large_image_text = level;
+      }
+      if (strcmp(level, "title")) {
+        large_image_text += fmt::format(" | Cells: {} | Orbs: {} | Flies: {} | Deaths: {}", cells,
+                                        orbs, scout_flies, deaths);
+      }
+
+      // small image hover: what we're doing right now
+      std::string small_image_text = "A Complicated Mod";
+      if (!strcmp(level, "finalboss")) {
+        small_image_text = "Fighting Final Boss";
+      } else if (plantboss != offset_of_s7()) {
+        small_image_text = "Fighting Dark Eco Plant";
+      } else if (ogreboss != offset_of_s7()) {
+        small_image_text = "Fighting Klaww";
+      } else if (!strcmp(level, "intro")) {
+        small_image_text = "Intro";
+      } else if (cutscene != offset_of_s7()) {
+        small_image_text = "Watching a cutscene";
+      } else if (racer != offset_of_s7()) {
+        small_image_text = "Driving A-Grav Zoomer";
+      } else if (flutflut != offset_of_s7()) {
+        small_image_text = "Riding on Flut Flut";
+      } else if (!indoors(indoor_levels, level)) {
+        small_image_text = "Time of day: " + get_time_of_day(time);
+      }
+
+      rpc.largeImageKey = cover_art_url;
+      rpc.largeImageText = large_image_text.c_str();
+      rpc.smallImageKey = thumbnail_art_url;
+      rpc.smallImageText = small_image_text.c_str();
+      rpc.state = state.c_str();
       rpc.startTimestamp = gStartTime;
-      rpc.details = status;
+      rpc.details = details.c_str();
       rpc.partySize = 0;
       rpc.partyMax = 0;
       Discord_UpdatePresence(&rpc);
