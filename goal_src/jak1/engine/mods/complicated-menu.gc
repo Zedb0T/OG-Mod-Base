@@ -6,11 +6,11 @@
 ;; dgos: ENGINE, GAME
 
 (bundles "ENGINE.CGO" "GAME.CGO")
-(define *complicated-settings-current-version* 2)
+(define *complicated-settings-current-version* 3)
 
 (define *complicated-settings-version* *complicated-settings-current-version*)
 
-(define *complicated-difficulty-preset* 'custom)
+(define *complicated-difficulty-preset* 'medium)
 
 ;; ---------------------------------------------------------------------------
 ;; Complicated Options pause-menu screen.
@@ -142,7 +142,7 @@
 (defmethod reset ((obj complicated-settings))
   ;; default values for new settings
   (set! *complicated-settings-version* *complicated-settings-current-version*)
-  (set! *complicated-difficulty-preset* 'custom)
+  (set! *complicated-difficulty-preset* 'medium)
   (set! (-> obj show-countup-timer?) #f)
   (set! (-> obj punishment-toggle-fall-damage?) #t)
   (set! (-> obj punishment-toggle-trip?) #t)
@@ -337,6 +337,10 @@
     ;; ** ADD UPDATES HERE **
     (when (< loaded-version 2)
       (set! (-> obj punishment-toggle-camera?) #t)
+    )
+    (when (< loaded-version 3)
+      (if (eq? *complicated-difficulty-preset* 'custom)
+          (complicated-settings-apply-preset! obj 'medium))
     )
     (when (< loaded-version *complicated-settings-current-version*)
       (set! *complicated-settings-version* *complicated-settings-current-version*)

@@ -106,8 +106,8 @@
    (game-beaten?      symbol) ;; has the run been finished?
    (time-remaining    int32) ;; countdown time left in ticks (final time left once beaten)
    (completion        float) ;; game completion percentage
-   (conditions-won    int32)
-   (conditions-failed int32)))
+   (rules-followed    int32)
+   (rules-broken int32)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; debug settings

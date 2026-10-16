@@ -460,8 +460,8 @@ void update_discord_rpc(u32 discord_info) {
       if (!strcmp(level, "title")) {
         state = "On title screen";
       } else {
-        state = fmt::format("{}% collected | Conditions: {} won, {} failed", (int)info->completion,
-                            info->conditions_won, info->conditions_failed);
+        state = fmt::format("{}% collected | Rules: {} followed, {} broken", (int)info->completion,
+                            info->rules_followed, info->rules_broken);
       }
 
       // large image hover: where we are and the usual counters

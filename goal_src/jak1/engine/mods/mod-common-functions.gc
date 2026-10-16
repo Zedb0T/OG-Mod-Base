@@ -945,14 +945,12 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-game-beaten-save-value ()
   (if (-> *MOD-rule-context-bank* game-beaten?) 1 0))
 
-;; mod: setter used by other files (e.g. robotboss.gc, game-save.gc) so they
-;; never touch *MOD-rule-context-bank* directly.
+;; mod: setter used by other files (e.g. robotboss.gc, game-save.gc)
 (defun mod-game-beaten-set! ((val symbol))
   (set! (-> *MOD-rule-context-bank* game-beaten?) val)
   (none))
 
-;; mod: called by robotboss.gc when the final white eco is picked up, so it
-;; never touches *MOD-countdown-bank*/*MOD-stats-bank* directly.
+;; mod: called by robotboss.gc when the final light eco is picked up
 (defun mod-rule-finalize-run-stats! ()
   (set! (-> *MOD-stats-bank* final-remaining-time) (-> *MOD-countdown-bank* remaining-time))
   (set! (-> *MOD-stats-bank* final-time) (-> *MOD-countdown-bank* countup-timer))
@@ -961,14 +959,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-difficulty-display-name ()
   (case *complicated-difficulty-preset*
-    (('easy) "Easy")
-    (('medium) "Medium")
+    (('easy) "Simple")
+    (('medium) "Complicated")
     (('esoteric) "Esoteric")
     (('unfathomable) "Unfathomable")
     (else "Custom")))
 
-;; mod: called by pckernel.gc's update-discord-rpc, so it never touches
-;; *MOD-countdown-bank*/*MOD-stats-bank* directly.
+;; mod: called by pckernel.gc's update-discord-rpc
 (defun mod-discord-info-fill! ((info discord-info))
   (set! (-> info difficulty) (mod-difficulty-display-name))
   (set! (-> info countdown-active?) (-> *MOD-countdown-bank* active?))
@@ -979,8 +976,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           (-> *MOD-stats-bank* final-remaining-time)
           (-> *MOD-countdown-bank* remaining-time)))
   (set! (-> info completion) (calculate-completion (the-as progress #f)))
-  (set! (-> info conditions-won) (-> *MOD-stats-bank* rules-followed))
-  (set! (-> info conditions-failed) (-> *MOD-stats-bank* rules-broken))
+  (set! (-> info rules-followed) (-> *MOD-stats-bank* rules-followed))
+  (set! (-> info rules-broken) (-> *MOD-stats-bank* rules-broken))
   (none))
 
 (defun final-time-save-value ()
@@ -2934,7 +2931,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           ((eq? id 'complication-income-tax) (if (eq? level-name 'finalboss) 0 32))
           ((eq? id 'complication-half-price) (if (half-price-level? level-name) 50 0))
           ((eq? id 'rule-button-pusher)
-           (if (or (not (button-level? level-name)) is-minigame) 0 (if (or (eq? level-name 'jungle) (eq? level-name 'village2)) 74 184)))
+           (if (or (not (button-level? level-name)) is-minigame) 0 (if (or (eq? level-name 'jungle) (eq? level-name 'village2)) 50 184)))
           ((eq? id 'rule-cooked)
            (if (or on-racer racer-lavatube (not (burn-level? level-name))) 0 (if (eq? level-name 'village1) 66 148)))
           ((eq? id 'complication-get-a-grip)

@@ -43,8 +43,8 @@ struct DiscordInfo {
   u32 game_beaten;       // has the run been finished?
   s32 time_remaining;    // countdown time left in ticks (final time left once beaten)
   float completion;      // game completion percentage
-  s32 conditions_won;
-  s32 conditions_failed;
+  s32 rules_followed;
+  s32 rules_broken;
 };
 
 // To speedup finding the auto-splitter block in GOAL memory
