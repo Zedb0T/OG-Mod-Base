@@ -82,7 +82,7 @@
 | **SPEED RACER** | REACH A SPEED OF 40 METERS PER SECOND. |
 | **QUICK MATHS** | ANSWER A MATH QUESTION CORRECTLY. | Use the D-Pad to input your answer. Up/Down step with 1, Left/Right step with 5. You can use L3 to submit an answer early.
 | **DON'T KNOW JAK** | ANSWER A TRIVIA QUESTION CORRECTLY. | Use the D-Pad to navigate choices. You can use L3 to submit an answer early.
-| **GREEN-PILLED** | COLLECT 50 SMALL GREEN ECO PILLS. | Only the small ones count.
+| **GREEN-PILLED** | INCREASE YOUR HEALTH WITH GREEN ECO. |
 | **BUTTON PUSHER** | PUSH A BUTTON. | Not to be confused with Quick Time Event; Jak must press a button somewhere in the world.
 | **LOYAL CUSTOMER** | BUY AN ORACLE CELL. |
 | **COOKED** | BURN JAK. | The fire pits in Rock Village do *not* send a burn event.
@@ -135,7 +135,7 @@
 | **INCOME TAX** | TIMER INCREMENTS ARE HALVED. | The additional time granted from cells, orbs, and flies is cut in half.
 | **MIRRORED** | THE WORLD IS MIRRORED. |
 | **ONE AND DONE** | JAK AND FLUT FLUT FORGOT HOW TO DOUBLE JUMP. |
-| **UNBREAKABLE** | SCOUT FLY CRATES CAN ONLY BE BROKEN WITH ECO. | You will need to use either blue, yellow, or dark eco to break scout fly crates.
+| **UNBREAKABLE** | SCOUT FLY CRATES CAN ONLY BE BROKEN BY ECO. | You will need to use either blue, yellow, red, or dark eco to break scout fly crates.
 | **GET A GRIP** | FOR EVERY X SECONDS A LEDGE IS NOT GRABBED, YOU DIE. | A timer counts down from X seconds; if it reaches 0, you die. Grabbing a ledge resets it. The time limit scales with your Time Limit Multiplier.
 | **FAST REEL** | YOUR REEL SPEED HAS INCREASED! | The fish during the fish minigame move faster.
 | **PALATE CHANGE** | EELS ARE GOOD, YELLOWS ARE BAD. | Their effects are swapped: eels grant 5 pounds, and yellows fail the minigame.
