@@ -912,6 +912,8 @@
   (complicated-opts-punish-toggle-ohko #x170f)
   (complicated-opts-punish-toggle-reset #x1710)
   (complicated-opts-punish-toggle-countdown #x1711)
+  (complicated-opts-punish-toggle-pause #x171e)
+  (complicated-opts-punish-toggle-kick #x171d)
   ;; difficulty preset menu
   (complicated-opts-difficulty-presets-title #x1712)
   (complicated-opts-easy-preset #x1713)
@@ -925,6 +927,7 @@
   (press-to-trade-money-oracle-cheap #x171a)
   (complicated-opts-compliance-increment #x171b)
   (complicated-opts-credits-per-pass #x171c)
+  ;; continue at #x171f !!
   (complicated-opts-restore-defaults #x1999)
   ;; mod text mod-base-change
   (pad-triangle #x2000)

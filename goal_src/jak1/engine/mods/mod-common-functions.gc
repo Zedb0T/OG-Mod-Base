@@ -165,7 +165,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
        'punishment-camera
        'punishment-ohko
        'punishment-reset
-       'punishment-kick))
+       'punishment-kick
+       'punishment-pause))
 
 (define *mod-rule-punishment-id-count* (length *mod-rule-punishment-ids*))
 
@@ -1558,6 +1559,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-camera) (seconds 120))
     ((eq? punishment 'punishment-ohko) (seconds 120))
     ((eq? punishment 'punishment-kick) (seconds 180))
+    ((eq? punishment 'punishment-pause) (seconds 180))
     (else 0)))
 
 (defun mod-rule-find-timed-punishment-slot ((punishment symbol))
@@ -1609,6 +1611,15 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (('punishment-iframes) (set! (-> *TARGET-bank* hit-invulnerable-timeout) (seconds 3))))
   (none))
 
+(defun mod-rule-can-menu-pause? ()
+  (the symbol
+       (and (progress-allowed?)
+            (not *progress-process*)
+            (not (mod-rule-active? 'rule-qte))
+            (not (mod-rule-active? 'rule-math-quiz))
+            (not (mod-rule-active? 'rule-trivia))
+            ;; (not (mod-rule-active? 'rule-red-light))
+            )))
 (defun mod-rule-update-timed-punishments ()
   (dotimes (slot *mod-rule-timed-punishment-slot-count*)
     (let ((punishment (-> (-> *MOD-rule-punishment-bank* timed-punishments) slot)))
@@ -1623,7 +1634,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
               (set! (-> (-> *MOD-rule-punishment-bank* timed-next-ticks) slot)
                     (+ (-> (-> *MOD-rule-punishment-bank* timed-next-ticks) slot) (seconds 1)))
               (when (= (mod-rand-punish-int-range 0 12) 0)
-                (send-event *target* 'loading))))))))
+                (send-event *target* 'loading)))
+            (when (and (eq? punishment 'punishment-pause) (>= (current-time) (-> (-> *MOD-rule-punishment-bank* timed-next-ticks) slot)))
+              ;; schedule from now (not +=) so a long menu stay can't cause a burst of catch-up rolls
+              (set! (-> (-> *MOD-rule-punishment-bank* timed-next-ticks) slot) (+ (current-time) (seconds 1)))
+              (when (= (mod-rand-punish-int-range 0 25) 0)
+                (when (mod-rule-can-menu-pause?)
+                  (activate-progress *dproc* (progress-screen fuel-cell))))))))))
   (none))
 
 (defun mod-rule-update-hang-time ()
@@ -1958,6 +1975,12 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           (+! running-total w)
           (when (< (mod-rand-punish-int-range 0 running-total) w)
             (set! selected 'punishment-ohko)))))
+    (when (and (punishment-toggle-enabled? 'punishment-pause) (mod-rule-punishment-rollable? 'punishment-pause))
+      (let ((w 10))
+        (when (> w 0)
+          (+! running-total w)
+          (when (< (mod-rand-punish-int-range 0 running-total) w)
+            (set! selected 'punishment-pause)))))
     (when (and (not (eq? rule-id 'rule-qte))
                (punishment-toggle-enabled? 'punishment-reset)
                (mod-rule-punishment-rollable? 'punishment-reset))
@@ -2729,9 +2752,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
              (is-minigame 0)
              ((and (eq? id 'rule-grounded) is-klaww) 16)
              ((eq? id 'rule-grounded) 40)
-             ((or (eq? level-name 'beach) (eq? level-name 'rolling)) 26)
-             (is-klaww 17)
-             (else 43)))
+             ((or (eq? level-name 'beach) (eq? level-name 'rolling)) 17)
+             (is-klaww 12)
+             (else 29)))
           ((eq? id 'rule-red-light)
            (cond
              (is-minigame 0)
@@ -2774,7 +2797,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (if (or (and (not (task-closed? (game-task misty-muse) (task-status need-resolution)))
                         (task-closed? (game-task misty-muse) (task-status need-introduction)))
                    (eq? level-name 'misty))
-             388
+             194
              0))
           ((eq? id 'rule-side-to-side) (if is-klaww 753 0))
           ((eq? id 'complication-mirror) (if is-klaww 0 41))
@@ -2783,7 +2806,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           ((eq? id 'rule-button-pusher)
            (if (or (not (button-level? level-name)) is-minigame) 0 (if (or (eq? level-name 'jungle) (eq? level-name 'village2)) 74 184)))
           ((eq? id 'rule-cooked)
-           (if (or on-racer racer-lavatube (not (burn-level? level-name))) 0 (if (eq? level-name 'village1) 82 185)))
+           (if (or on-racer racer-lavatube (not (burn-level? level-name))) 0 (if (eq? level-name 'village1) 66 148)))
           ((eq? id 'complication-get-a-grip)
            (if (or (sole-zoomer-level? level-name)
                    (string= checkpoint-name "swamp-cave1")
@@ -3138,6 +3161,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-ohko) "ANY DAMAGE OR BONK KILLS FOR 2 MINUTES")
     ((eq? punishment 'punishment-reset) "RESET THE RUN")
     ((eq? punishment 'punishment-kick) "NO SPIN KICK FOR 3 MINUTES")
+    ((eq? punishment 'punishment-pause) "PAUSE RANDOMLY FOR 3 MINUTES")
     (else "NONE")))
 
 (defun mod-rule-timed-punishment-name ((punishment symbol))
@@ -3150,6 +3174,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-camera) "CAMERA")
     ((eq? punishment 'punishment-ohko) "OHKO")
     ((eq? punishment 'punishment-kick) "SPIN KICK")
+    ((eq? punishment 'punishment-pause) "PAUSE")
     (else (mod-rule-punishment-name punishment))))
 
 (defun mod-rule-apply-extra-rule-punishment ((failed-slot int))
@@ -3208,6 +3233,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-camera) (none) (mod-rule-start-timed-punishment punishment))
     ((eq? punishment 'punishment-ohko) (none) (mod-rule-start-timed-punishment punishment))
     ((eq? punishment 'punishment-kick) (none) (mod-rule-start-timed-punishment punishment))
+    ((eq? punishment 'punishment-pause) (none) (mod-rule-start-timed-punishment punishment))
     ((eq? punishment 'punishment-reset)
      (process-spawn-function process
        (lambda ()
@@ -4506,8 +4532,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (while (< slot *mod-rule-timed-punishment-slot-count*)
       (let* ((punishment (-> (-> *MOD-rule-punishment-bank* timed-punishments) slot))
              (idx (if punishment (mod-rule-punishment-index-from-id punishment) -1))
-             (nibble-val (if (>= idx 0) (the uint idx) (the uint #xf))))
-        (set! result (logior result (shl nibble-val (* slot 4)))))
+             (byte-val (if (>= idx 0) (the uint idx) (the uint #xff))))
+        (set! result (logior result (shl byte-val (* slot 8)))))
       (+! slot 1))
     (the int result)))
 
@@ -4526,12 +4552,16 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (the int result)))
 
 (defun mod-rule-timed-punishments-resume-from-save ((val int))
-  (let ((bits (the uint val))
-        (slot 0))
+  (let* ((bits (the uint val))
+         (legacy? (zero? (shr bits 32)))
+         (empty-val (if legacy? #xf #xff))
+         (slot 0))
     (while (< slot *mod-rule-timed-punishment-slot-count*)
-      (let ((idx (the int (logand (shr bits (* slot 4)) (the uint #xf)))))
+      (let ((idx (if legacy?
+                   (the int (logand (shr bits (* slot 4)) (the uint #xf)))
+                   (the int (logand (shr bits (* slot 8)) (the uint #xff))))))
         (set! (-> (-> *MOD-rule-punishment-bank* timed-saved-ids) slot)
-              (if (= idx #xf) #f (mod-rule-punishment-id-from-index idx))))
+              (if (= idx empty-val) #f (mod-rule-punishment-id-from-index idx))))
       (+! slot 1)))
   (none))
 

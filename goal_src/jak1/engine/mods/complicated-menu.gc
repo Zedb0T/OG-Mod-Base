@@ -40,6 +40,7 @@
    (punishment-toggle-reset? symbol)
    (punishment-toggle-countdown? symbol)
    (punishment-toggle-kick? symbol)
+   (punishment-toggle-pause? symbol)
    (klaww-assist? symbol)
    (fish-assist? symbol)
    (rule-grounded? symbol)
@@ -159,6 +160,7 @@
   (set! (-> obj punishment-toggle-reset?) #f)
   (set! (-> obj punishment-toggle-countdown?) #t)
   (set! (-> obj punishment-toggle-kick?) #t)
+  (set! (-> obj punishment-toggle-pause?) #t)
   (set! (-> obj klaww-assist?) #f)
   (set! (-> obj fish-assist?) #f)
   (set! (-> obj rule-grounded?) #t)
@@ -378,6 +380,7 @@
                                           (("punishment-toggle-reset?") (set! (-> obj punishment-toggle-reset?) (file-stream-read-symbol file)))
                                           (("punishment-toggle-countdown?") (set! (-> obj punishment-toggle-countdown?) (file-stream-read-symbol file)))
                                           (("punishment-toggle-kick?") (set! (-> obj punishment-toggle-kick?) (file-stream-read-symbol file)))
+                                          (("punishment-toggle-pause?") (set! (-> obj punishment-toggle-pause?) (file-stream-read-symbol file)))
                                           (("klaww-assist?") (set! (-> obj klaww-assist?) (file-stream-read-symbol file)))
                                           (("fish-assist?") (set! (-> obj fish-assist?) (file-stream-read-symbol file)))
                                           (("rule-grounded?") (set! (-> obj rule-grounded?) (file-stream-read-symbol file)))
@@ -512,6 +515,7 @@
     (format file "  (punishment-toggle-reset? ~A)~%" (-> obj punishment-toggle-reset?))
     (format file "  (punishment-toggle-countdown? ~A)~%" (-> obj punishment-toggle-countdown?))
     (format file "  (punishment-toggle-kick? ~A)~%" (-> obj punishment-toggle-kick?))
+    (format file "  (punishment-toggle-pause? ~A)~%" (-> obj punishment-toggle-pause?))
     (format file "  (klaww-assist? ~A)~%" (-> obj klaww-assist?))
     (format file "  (fish-assist? ~A)~%" (-> obj fish-assist?))
     (format file "  (rule-grounded? ~A)~%" (-> obj rule-grounded?))
@@ -1023,7 +1027,27 @@
             (lambda ()
               (commit-to-file *complicated-settings*)
               (none)))
-       ;; [15] BACK
+         ;; [15] KICK
+          (new 'static
+               'game-option
+               :option-type (game-option-type on-off)
+               :name (text-id complicated-opts-punish-toggle-kick)
+               :scale #t
+               :on-confirm
+               (lambda ()
+                 (commit-to-file *complicated-settings*)
+                 (none)))
+          ;; [16] PAUSE
+         (new 'static
+              'game-option
+              :option-type (game-option-type on-off)
+              :name (text-id complicated-opts-punish-toggle-pause)
+              :scale #t
+              :on-confirm
+              (lambda ()
+                (commit-to-file *complicated-settings*)
+                (none)))
+       ;; [--] BACK
        (new 'static
             'game-option
             :option-type (game-option-type button)
@@ -2136,6 +2160,7 @@
   (set! (-> *punishment-toggle-options* 13 value-to-modify) (&-> *complicated-settings* punishment-toggle-reset?))
   (set! (-> *punishment-toggle-options* 14 value-to-modify) (&-> *complicated-settings* punishment-toggle-countdown?))
   (set! (-> *punishment-toggle-options* 15 value-to-modify) (&-> *complicated-settings* punishment-toggle-kick?))
+  (set! (-> *punishment-toggle-options* 16 value-to-modify) (&-> *complicated-settings* punishment-toggle-pause?))
   ;; Condition toggle mappings
   (set! (-> *condition-toggle-options* 0 value-to-modify) (&-> *complicated-settings* rule-grounded?))
   (set! (-> *condition-toggle-options* 1 value-to-modify) (&-> *complicated-settings* rule-die?))
@@ -2257,6 +2282,7 @@
          ((eq? punishment 'punishment-reset) (-> *complicated-settings* punishment-toggle-reset?))
          ((eq? punishment 'punishment-countdown) (-> *complicated-settings* punishment-toggle-countdown?))
          ((eq? punishment 'punishment-kick) (-> *complicated-settings* punishment-toggle-kick?))
+         ((eq? punishment 'punishment-pause) (-> *complicated-settings* punishment-toggle-pause?))
          (else #t))))
 
 (defun klaww-assist-enabled? ()
