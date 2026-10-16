@@ -1330,7 +1330,10 @@
      (if (not (-> *setting-control* current auto-save)) (go-virtual error (mc-status-code no-auto-save)))
      (when (and (zero? (-> self card)) (-> *setting-control* current auto-save))
        (set! (-> self card) (-> *game-info* auto-save-card))
-       (set! (-> self which) (-> *game-info* auto-save-which))))
+       (set! (-> self which) (-> *game-info* auto-save-which)))
+     ;; mod: speedrunner mode turns auto-save on even after "continue without saving", so there may be
+     ;; no save slot. Saving to slot -1 makes the runtime read past its save file table and crash.
+     (if (< (-> self which) 0) (go-virtual error (mc-status-code no-auto-save))))
     ((= desired-mode 'error) (set! (-> *setting-control* default auto-save) #f) (go-virtual error (mc-status-code no-card))))
   (set! (-> *setting-control* default auto-save) #f)
   (go-virtual get-heap)
