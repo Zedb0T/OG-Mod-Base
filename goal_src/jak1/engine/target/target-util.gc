@@ -6,6 +6,7 @@
 (require "engine/gfx/shadow/shadow-cpu-h.gc")
 (require "engine/common-obs/process-drawable-h.gc")
 (define-extern target-collide-set! (function symbol float int :behavior target))
+
 (define-extern mod-rule-timed-punishment-active? (function symbol symbol))
 
 ;; DECOMP BEGINS

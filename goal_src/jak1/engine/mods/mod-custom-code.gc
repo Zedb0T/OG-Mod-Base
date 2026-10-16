@@ -149,8 +149,12 @@
         (set! *last-kill-dist* distance)
         (mod-rule-trigger-sniper (>= distance (meters 70)))
         (when *debug-segment*
-          (format #t "distance: ~f type: ~a state: ~A hit: ~A~%"
-                  distance enemy-type (-> enemy state name) (mod-rule-last-player-hit-mode enemy)))))
+          (format #t
+                  "distance: ~f type: ~a state: ~A hit: ~A~%"
+                  distance
+                  enemy-type
+                  (-> enemy state name)
+                  (mod-rule-last-player-hit-mode enemy)))))
     (mod-rule-counter-add-progress 'rule-lurker-pressure 1)
     (mod-rule-trigger-disassociate)
     (mod-rule-trigger-double-kill)

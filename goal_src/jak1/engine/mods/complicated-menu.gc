@@ -336,12 +336,9 @@
       (set! (-> obj complication-soul-bond?) #t))
     ;; ** ADD UPDATES HERE **
     (when (< loaded-version 2)
-      (set! (-> obj punishment-toggle-camera?) #t)
-    )
+      (set! (-> obj punishment-toggle-camera?) #t))
     (when (< loaded-version 3)
-      (if (eq? *complicated-difficulty-preset* 'custom)
-          (set! *complicated-difficulty-preset* 'medium))
-    )
+      (if (eq? *complicated-difficulty-preset* 'custom) (set! *complicated-difficulty-preset* 'medium)))
     (when (< loaded-version *complicated-settings-current-version*)
       (set! *complicated-settings-version* *complicated-settings-current-version*)
       (unless (write-to-file obj filename)
@@ -2315,7 +2312,7 @@
 
 (defun mod-rule-condition-enabled? ((id symbol))
   (the symbol
-        (cond
+       (cond
          ((not *complicated-settings*) #t)
          ((eq? id 'rule-grounded) (-> *complicated-settings* rule-grounded?))
          ((eq? id 'rule-die) (-> *complicated-settings* rule-die?))
