@@ -689,7 +689,7 @@
                                                                           (while (< (the-as int a0-64) (the int (game-task max))) ;; changed from hard-coded 116 to (game-task max) mod-base-change
                                                                             (set! (-> (the-as (pointer int64) (&+ v1-96 (* (the-as int a0-64) 8)))) (-> this fuel-cell-time (the-as int a0-64)))
                                                                             (set! a0-64 (+ (the-as int a0-64) 1))))
-                                                                        (let ((v1-97 (&+ v1-96 928)))
+                                                                        (let ((v1-97 (&+ v1-96 (logand -16 (+ (* 8 (the int (game-task max))) 15)))))
                                                                           (let ((a0-67 (the-as game-save-tag (&+ v1-97 0))))
                                                                             (set! (-> a0-67 elt-type) (game-save-elt deaths-per-level))
                                                                             (set! (-> a0-67 elt-count) 32)
@@ -1120,7 +1120,7 @@
              (set! (-> this in-level-time a0-130)
                    (the-as time-frame (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer data) 16) (* a0-130 8)))))))))
         (((game-save-elt fuel-cell-time))
-         (let ((v1-92 (min 32 (-> data elt-count))))
+         (let ((v1-92 (min (the int (game-task max)) (-> data elt-count))))
            (dotimes (a0-133 v1-92)
              (set! (-> this fuel-cell-time a0-133)
                    (the-as time-frame (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer data) 16) (* a0-133 8)))))))))

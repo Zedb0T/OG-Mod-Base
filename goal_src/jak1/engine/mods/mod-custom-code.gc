@@ -128,9 +128,7 @@
 
 (defun runs-on-jak-spawn ()
   (when (mod-rule-active? 'complication-invisible-man)
-    (set-vector! (-> *target* draw color-mult) 1.0 1.0 1.0 0.0)
-    (send-event *target* 'sidekick #f)
-    (none))
+    (mod-rule-reapply-slot-visual-effect 'complication-invisible-man))
   (mod-rule-trigger-get-a-grip)
   ;; Code here runs every time jak spawns (loading a file new game or death)
   ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
@@ -149,20 +147,16 @@
 
 (defun runs-on-enemy-death ((enemy process-drawable))
   (mod-rule-trigger-failure 'rule-no-harm)
-  (format #t "distance: ~f~%" (vector-vector-distance (-> enemy root trans) (target-pos 0)))
-  (when *target*
-    (format #t "kill mode (target state): ~a~%" (-> *target* state name)))
   (let* ((enemy-type (the-as symbol (-> enemy type)))
          (was-flop? (mod-rule-enemy-killed-by-flop? enemy))
-         (was-red? (mod-rule-enemy-killed-by-red-eco? enemy))
-         ;;  (was-yellow?  (mod-rule-enemy-killed-by-yellow-eco? enemy))
-         )
-    (when (and enemy (-> enemy root))
+         (was-red? (mod-rule-enemy-killed-by-red-eco? enemy)))
+    (when (and (-> enemy root) *target*)
       (let ((distance (vector-vector-distance (-> enemy root trans) (target-pos 0))))
         (set! *last-kill-dist* distance)
-        (mod-rule-trigger-sniper (>= distance (meters 70)))))
-    (format #t "enemy type: ~a~%" enemy-type)
-    (format #t "enemy state: ~A, last recorded hit: ~A~%" (-> enemy state name) (mod-rule-last-player-hit-mode enemy))
+        (mod-rule-trigger-sniper (>= distance (meters 70)))
+        (when *debug-segment*
+          (format #t "distance: ~f type: ~a state: ~A hit: ~A~%"
+                  distance enemy-type (-> enemy state name) (mod-rule-last-player-hit-mode enemy)))))
     (mod-rule-counter-add-progress 'rule-lurker-pressure 1)
     (mod-rule-trigger-disassociate)
     (mod-rule-trigger-double-kill)

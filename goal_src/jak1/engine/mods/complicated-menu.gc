@@ -2307,11 +2307,12 @@
   (if *complicated-settings* (the float (the int (-> *complicated-settings* compliance-increment))) 0.0))
 
 (defun pass-credits-required-value ()
-  (if *complicated-settings* (max 5 (min 40 (the int (+ (-> *complicated-settings* pass-credits-required) 0.5)))) 10))
+  (if *complicated-settings* (max 5 (min 100 (the int (+ (-> *complicated-settings* pass-credits-required) 0.5)))) 10))
 
 (defun mod-rule-condition-enabled? ((id symbol))
   (the symbol
-       (cond
+        (cond
+         ((not *complicated-settings*) #t)
          ((eq? id 'rule-grounded) (-> *complicated-settings* rule-grounded?))
          ((eq? id 'rule-die) (-> *complicated-settings* rule-die?))
          ((eq? id 'rule-lurker-pressure) (-> *complicated-settings* rule-lurker-pressure?))
